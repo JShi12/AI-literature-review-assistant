@@ -45,15 +45,21 @@ def persist_extracted_claims(
 ) -> list[Claim]:
     claims: list[Claim] = []
     for extracted in extracted_claims:
+        paper_id = extracted.paper_id
+        chunk_id = extracted.chunk_id
+        section_id = extracted.section_id
         if chunk is not None:
-            _validate_claim_against_chunk(extracted, chunk)
+            _validate_claim_location_against_chunk(extracted, chunk)
+            paper_id = chunk.paper_id
+            chunk_id = chunk.id
+            section_id = chunk.section_id
         claim = Claim(
             claim_text=extracted.claim_text,
             claim_type=extracted.claim_type,
             normalized_text=extracted.normalized_text,
-            paper_id=extracted.paper_id,
-            chunk_id=extracted.chunk_id,
-            section_id=extracted.section_id,
+            paper_id=paper_id,
+            chunk_id=chunk_id,
+            section_id=section_id,
             page=extracted.page,
             start_char=extracted.start_char,
             end_char=extracted.end_char,
@@ -84,11 +90,7 @@ def build_claim_extraction_input(chunk: Chunk) -> str:
     )
 
 
-def _validate_claim_against_chunk(extracted: ExtractedClaim, chunk: Chunk) -> None:
-    if extracted.paper_id != chunk.paper_id:
-        raise ValueError("Extracted claim paper_id does not match chunk.")
-    if extracted.chunk_id != chunk.id:
-        raise ValueError("Extracted claim chunk_id does not match chunk.")
+def _validate_claim_location_against_chunk(extracted: ExtractedClaim, chunk: Chunk) -> None:
     if extracted.start_char < chunk.start_char or extracted.end_char > chunk.end_char:
         raise ValueError("Extracted claim offsets must fall within the source chunk offsets.")
     if not (chunk.page_start <= extracted.page <= chunk.page_end):
@@ -102,6 +104,7 @@ Rules:
 - Preserve the source meaning. Do not add interpretation.
 - Include an optional normalized_text when a concise canonical form is obvious.
 - Each claim must include paper_id, chunk_id, section_id, page, start_char, end_char, and confidence.
+- Copy paper_id, chunk_id, and section_id exactly from the chunk metadata. Do not shorten, rewrite, or invent IDs.
 - Character offsets must refer to the page text coordinates provided by the chunk metadata.
 - If the chunk has no direct claim, return an empty claims list.
 """
