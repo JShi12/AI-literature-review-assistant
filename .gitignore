@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+README_private.md
 API keys.txt
 API keys*.txt
 *api_key*
