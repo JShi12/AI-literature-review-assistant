@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+import re
+import importlib
 
 import streamlit as st
 from sqlalchemy import func, select
@@ -9,9 +11,10 @@ from sqlalchemy import func, select
 from lit_review_assistant.db.models import Chunk, Claim, Paper, ReviewDraft, Synthesis
 from lit_review_assistant.db.session import session_scope
 from lit_review_assistant.llm.claims import extract_claims_for_chunk
-from lit_review_assistant.llm.review import generate_review_draft
+from lit_review_assistant.llm import client as llm_client
+from lit_review_assistant.llm import review as review_llm
 from lit_review_assistant.llm.synthesis import generate_syntheses
-from lit_review_assistant.services import ingest_pdf
+from lit_review_assistant import services
 
 
 UPLOAD_DIR = Path("data/uploads")
@@ -69,7 +72,7 @@ def upload_papers_tab() -> None:
             destination = UPLOAD_DIR / upload.name
             destination.write_bytes(upload.getbuffer())
             with session_scope() as session:
-                paper = ingest_pdf(
+                paper = services.ingest_pdf(
                     session,
                     destination,
                     file_name=upload.name,
@@ -153,7 +156,7 @@ def claims_tab() -> None:
                         created += len(extract_claims_for_chunk(session, chunk))
                 st.success(f"Extracted {created} claim(s) from {len(chunks)} chunk(s).")
             except Exception as exc:
-                st.error(f"Claim extraction failed: {exc}")
+                st.error(f"Claim extraction failed: {describe_error(exc)}")
 
 
 def count_chunks_for_selection(paper_id: str | None) -> int:
@@ -177,7 +180,14 @@ def syntheses_tab() -> None:
         return
 
     synthesis_types = st.multiselect("Synthesis types", SYNTHESIS_TYPES, default=SYNTHESIS_TYPES)
-    max_claims = st.number_input("Max recent claims to use", min_value=1, max_value=50, value=10, step=1)
+    max_claims = st.number_input(
+        "Claims to use",
+        min_value=1,
+        max_value=claim_count,
+        value=min(10, claim_count),
+        step=1,
+    )
+    st.caption(f"Up to {claim_count} available claim(s) can be used.")
 
     if st.button("Generate Syntheses", type="primary"):
         if not ensure_openai_key():
@@ -189,7 +199,7 @@ def syntheses_tab() -> None:
             try:
                 with session_scope() as session:
                     claims = session.scalars(
-                        select(Claim).order_by(Claim.created_at.desc()).limit(max_claims)
+                        select(Claim).order_by(Claim.created_at.asc()).limit(max_claims)
                     ).all()
                     total_created = 0
                     for synthesis_type in synthesis_types:
@@ -201,16 +211,14 @@ def syntheses_tab() -> None:
                         total_created += len(syntheses)
                 st.success(f"Generated {total_created} synthesis item(s) across {len(synthesis_types)} type(s).")
             except Exception as exc:
-                st.error(f"Synthesis generation failed: {exc}")
+                st.error(f"Synthesis generation failed: {describe_error(exc)}")
 
 
 def review_drafts_tab() -> None:
     with session_scope() as session:
         draft_count = session.scalar(select(func.count(ReviewDraft.id))) or 0
         synthesis_count = session.scalar(select(func.count(Synthesis.id))) or 0
-        latest_draft = session.scalars(select(ReviewDraft).order_by(ReviewDraft.created_at.desc()).limit(1)).first()
-        latest_title = latest_draft.title if latest_draft is not None else None
-        latest_markdown = latest_draft.markdown if latest_draft is not None else None
+        drafts = session.scalars(select(ReviewDraft).order_by(ReviewDraft.created_at.desc())).all()
 
     st.metric("Review Drafts", draft_count)
     st.metric("Available syntheses", synthesis_count)
@@ -220,7 +228,14 @@ def review_drafts_tab() -> None:
         return
 
     topic = st.text_input("Review topic", value="AI literature review")
-    max_syntheses = st.number_input("Max recent syntheses to use", min_value=1, max_value=50, value=20, step=1)
+    max_syntheses = st.number_input(
+        "Max recent syntheses to use",
+        min_value=1,
+        max_value=synthesis_count,
+        value=min(20, synthesis_count),
+        step=1,
+    )
+    st.caption(f"Up to {synthesis_count} available synthesis item(s) can be used.")
 
     if st.button("Generate Review Draft", type="primary"):
         if not ensure_openai_key():
@@ -231,7 +246,7 @@ def review_drafts_tab() -> None:
                     syntheses = session.scalars(
                         select(Synthesis).order_by(Synthesis.created_at.desc()).limit(max_syntheses)
                     ).all()
-                    draft = generate_review_draft(
+                    draft = review_llm.generate_review_draft(
                         session,
                         topic=topic,
                         synthesis_ids=[synthesis.id for synthesis in syntheses],
@@ -239,15 +254,33 @@ def review_drafts_tab() -> None:
                 if draft is None:
                     st.warning("No review draft was created.")
                 else:
-                    latest_title = draft.title
-                    latest_markdown = draft.markdown
                     st.success(f"Generated review draft: {draft.title}")
+                    st.rerun()
             except Exception as exc:
-                st.error(f"Review draft generation failed: {exc}")
+                st.error(f"Review draft generation failed: {describe_error(exc)}")
 
-    if latest_markdown:
-        st.subheader(latest_title or "Latest Review Draft")
-        st.markdown(latest_markdown)
+    selected_draft = select_review_draft(drafts)
+    if selected_draft is not None:
+        render_review_markdown(selected_draft.markdown)
+
+
+def select_review_draft(drafts: list[ReviewDraft]) -> ReviewDraft | None:
+    if not drafts:
+        st.info("No review drafts have been generated yet.")
+        return None
+
+    draft_by_id = {draft.id: draft for draft in drafts}
+    selected_id = st.selectbox(
+        "Review draft",
+        [draft.id for draft in drafts],
+        format_func=lambda draft_id: format_review_draft_label(draft_by_id[draft_id]),
+    )
+    return draft_by_id[selected_id]
+
+
+def format_review_draft_label(draft: ReviewDraft) -> str:
+    created = draft.created_at.strftime("%Y-%m-%d %H:%M") if draft.created_at is not None else "unknown time"
+    return f"{created} - {draft.title}"
 
 
 def ensure_openai_key() -> bool:
@@ -255,6 +288,37 @@ def ensure_openai_key() -> bool:
         return True
     st.warning("Set OPENAI_API_KEY in the terminal before running Streamlit, then restart the app.")
     return False
+
+
+def describe_error(exc: Exception) -> str:
+    formatter = getattr(llm_client, "describe_openai_error", None)
+    if callable(formatter):
+        return formatter(exc)
+    return str(exc)
+
+
+def format_review_markdown(markdown: str) -> str:
+    formatter = getattr(review_llm, "normalize_references_for_markdown", None)
+    if callable(formatter):
+        return formatter(markdown)
+    return markdown
+
+
+def render_review_markdown(markdown: str) -> None:
+    formatted = format_review_markdown(markdown)
+    parts = re.split(r"(?im)^\s{0,3}#{0,6}\s*references\s*$", formatted, maxsplit=1)
+    if len(parts) != 2:
+        st.markdown(formatted)
+        return
+
+    body, references = parts
+    if body.strip():
+        st.markdown(body.strip())
+    st.markdown("## References")
+    for reference in references.splitlines():
+        reference = reference.strip()
+        if reference:
+            st.markdown(reference)
 
 
 def table_count_tab(label: str, model: type) -> None:
@@ -272,7 +336,39 @@ def database_tab() -> None:
             "syntheses": session.scalar(select(func.count(Synthesis.id))) or 0,
             "review_drafts": session.scalar(select(func.count(ReviewDraft.id))) or 0,
         }
+        papers = session.scalars(select(Paper).order_by(Paper.paper_key.asc())).all()
+        paper_rows = [
+            {
+                "paper_key": paper.paper_key,
+                "title": paper.title,
+                "authors": ", ".join(paper.authors or []),
+                "year": paper.year,
+                "file_name": paper.file_name,
+            }
+            for paper in papers
+        ]
     st.json(counts)
+
+    if st.button("Backfill Paper Metadata"):
+        try:
+            with session_scope() as session:
+                updated = backfill_metadata(session, UPLOAD_DIR)
+            st.success(f"Updated metadata for {updated} paper(s). Refresh the page to see updated rows.")
+        except Exception as exc:
+            st.error(f"Paper metadata backfill failed: {describe_error(exc)}")
+
+    if paper_rows:
+        st.dataframe(paper_rows, use_container_width=True)
+
+
+def backfill_metadata(session, upload_dir: Path) -> int:
+    backfill = getattr(services, "backfill_paper_metadata", None)
+    if not callable(backfill):
+        reloaded_services = importlib.reload(services)
+        backfill = getattr(reloaded_services, "backfill_paper_metadata", None)
+    if not callable(backfill):
+        raise RuntimeError("Paper metadata backfill is not available. Restart Streamlit and try again.")
+    return backfill(session, upload_dir)
 
 
 if __name__ == "__main__":

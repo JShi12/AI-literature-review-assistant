@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from lit_review_assistant.db.models import Claim, Chunk, Page, Paper, Section, Synthesis, SynthesisClaim
 from lit_review_assistant.pipeline.chunking import chunk_pages_with_sections
-from lit_review_assistant.pipeline.pdf import extract_pages
+from lit_review_assistant.pipeline.pdf import extract_pages, extract_pdf_metadata, infer_paper_metadata_from_name
 from lit_review_assistant.pipeline.sections import detect_sections
 
 
@@ -38,14 +38,17 @@ def ingest_pdf(
     if existing:
         return existing
 
+    pdf_metadata = extract_pdf_metadata(path)
+    filename_metadata = infer_paper_metadata_from_name(file_name or path.name)
     pages = extract_pages(path)
     detected_sections = detect_sections(pages)
     chunks = chunk_pages_with_sections(pages, detected_sections, max_chars=chunk_max_chars, overlap=chunk_overlap)
 
     paper = Paper(
         paper_key=next_paper_key(session),
-        title=path.stem,
-        authors=[],
+        title=pdf_metadata.title or filename_metadata.title or path.stem,
+        authors=pdf_metadata.authors or filename_metadata.authors or [],
+        year=pdf_metadata.year or filename_metadata.year,
         file_name=file_name or path.name,
         file_sha256=file_hash,
     )
@@ -106,6 +109,50 @@ def recalculate_synthesis_support_counts(session: Session, synthesis_id: str) ->
     synthesis.supporting_papers = len(paper_ids)
     session.flush()
     return synthesis
+
+
+def backfill_paper_metadata(session: Session, upload_dir: str | Path = "data/uploads") -> int:
+    base_dir = Path(upload_dir)
+    updated = 0
+    papers = session.scalars(select(Paper).order_by(Paper.created_at.asc())).all()
+    for paper in papers:
+        metadata = infer_paper_metadata_from_name(paper.file_name)
+        pdf_path = base_dir / paper.file_name
+        if pdf_path.exists():
+            pdf_metadata = extract_pdf_metadata(pdf_path)
+            metadata = _merge_metadata(pdf_metadata, metadata)
+
+        changed = False
+        if metadata.authors and not paper.authors:
+            paper.authors = metadata.authors
+            changed = True
+        if metadata.year is not None and paper.year is None:
+            paper.year = metadata.year
+            changed = True
+        if metadata.title and _title_is_missing_or_filename_derived(paper.title, paper.file_name):
+            paper.title = metadata.title
+            changed = True
+        if changed:
+            updated += 1
+
+    session.flush()
+    return updated
+
+
+def _merge_metadata(primary, fallback):
+    return type(primary)(
+        title=primary.title or fallback.title,
+        authors=primary.authors or fallback.authors,
+        year=primary.year or fallback.year,
+    )
+
+
+def _title_is_missing_or_filename_derived(title: str | None, file_name: str) -> bool:
+    if not title:
+        return True
+    normalized_title = title.replace("_", " ").strip()
+    normalized_stem = Path(file_name).stem.replace("_", " ").strip()
+    return normalized_title == normalized_stem
 
 
 def _match_section_id(

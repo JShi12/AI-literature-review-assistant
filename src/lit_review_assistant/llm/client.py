@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 from typing import Generic, Protocol, TypeVar
 
-from openai import OpenAI
+from openai import APIStatusError, OpenAI
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -97,3 +97,39 @@ def _get_parsed_response(response: object) -> ParsedModel:
             if parsed is not None:
                 return parsed
     raise ValueError("OpenAI response did not include parsed structured output.")
+
+
+def describe_openai_error(exc: Exception) -> str:
+    if not isinstance(exc, APIStatusError):
+        return str(exc)
+
+    status_code = getattr(exc, "status_code", None)
+    model = os.getenv("OPENAI_CHAT_MODEL", "gpt-4.1-mini")
+    message = _extract_openai_error_message(getattr(exc, "body", None)) or str(exc)
+    parts = [f"OpenAI API request failed with status {status_code}: {message}"]
+
+    if status_code == 403:
+        parts.append(
+            "This usually means the API key or project is not allowed to make this request. "
+            f"Check that OPENAI_API_KEY belongs to the right project, that the project can use OPENAI_CHAT_MODEL='{model}', "
+            "and that billing, organization policy, and region restrictions are not blocking the request."
+        )
+    elif status_code == 401:
+        parts.append("Check that OPENAI_API_KEY is set correctly in the terminal running Streamlit.")
+    elif status_code == 429:
+        parts.append("The project is rate-limited or out of quota. Reduce request size or check billing/usage limits.")
+
+    return " ".join(parts)
+
+
+def _extract_openai_error_message(body: object) -> str | None:
+    if isinstance(body, dict):
+        error = body.get("error")
+        if isinstance(error, dict):
+            message = error.get("message")
+            if isinstance(message, str):
+                return message
+        message = body.get("message")
+        if isinstance(message, str):
+            return message
+    return None

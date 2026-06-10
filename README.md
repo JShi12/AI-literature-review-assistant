@@ -12,6 +12,7 @@ The Streamlit app supports PDF ingestion, paper-structure inspection, LLM claim 
 
 - Upload and ingest one or more PDF papers.
 - Extract page text with PyMuPDF.
+- Extract PDF metadata and infer missing author/year/title details from filenames when possible.
 - Detect common academic sections such as Abstract, Introduction, Methods, Results, Discussion, Limitations, and Conclusion.
 - Create section-aware text chunks with stable page-level character offsets.
 - Avoid duplicate ingestion by hashing uploaded PDFs with SHA-256.
@@ -29,8 +30,8 @@ This project is a local MVP, not a production deployment. The core workflow is i
 - `Paper Structure`: inspect recent papers and their extracted structure.
 - `Claims`: run LLM claim extraction over selected paper chunks.
 - `Syntheses`: generate claim-supported synthesis items.
-- `Review Drafts`: generate and display the latest literature review draft.
-- `Database`: inspect table counts.
+- `Review Drafts`: generate review drafts and display a selected saved draft.
+- `Database`: inspect table counts and backfill paper metadata from uploaded PDFs.
 
 The database includes an `embeddings` table using `pgvector`, and the environment configuration includes an embedding model setting. Embedding generation and retrieval are not currently wired into the UI workflow.
 
@@ -211,6 +212,8 @@ Chunking defaults:
 
 Chunk settings apply only to newly ingested PDFs. If a file has already been ingested, the existing paper record is reused based on its SHA-256 hash.
 
+Use `Database` -> `Backfill Paper Metadata` to update existing paper rows with title, author, and year metadata extracted from the uploaded PDFs.
+
 ## LLM Workflow
 
 Claim extraction:
@@ -221,13 +224,13 @@ Claim extraction:
 
 Synthesis generation:
 
-- Uses selected recent claims.
+- Uses the selected number of available claims, up to the total available claim count.
 - Supports `theme`, `contradiction`, `gap`, `method_comparison`, and `insight`.
 - Stores supporting claim links and support counts.
 
 Review drafting:
 
-- Uses selected recent syntheses.
+- Uses the selected number of recent syntheses, up to the total available synthesis count.
 - Generates Markdown.
 - Replaces internal claim identifiers with numeric citations.
 - Rebuilds the References section from supporting papers.

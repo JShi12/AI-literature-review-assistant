@@ -2,11 +2,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from lit_review_assistant.llm.claims import build_claim_extraction_input
-from lit_review_assistant.llm.client import LLMResult
-from lit_review_assistant.llm.review import apply_academic_citations, build_review_input
+import httpx
+from openai import APIStatusError
+
+from lit_review_assistant.llm.claims import build_claim_extraction_input, persist_extracted_claims
+from lit_review_assistant.llm.client import LLMResult, describe_openai_error
+from lit_review_assistant.llm.review import apply_academic_citations, build_review_input, normalize_references_for_markdown
 from lit_review_assistant.pipeline.review_traceability import claim_support_map, normalize_sentence_support, unsupported_sentence_indexes
-from lit_review_assistant.schemas import ReviewDraftPayload, ReviewSentencePayload
+from lit_review_assistant.schemas import ExtractedClaim, ReviewDraftPayload, ReviewSentencePayload
 
 
 @dataclass
@@ -64,6 +67,39 @@ def test_claim_extraction_input_includes_provenance() -> None:
     assert "chunk_id: CH001" in prompt
     assert "chunk_start_char: 100" in prompt
     assert "The proposed method improves accuracy" in prompt
+
+
+def test_persist_extracted_claims_uses_authoritative_chunk_ids() -> None:
+    class FakeSession:
+        def __init__(self) -> None:
+            self.added = []
+
+        def add(self, model) -> None:
+            self.added.append(model)
+
+        def flush(self) -> None:
+            return None
+
+    extracted = ExtractedClaim(
+        claim_text="The proposed method improves accuracy.",
+        claim_type="finding",
+        normalized_text="Method improves accuracy.",
+        paper_id="WRONG_PAPER",
+        chunk_id="WRONG_CHUNK",
+        section_id="WRONG_SECTION",
+        page=3,
+        start_char=100,
+        end_char=155,
+        confidence=0.8,
+    )
+    session = FakeSession()
+
+    claims = persist_extracted_claims(session, [extracted], "RUN001", chunk=FakeChunk())  # type: ignore[arg-type]
+
+    assert len(claims) == 1
+    assert claims[0].paper_id == "P001"
+    assert claims[0].chunk_id == "CH001"
+    assert claims[0].section_id == "SEC001"
 
 
 def test_review_input_includes_syntheses_and_claim_ids() -> None:
@@ -137,6 +173,99 @@ def test_review_markdown_unquoted_uuid_citations_are_replaced() -> None:
     assert "[1] Ada Lovelace, Grace Hopper. (2024). Coffee Ring Suppression." in updated.markdown
 
 
+def test_review_references_are_separated_by_blank_lines() -> None:
+    payload = ReviewDraftPayload(
+        title="Draft",
+        outline=["Intro"],
+        markdown="Two papers support retrieval [CL001, CL003].",
+        sentences=[
+            ReviewSentencePayload(
+                section_title="Intro",
+                sentence_index=0,
+                sentence_text="Two papers support retrieval.",
+                supporting_claim_ids=["CL001", "CL003"],
+                is_supported=True,
+            )
+        ],
+        confidence=0.8,
+    )
+    synthesis = FakeSynthesis(
+        claims=[
+            FakeClaim("CL001", paper_id="PAPER001", paper=FakePaper(title="First Paper")),
+            FakeClaim("CL003", paper_id="PAPER002", paper=FakePaper(title="Second Paper")),
+        ]
+    )
+
+    updated = apply_academic_citations(payload, [synthesis])  # type: ignore[list-item]
+
+    assert (
+        "- [1] Ada Lovelace, Grace Hopper. (2024). First Paper.\n"
+        "- [2] Ada Lovelace, Grace Hopper. (2024). Second Paper."
+    ) in updated.markdown
+
+
+def test_reference_fallback_infers_authors_from_filename() -> None:
+    payload = ReviewDraftPayload(
+        title="Draft",
+        outline=["Intro"],
+        markdown="Coffee ring studies compare surfactant mixtures [CL001].",
+        sentences=[
+            ReviewSentencePayload(
+                section_title="Intro",
+                sentence_index=0,
+                sentence_text="Coffee ring studies compare surfactant mixtures.",
+                supporting_claim_ids=["CL001"],
+                is_supported=True,
+            )
+        ],
+        confidence=0.8,
+    )
+    paper = FakePaper(
+        title="Anyfantakis1 Baigl5-2015-Modulation of the Coffee-Ring Effect in Particle-Surfactant Mixtures",
+        authors=[],
+        year=None,  # type: ignore[arg-type]
+        file_name="Anyfantakis1 Baigl5-2015-Modulation of the Coffee-Ring Effect in Particle-Surfactant Mixtures.pdf",
+    )
+    synthesis = FakeSynthesis(claims=[FakeClaim("CL001", paper_id="PAPER001", paper=paper)])
+
+    updated = apply_academic_citations(payload, [synthesis])  # type: ignore[list-item]
+
+    assert (
+        "- [1] Anyfantakis, Baigl. (2015). "
+        "Modulation of the Coffee-Ring Effect in Particle-Surfactant Mixtures."
+    ) in updated.markdown
+
+
+def test_inline_references_are_normalized_for_markdown_display() -> None:
+    markdown = (
+        "Draft body.\n\n"
+        "References\n"
+        "[1] Unknown authors. (n.d.). First paper. [2] Unknown authors. (n.d.). Second paper."
+    )
+
+    normalized = normalize_references_for_markdown(markdown)
+
+    assert "## References" in normalized
+    assert "- [1] Unknown authors. (n.d.). First paper." in normalized
+    assert "- [2] Unknown authors. (n.d.). Second paper." in normalized
+    assert "First paper. [2]" not in normalized
+
+
+def test_inline_unknown_references_are_improved_from_titles() -> None:
+    markdown = (
+        "References\n"
+        "[1] Unknown authors. (n.d.). Anyfantakis1 Baigl5-2015-Modulation of the Coffee-Ring Effect. "
+        "[2] Unknown authors. (n.d.). Cui, B.Yang-2014-Suppression of the Coffee Ring Effect."
+    )
+
+    normalized = normalize_references_for_markdown(markdown)
+
+    assert "- [1] Anyfantakis, Baigl. (2015). Modulation of the Coffee-Ring Effect." in normalized
+    assert "- [2] Cui, B. Yang. (2014). Suppression of the Coffee Ring Effect." in normalized
+    assert "Unknown authors" not in normalized
+    assert "Effect. [2]" not in normalized
+
+
 def test_review_traceability_normalizes_many_claim_support() -> None:
     sentence = ReviewSentencePayload(
         section_title="Methods",
@@ -193,3 +322,19 @@ def test_llm_result_carries_run_metadata() -> None:
     assert result.model == "test-model"
     assert result.prompt_version == "test.v1"
     assert result.input_tokens == 10
+
+
+def test_describe_openai_error_expands_permission_denied() -> None:
+    response = httpx.Response(403, request=httpx.Request("POST", "https://api.openai.com/v1/responses"))
+    exc = APIStatusError(
+        "Error code: 403",
+        response=response,
+        body={"error": {"message": "Project does not have access to this model."}},
+    )
+
+    message = describe_openai_error(exc)
+
+    assert "status 403" in message
+    assert "Project does not have access to this model." in message
+    assert "OPENAI_API_KEY" in message
+    assert "OPENAI_CHAT_MODEL" in message

@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import re
 from decimal import Decimal
+from pathlib import Path
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from lit_review_assistant.db.models import Claim, ReviewDraft, ReviewSentence, ReviewSentenceClaim, Synthesis
 from lit_review_assistant.llm.client import OpenAIStructuredLLM, StructuredLLM, create_llm_run
+from lit_review_assistant.pipeline.pdf import infer_paper_metadata_from_name
 from lit_review_assistant.pipeline.review_traceability import normalize_sentence_support
 from lit_review_assistant.schemas import ReviewDraftPayload, ReviewSentencePayload
 
@@ -189,12 +191,28 @@ def format_reference(
         paper = getattr(claim, "paper", None)
         if paper is None:
             return f"paper_id={paper_id}"
-        title = paper.title or paper.file_name or paper.paper_key
-        authors = getattr(paper, "authors", None) or []
-        author_text = ", ".join(authors) if authors else "Unknown authors"
-        year = paper.year if paper.year is not None else "n.d."
-        return f"{author_text}. ({year}). {title}."
+        file_name = getattr(paper, "file_name", None)
+        fallback = infer_paper_metadata_from_name(file_name or getattr(paper, "title", None) or "")
+        title = paper.title or fallback.title or paper.file_name or paper.paper_key
+        if fallback.title and file_name and clean_reference_title(str(title)) == clean_reference_title(Path(file_name).stem):
+            title = fallback.title
+        authors = getattr(paper, "authors", None) or fallback.authors or []
+        author_text = format_author_text(authors)
+        year = paper.year if paper.year is not None else fallback.year
+        year_text = year if year is not None else "n.d."
+        title = clean_reference_title(title)
+        return f"{author_text}. ({year_text}). {title}."
     return f"paper_id={paper_id}"
+
+
+def clean_reference_title(title: str) -> str:
+    return re.sub(r"\s+", " ", title.replace("_", " ").strip())
+
+
+def format_author_text(authors: list[str]) -> str:
+    if not authors:
+        return "Unknown authors"
+    return ", ".join(authors).rstrip(".")
 
 
 def remove_repeated_title_headings(markdown: str, title: str) -> str:
@@ -247,10 +265,50 @@ def rebuild_references_section(
 
     body = re.split(r"(?im)^\s{0,3}#{0,6}\s*references\s*$", markdown, maxsplit=1)[0].rstrip()
     reference_lines = [
-        f"[{citation_number}] {format_reference(paper_id, syntheses, extra_claims=extra_claims)}"
+        f"- [{citation_number}] {format_reference(paper_id, syntheses, extra_claims=extra_claims)}"
         for paper_id, citation_number in citation_by_paper_id.items()
     ]
     return body + "\n\n## References\n\n" + "\n".join(reference_lines)
+
+
+def normalize_references_for_markdown(markdown: str) -> str:
+    parts = re.split(r"(?im)^\s{0,3}#{0,6}\s*references\s*$", markdown, maxsplit=1)
+    if len(parts) != 2:
+        return markdown
+
+    body, references = parts
+    references = re.sub(r"\s+(?=\[\d+\]\s)", "\n", references.strip())
+    reference_lines = []
+    for line in references.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        if line.startswith("- "):
+            reference_lines.append(improve_unknown_reference_line(line))
+        elif re.match(r"^\[\d+\]\s", line):
+            reference_lines.append(improve_unknown_reference_line(f"- {line}"))
+        else:
+            reference_lines.append(line)
+    if not reference_lines:
+        return body.rstrip()
+    return body.rstrip() + "\n\n## References\n\n" + "\n\n".join(reference_lines)
+
+
+def improve_unknown_reference_line(line: str) -> str:
+    match = re.match(r"^(-\s*)?(\[\d+\]\s+)Unknown authors\. \(n\.d\.\)\. (.+?)\.?$", line)
+    if match is None:
+        return line
+
+    bullet = match.group(1) or ""
+    citation = match.group(2)
+    raw_title = match.group(3)
+    metadata = infer_paper_metadata_from_name(raw_title)
+    if not metadata.authors and metadata.year is None:
+        return line
+    author_text = format_author_text(metadata.authors or [])
+    year_text = metadata.year if metadata.year is not None else "n.d."
+    title = clean_reference_title(metadata.title or raw_title)
+    return f"{bullet}{citation}{author_text}. ({year_text}). {title}."
 
 
 REVIEW_INSTRUCTIONS = """You write evidence-grounded literature review drafts.
