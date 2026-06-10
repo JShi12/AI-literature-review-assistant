@@ -1,0 +1,33 @@
+[project]
+name = "ai-literature-assistant"
+version = "0.1.0"
+description = "Local AI literature review assistant MVP with PostgreSQL, pgvector, and sentence-level traceability."
+requires-python = ">=3.12"
+dependencies = [
+    "alembic>=1.13.2",
+    "openai>=1.40.0",
+    "pgvector>=0.3.2",
+    "psycopg[binary]>=3.2.1",
+    "pydantic>=2.8.2",
+    "pymupdf>=1.24.9",
+    "python-dotenv>=1.0.1",
+    "sqlalchemy>=2.0.32",
+    "streamlit>=1.37.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.2",
+]
+
+[build-system]
+requires = ["setuptools>=72.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q"
