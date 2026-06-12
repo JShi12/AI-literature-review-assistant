@@ -1,6 +1,6 @@
 # AI Literature Review Assistant
 
-AI Literature Review Assistant is a local Streamlit application for turning research-paper PDFs into structured, citation-grounded literature review drafts.
+An AI tool to summerise research-paper PDFs into structured, citation-grounded literature review drafts.
 
 ```text
 PDFs -> pages -> sections -> chunks -> claims -> syntheses -> review draft
