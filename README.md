@@ -1,6 +1,34 @@
 # AI Literature Review Assistant
 
-An AI tool to summerise research-paper PDFs into structured, citation-grounded literature review drafts.
+[![CI](https://github.com/JShi12/AI-literature-review-assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/JShi12/AI-literature-review-assistant/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/)
+
+An AI tool to summarize research-paper PDFs into structured, citation-grounded literature review drafts.
+
+## Why this is interesting
+
+- **Sentence-level citation traceability**: every sentence in a generated review draft is linked back to
+  the specific claims (and papers) that support it, not just a generic reference list.
+- **Structured, validated LLM outputs**: claims, syntheses, and review drafts are all extracted via OpenAI
+  structured outputs into Pydantic schemas, rather than parsed out of free-form text.
+- **A real, if small, extraction pipeline**: PDFs are split into pages, academic sections are detected
+  heuristically, and text is chunked section-aware before ever reaching the LLM.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    User -->|uploads PDFs| UI["Streamlit UI (app.py)"]
+    UI --> Services["services.py / pipeline/*"]
+    Services --> DB[("PostgreSQL + pgvector")]
+    Services --> LLM["llm/* (claims, synthesis, review)"]
+    LLM -->|structured outputs| OpenAI[("OpenAI API")]
+    LLM --> DB
+    UI --> DB
+```
+
+Data flows through the pipeline in stages, each persisted for traceability:
 
 ```text
 PDFs -> pages -> sections -> chunks -> claims -> syntheses -> review draft
@@ -25,7 +53,7 @@ PDFs -> pages -> sections -> chunks -> claims -> syntheses -> review draft
 - PyMuPDF
 - Pydantic
 - OpenAI Python SDK
-- Pytest
+- Pytest, Ruff, Mypy, pre-commit, GitHub Actions
 
 ## Project Structure
 
@@ -39,6 +67,7 @@ PDFs -> pages -> sections -> chunks -> claims -> syntheses -> review draft
 |   +-- pipeline/                 PDF extraction, sectioning, chunking, traceability
 |   +-- schemas.py                Structured-output schemas
 |   +-- services.py               Application services
+|   +-- logging_config.py         Logging setup
 +-- tests/                        Test suite
 +-- docker-compose.yml            App + PostgreSQL/pgvector services
 +-- Dockerfile
@@ -49,6 +78,14 @@ PDFs -> pages -> sections -> chunks -> claims -> syntheses -> review draft
 
 Create a local environment file:
 
+macOS/Linux:
+
+```bash
+cp .env.example .env
+```
+
+Windows (PowerShell):
+
 ```powershell
 Copy-Item .env.example .env
 ```
@@ -57,7 +94,7 @@ Set `OPENAI_API_KEY` in `.env` if you want to run claim extraction, synthesis ge
 
 Run with Docker:
 
-```powershell
+```bash
 docker compose up -d db
 docker compose build app
 docker compose run --rm app alembic upgrade head
@@ -72,11 +109,26 @@ http://localhost:8501
 
 ## Local Development
 
+macOS/Linux:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev]"
+pre-commit install
+alembic upgrade head
+streamlit run src/lit_review_assistant/app.py
+```
+
+Windows (PowerShell):
+
 ```powershell
 py -3.12 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
+pre-commit install
 alembic upgrade head
 streamlit run src/lit_review_assistant/app.py
 ```
@@ -91,16 +143,27 @@ PostgreSQL must have the `vector` extension available.
 
 ## Testing
 
-```powershell
+```bash
 pytest
 ```
 
-The tests cover PDF extraction, section detection, chunking offsets, metadata extraction, structured LLM prompt construction, schema validation, support counting, and review traceability helpers.
+The tests cover PDF extraction, section detection, chunking offsets, metadata extraction, structured LLM
+prompt construction, schema validation, support counting, and review traceability helpers. All 27 tests
+are self-contained unit tests (fakes and `monkeypatch`, no live database or `OPENAI_API_KEY` required).
+`pytest --cov` (configured by default) reports coverage.
 
-## Notes
+## Code Quality / CI
 
-- PDF ingestion works without an OpenAI API key.
-- LLM workflows require `OPENAI_API_KEY`.
-- Scanned/image-only PDFs are not OCR'd.
+Ruff (lint + format), Mypy, and the full test suite run in GitHub Actions on every push and pull request
+(see the badge above). Locally, `pre-commit install` wires the same checks into `git commit`.
+
+## What's not done yet
+
 - Embedding storage is modeled, but embedding generation and retrieval are not yet exposed in the UI.
-- This is a local MVP and does not include authentication or production hardening.
+- Scanned/image-only PDFs are not OCR'd.
+- No authentication; this is a local, single-user MVP.
+- Screenshots/demo GIF: not yet included — planned once the app is next run locally.
+
+## License
+
+This project is licensed under the MIT License — see [LICENSE](LICENSE).
