@@ -6,6 +6,8 @@
 
 An AI tool to summarize research-paper PDFs into structured, citation-grounded literature review drafts.
 
+![Upload Papers tab of the Streamlit app](docs/screenshot.png)
+
 ## Why this is interesting
 
 - **Sentence-level citation traceability**: every sentence in a generated review draft is linked back to
@@ -162,7 +164,6 @@ Ruff (lint + format), Mypy, and the full test suite run in GitHub Actions on eve
 - Embedding storage is modeled, but embedding generation and retrieval are not yet exposed in the UI.
 - Scanned/image-only PDFs are not OCR'd.
 - No authentication; this is a local, single-user MVP.
-- Screenshots/demo GIF: not yet included — planned once the app is next run locally.
 
 ## License
 
