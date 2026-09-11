@@ -1,10 +1,11 @@
+"""Regex-based heuristics for detecting academic paper sections (abstract, methods, results, ...) from page text."""
+
 from __future__ import annotations
 
 import re
 from dataclasses import dataclass
 
 from lit_review_assistant.pipeline.pdf import PageText
-
 
 SECTION_TYPES = {
     "abstract": "abstract",
@@ -59,6 +60,7 @@ def normalize_section_title(title: str) -> str:
 
 
 def detect_sections(pages: list[PageText]) -> list[DetectedSection]:
+    """Detect academic sections across pages by matching heading-like lines to known section names."""
     hits: list[HeadingHit] = []
     for page in pages:
         cursor = 0
@@ -95,7 +97,11 @@ def detect_sections(pages: list[PageText]) -> list[DetectedSection]:
     for index, hit in enumerate(hits):
         next_hit = hits[index + 1] if index + 1 < len(hits) else None
         page_end = next_hit.page_number if next_hit else pages[-1].page_number
-        end_char = next_hit.start_char if next_hit and next_hit.page_number == hit.page_number else len(page_by_number[page_end].text)
+        end_char = (
+            next_hit.start_char
+            if next_hit and next_hit.page_number == hit.page_number
+            else len(page_by_number[page_end].text)
+        )
         sections.append(
             DetectedSection(
                 title=hit.title,

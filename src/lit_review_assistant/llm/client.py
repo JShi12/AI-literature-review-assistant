@@ -1,16 +1,17 @@
+"""OpenAI structured-output client wrapper, LLM run usage/cost logging, and API error message formatting."""
+
 from __future__ import annotations
 
 import os
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import Generic, Protocol, TypeVar
+from typing import Generic, Protocol, TypeVar, cast
 
 from openai import APIStatusError, OpenAI
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from lit_review_assistant.db.models import LLMRun
-
 
 ParsedModel = TypeVar("ParsedModel", bound=BaseModel)
 
@@ -40,8 +41,10 @@ class LLMResult(Generic[ParsedModel]):
 
 
 class OpenAIStructuredLLM:
+    """Calls the OpenAI Responses API and parses the result into a Pydantic model."""
+
     def __init__(self, model: str | None = None, client: OpenAI | None = None) -> None:
-        self.model = model or os.getenv("OPENAI_CHAT_MODEL", "gpt-4.1-mini")
+        self.model: str = model if model is not None else os.getenv("OPENAI_CHAT_MODEL", "gpt-4.1-mini")
         self.client = client or OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
     def parse(
@@ -53,6 +56,7 @@ class OpenAIStructuredLLM:
         input_text: str,
         temperature: float = 0.1,
     ) -> LLMResult[ParsedModel]:
+        """Request a structured completion and return the parsed result with usage metadata."""
         response = self.client.responses.parse(
             model=self.model,
             text_format=text_format,
@@ -60,7 +64,7 @@ class OpenAIStructuredLLM:
             input=input_text,
             temperature=temperature,
         )
-        parsed = _get_parsed_response(response)
+        parsed = cast(ParsedModel, _get_parsed_response(response))
         usage = getattr(response, "usage", None)
         return LLMResult(
             parsed=parsed,
@@ -72,7 +76,8 @@ class OpenAIStructuredLLM:
         )
 
 
-def create_llm_run(session: Session, result: LLMResult[BaseModel]) -> LLMRun:
+def create_llm_run(session: Session, result: LLMResult[ParsedModel]) -> LLMRun:
+    """Persist an LLM call's model, prompt version, token usage, and cost for observability."""
     run = LLMRun(
         model=result.model,
         prompt_version=result.prompt_version,
@@ -86,7 +91,7 @@ def create_llm_run(session: Session, result: LLMResult[BaseModel]) -> LLMRun:
     return run
 
 
-def _get_parsed_response(response: object) -> ParsedModel:
+def _get_parsed_response(response: object) -> BaseModel:
     direct = getattr(response, "output_parsed", None)
     if direct is not None:
         return direct
@@ -100,6 +105,7 @@ def _get_parsed_response(response: object) -> ParsedModel:
 
 
 def describe_openai_error(exc: Exception) -> str:
+    """Translate an OpenAI API error into an actionable message, special-casing 401/403/429."""
     if not isinstance(exc, APIStatusError):
         return str(exc)
 
@@ -111,8 +117,9 @@ def describe_openai_error(exc: Exception) -> str:
     if status_code == 403:
         parts.append(
             "This usually means the API key or project is not allowed to make this request. "
-            f"Check that OPENAI_API_KEY belongs to the right project, that the project can use OPENAI_CHAT_MODEL='{model}', "
-            "and that billing, organization policy, and region restrictions are not blocking the request."
+            f"Check that OPENAI_API_KEY belongs to the right project, that the project can use "
+            f"OPENAI_CHAT_MODEL='{model}', and that billing, organization policy, and region "
+            "restrictions are not blocking the request."
         )
     elif status_code == 401:
         parts.append("Check that OPENAI_API_KEY is set correctly in the terminal running Streamlit.")

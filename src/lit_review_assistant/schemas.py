@@ -1,9 +1,10 @@
+"""Pydantic schemas used as OpenAI structured-output response formats."""
+
 from __future__ import annotations
 
 from typing import Literal
 
 from pydantic import BaseModel, Field
-
 
 Confidence = float
 

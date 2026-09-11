@@ -1,3 +1,5 @@
+"""Split extracted pages into section-aware, offset-tracked chunks for claim extraction."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -57,7 +59,7 @@ def chunk_pages_with_sections(
     max_chars: int = 1_500,
     overlap: int = 150,
 ) -> list[TextChunk]:
-    section_lookup = {(section.page_start, section.start_char): section for section in sections}
+    """Chunk every page and tag each chunk with the detected section it falls within, if any."""
     chunks: list[TextChunk] = []
     for page in pages:
         page_chunks = chunk_page_text(page, max_chars=max_chars, overlap=overlap)
@@ -89,11 +91,7 @@ def _prefer_boundary(text: str, start: int, hard_end: int) -> int:
 
 
 def _section_for_chunk(chunk: TextChunk, sections: list[DetectedSection]) -> DetectedSection | None:
-    candidates = [
-        section
-        for section in sections
-        if section.page_start <= chunk.page_start <= section.page_end
-    ]
+    candidates = [section for section in sections if section.page_start <= chunk.page_start <= section.page_end]
     if not candidates:
         return None
     same_page = [

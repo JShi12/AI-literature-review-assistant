@@ -1,3 +1,5 @@
+"""Application-level services: PDF ingestion orchestration, hashing, section matching, and metadata backfill."""
+
 from __future__ import annotations
 
 import hashlib
@@ -6,9 +8,14 @@ from pathlib import Path
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from lit_review_assistant.db.models import Claim, Chunk, Page, Paper, Section, Synthesis, SynthesisClaim
+from lit_review_assistant.db.models import Chunk, Claim, Page, Paper, Section, Synthesis, SynthesisClaim
 from lit_review_assistant.pipeline.chunking import chunk_pages_with_sections
-from lit_review_assistant.pipeline.pdf import extract_pages, extract_pdf_metadata, infer_paper_metadata_from_name
+from lit_review_assistant.pipeline.pdf import (
+    PaperMetadata,
+    extract_pages,
+    extract_pdf_metadata,
+    infer_paper_metadata_from_name,
+)
 from lit_review_assistant.pipeline.sections import detect_sections
 
 
@@ -32,6 +39,11 @@ def ingest_pdf(
     chunk_max_chars: int = 1_500,
     chunk_overlap: int = 150,
 ) -> Paper:
+    """Ingest a PDF into pages, sections, and chunks, deduplicating by file hash.
+
+    If a paper with the same SHA-256 content hash already exists, the existing record is
+    returned unchanged rather than re-ingesting the file.
+    """
     path = Path(pdf_path)
     file_hash = sha256_file(path)
     existing = session.scalar(select(Paper).where(Paper.file_sha256 == file_hash))
@@ -139,7 +151,8 @@ def backfill_paper_metadata(session: Session, upload_dir: str | Path = "data/upl
     return updated
 
 
-def _merge_metadata(primary, fallback):
+def _merge_metadata(primary: PaperMetadata, fallback: PaperMetadata) -> PaperMetadata:
+    """Merge two metadata records, preferring values from `primary` and falling back to `fallback`."""
     return type(primary)(
         title=primary.title or fallback.title,
         authors=primary.authors or fallback.authors,

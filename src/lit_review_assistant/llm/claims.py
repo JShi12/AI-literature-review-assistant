@@ -1,3 +1,5 @@
+"""Extract source-grounded claims from paper chunks using structured LLM output."""
+
 from __future__ import annotations
 
 from decimal import Decimal
@@ -8,7 +10,6 @@ from sqlalchemy.orm import Session
 from lit_review_assistant.db.models import Chunk, Claim
 from lit_review_assistant.llm.client import OpenAIStructuredLLM, StructuredLLM, create_llm_run
 from lit_review_assistant.schemas import ExtractedClaim
-
 
 PROMPT_VERSION = "claims.v1"
 
@@ -23,6 +24,7 @@ def extract_claims_for_chunk(
     llm: StructuredLLM | None = None,
     temperature: float = 0.1,
 ) -> list[Claim]:
+    """Extract and persist source-grounded claims from a single chunk's text."""
     llm = llm or OpenAIStructuredLLM()
     result = llm.parse(
         text_format=ExtractedClaimsBatch,
@@ -73,7 +75,7 @@ def persist_extracted_claims(
 
 
 def build_claim_extraction_input(chunk: Chunk) -> str:
-    section_label = chunk.section.normalized_type if getattr(chunk, "section", None) else "unknown"
+    section_label = chunk.section.normalized_type if chunk.section else "unknown"
     return (
         "Extract source-grounded atomic claims from this paper chunk.\n"
         "Return only claims that are directly supported by the text. Use page-level character offsets.\n\n"

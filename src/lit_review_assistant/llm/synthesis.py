@@ -1,5 +1,8 @@
+"""Generate claim-backed syntheses: themes, contradictions, gaps, method comparisons, and insights."""
+
 from __future__ import annotations
 
+from collections.abc import Sequence
 from decimal import Decimal
 from typing import Literal
 
@@ -11,7 +14,6 @@ from lit_review_assistant.db.models import Claim, Synthesis, SynthesisClaim
 from lit_review_assistant.llm.client import OpenAIStructuredLLM, StructuredLLM, create_llm_run
 from lit_review_assistant.pipeline.support import ClaimSupport, calculate_support_counts
 from lit_review_assistant.schemas import GeneratedSynthesis
-
 
 PROMPT_VERSION = "synthesis.v1"
 SynthesisType = Literal["theme", "contradiction", "gap", "method_comparison", "insight"]
@@ -28,6 +30,7 @@ def generate_syntheses(
     llm: StructuredLLM | None = None,
     temperature: float = 0.2,
 ) -> list[Synthesis]:
+    """Generate and persist syntheses of a single type from the given claims."""
     claims = session.scalars(select(Claim).where(Claim.id.in_(claim_ids))).all()
     if not claims:
         return []
@@ -54,7 +57,9 @@ def persist_generated_syntheses(
     persisted: list[Synthesis] = []
     for generated in generated_syntheses:
         claims = session.scalars(select(Claim).where(Claim.id.in_(generated.supporting_claim_ids))).all()
-        counts = calculate_support_counts([ClaimSupport(claim_id=claim.id, paper_id=claim.paper_id) for claim in claims])
+        counts = calculate_support_counts(
+            [ClaimSupport(claim_id=claim.id, paper_id=claim.paper_id) for claim in claims]
+        )
         synthesis = Synthesis(
             synthesis_type=generated.synthesis_type,
             title=generated.title,
@@ -73,7 +78,7 @@ def persist_generated_syntheses(
     return persisted
 
 
-def build_synthesis_input(claims: list[Claim], synthesis_type: SynthesisType) -> str:
+def build_synthesis_input(claims: Sequence[Claim], synthesis_type: SynthesisType) -> str:
     claim_lines = []
     for claim in claims:
         text = claim.normalized_text or claim.claim_text
@@ -83,8 +88,7 @@ def build_synthesis_input(claims: list[Claim], synthesis_type: SynthesisType) ->
         )
     return (
         f"Create {synthesis_type} syntheses from the claims below.\n"
-        "Every synthesis must cite the supporting_claim_ids it actually uses.\n\n"
-        + "\n".join(claim_lines)
+        "Every synthesis must cite the supporting_claim_ids it actually uses.\n\n" + "\n".join(claim_lines)
     )
 
 

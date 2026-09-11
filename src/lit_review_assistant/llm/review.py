@@ -1,6 +1,9 @@
+"""Generate Markdown literature review drafts with sentence-level citation traceability back to source claims."""
+
 from __future__ import annotations
 
 import re
+from collections.abc import Sequence
 from decimal import Decimal
 from pathlib import Path
 
@@ -13,11 +16,8 @@ from lit_review_assistant.pipeline.pdf import infer_paper_metadata_from_name
 from lit_review_assistant.pipeline.review_traceability import normalize_sentence_support
 from lit_review_assistant.schemas import ReviewDraftPayload, ReviewSentencePayload
 
-
 PROMPT_VERSION = "review.v1"
-UUID_PATTERN = re.compile(
-    r"\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b"
-)
+UUID_PATTERN = re.compile(r"\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b")
 
 
 def generate_review_draft(
@@ -27,6 +27,7 @@ def generate_review_draft(
     llm: StructuredLLM | None = None,
     temperature: float = 0.2,
 ) -> ReviewDraft | None:
+    """Generate, citation-clean, and persist a review draft from the given syntheses."""
     syntheses = session.scalars(select(Synthesis).where(Synthesis.id.in_(synthesis_ids))).all()
     if not syntheses:
         return None
@@ -85,7 +86,7 @@ def persist_review_sentence(
     return sentence
 
 
-def build_review_input(topic: str, syntheses: list[Synthesis]) -> str:
+def build_review_input(topic: str, syntheses: Sequence[Synthesis]) -> str:
     citation_by_paper_id = build_citation_map(syntheses)
     lines = [
         f"Topic: {topic}",
@@ -112,7 +113,7 @@ def build_review_input(topic: str, syntheses: list[Synthesis]) -> str:
 def find_claims_for_citation_cleanup(
     session: Session,
     payload: ReviewDraftPayload,
-    syntheses: list[Synthesis],
+    syntheses: Sequence[Synthesis],
 ) -> list[Claim]:
     text_parts = [payload.markdown]
     text_parts.extend(sentence.sentence_text for sentence in payload.sentences)
@@ -121,12 +122,12 @@ def find_claims_for_citation_cleanup(
     candidate_ids = sorted(set(UUID_PATTERN.findall("\n".join(text_parts))))
     if not candidate_ids:
         return []
-    return session.scalars(select(Claim).where(Claim.id.in_(candidate_ids))).all()
+    return list(session.scalars(select(Claim).where(Claim.id.in_(candidate_ids))).all())
 
 
 def apply_academic_citations(
     payload: ReviewDraftPayload,
-    syntheses: list[Synthesis],
+    syntheses: Sequence[Synthesis],
     extra_claims: list[Claim] | None = None,
 ) -> ReviewDraftPayload:
     claim_citations = build_claim_citation_map(syntheses, extra_claims=extra_claims)
@@ -139,7 +140,7 @@ def apply_academic_citations(
 
 
 def build_citation_map(
-    syntheses: list[Synthesis],
+    syntheses: Sequence[Synthesis],
     extra_claims: list[Claim] | None = None,
 ) -> dict[str, int]:
     paper_ids: list[str] = []
@@ -150,7 +151,7 @@ def build_citation_map(
 
 
 def build_claim_citation_map(
-    syntheses: list[Synthesis],
+    syntheses: Sequence[Synthesis],
     extra_claims: list[Claim] | None = None,
 ) -> dict[str, int]:
     citation_by_paper_id = build_citation_map(syntheses, extra_claims=extra_claims)
@@ -163,7 +164,7 @@ def build_claim_citation_map(
 
 
 def collect_support_claims(
-    syntheses: list[Synthesis],
+    syntheses: Sequence[Synthesis],
     extra_claims: list[Claim] | None = None,
 ) -> list[Claim]:
     claims: list[Claim] = []
@@ -182,7 +183,7 @@ def collect_support_claims(
 
 def format_reference(
     paper_id: str,
-    syntheses: list[Synthesis],
+    syntheses: Sequence[Synthesis],
     extra_claims: list[Claim] | None = None,
 ) -> str:
     for claim in collect_support_claims(syntheses, extra_claims=extra_claims):
@@ -194,7 +195,11 @@ def format_reference(
         file_name = getattr(paper, "file_name", None)
         fallback = infer_paper_metadata_from_name(file_name or getattr(paper, "title", None) or "")
         title = paper.title or fallback.title or paper.file_name or paper.paper_key
-        if fallback.title and file_name and clean_reference_title(str(title)) == clean_reference_title(Path(file_name).stem):
+        if (
+            fallback.title
+            and file_name
+            and clean_reference_title(str(title)) == clean_reference_title(Path(file_name).stem)
+        ):
             title = fallback.title
         authors = getattr(paper, "authors", None) or fallback.authors or []
         author_text = format_author_text(authors)
@@ -242,9 +247,7 @@ def replace_claim_id_citations(markdown: str, claim_citations: dict[str, int]) -
     def replace_bracket(match: re.Match[str]) -> str:
         body = match.group(1)
         citation_numbers = [
-            citation_number
-            for claim_id, citation_number in claim_citations.items()
-            if claim_id in body
+            citation_number for claim_id, citation_number in claim_citations.items() if claim_id in body
         ]
         if not citation_numbers:
             return match.group(0)
@@ -257,7 +260,7 @@ def replace_claim_id_citations(markdown: str, claim_citations: dict[str, int]) -
 def rebuild_references_section(
     markdown: str,
     citation_by_paper_id: dict[str, int],
-    syntheses: list[Synthesis],
+    syntheses: Sequence[Synthesis],
     extra_claims: list[Claim] | None = None,
 ) -> str:
     if not citation_by_paper_id:
@@ -272,6 +275,7 @@ def rebuild_references_section(
 
 
 def normalize_references_for_markdown(markdown: str) -> str:
+    """Tidy up the References section heading and entries for display."""
     parts = re.split(r"(?im)^\s{0,3}#{0,6}\s*references\s*$", markdown, maxsplit=1)
     if len(parts) != 2:
         return markdown

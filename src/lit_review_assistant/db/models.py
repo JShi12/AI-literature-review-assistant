@@ -1,3 +1,5 @@
+"""SQLAlchemy ORM models for papers, pages, sections, chunks, claims, syntheses, review drafts, and LLM run logs."""
+
 from __future__ import annotations
 
 import uuid
@@ -77,10 +79,14 @@ class Section(Base):
     __tablename__ = "sections"
     __table_args__ = (
         CheckConstraint(
-            "normalized_type in ('abstract','introduction','related_work','methods','results','discussion','limitations','conclusion','other')",
+            "normalized_type in ('abstract','introduction','related_work','methods',"
+            "'results','discussion','limitations','conclusion','other')",
             name="ck_sections_normalized_type",
         ),
-        CheckConstraint("confidence is null or (confidence >= 0 and confidence <= 1)", name="ck_sections_confidence_range"),
+        CheckConstraint(
+            "confidence is null or (confidence >= 0 and confidence <= 1)",
+            name="ck_sections_confidence_range",
+        ),
     )
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
@@ -212,7 +218,12 @@ class ReviewDraft(Base):
 class ReviewSentence(Base):
     __tablename__ = "review_sentences"
     __table_args__ = (
-        UniqueConstraint("review_draft_id", "section_title", "sentence_index", name="uq_review_sentences_draft_section_index"),
+        UniqueConstraint(
+            "review_draft_id",
+            "section_title",
+            "sentence_index",
+            name="uq_review_sentences_draft_section_index",
+        ),
     )
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
@@ -233,7 +244,9 @@ class ReviewSentence(Base):
 class ReviewSentenceClaim(Base):
     __tablename__ = "review_sentence_claims"
 
-    review_sentence_id: Mapped[str] = mapped_column(ForeignKey("review_sentences.id", ondelete="CASCADE"), primary_key=True)
+    review_sentence_id: Mapped[str] = mapped_column(
+        ForeignKey("review_sentences.id", ondelete="CASCADE"), primary_key=True
+    )
     claim_id: Mapped[str] = mapped_column(ForeignKey("claims.id", ondelete="CASCADE"), primary_key=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 

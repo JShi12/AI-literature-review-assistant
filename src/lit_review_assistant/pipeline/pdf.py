@@ -1,8 +1,10 @@
+"""PyMuPDF-based page text and metadata extraction, plus filename-derived metadata fallback."""
+
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
-import re
 
 import fitz
 
@@ -31,6 +33,7 @@ def extract_pages(pdf_path: str | Path) -> list[PageText]:
 
 
 def extract_pdf_metadata(pdf_path: str | Path) -> PaperMetadata:
+    """Combine PDF document metadata with metadata inferred from the first page's text."""
     path = Path(pdf_path)
     with fitz.open(path) as doc:
         metadata = doc.metadata or {}
@@ -51,9 +54,7 @@ def extract_pdf_metadata(pdf_path: str | Path) -> PaperMetadata:
 
 def infer_paper_metadata_from_first_page(text: str) -> PaperMetadata:
     lines = [
-        line
-        for line in (clean_metadata_text(normalize_pdf_text(raw_line)) for raw_line in text.splitlines())
-        if line
+        line for line in (clean_metadata_text(normalize_pdf_text(raw_line)) for raw_line in text.splitlines()) if line
     ]
     if not lines:
         return PaperMetadata()
@@ -78,6 +79,7 @@ def infer_paper_metadata_from_first_page(text: str) -> PaperMetadata:
 
 
 def infer_paper_metadata_from_name(name: str | Path) -> PaperMetadata:
+    """Infer title, authors, and year from a filename, as a fallback when PDF metadata is missing."""
     raw_name = str(name)
     suffix = Path(raw_name).suffix.lower()
     stem = Path(raw_name).stem if suffix in {".pdf", ".txt", ".md"} else raw_name
@@ -133,10 +135,7 @@ def looks_like_author_line(line: str) -> bool:
         return False
     if re.search(r"\babstract\b|\bkeywords\b|\bintroduction\b", lowered):
         return False
-    return bool(
-        "," in line
-        or re.search(r"\b[A-Z]\.\s*(?:[A-Z]\.\s*)?[A-Z][A-Za-z-]+", line)
-    )
+    return bool("," in line or re.search(r"\b[A-Z]\.\s*(?:[A-Z]\.\s*)?[A-Z][A-Za-z-]+", line))
 
 
 def looks_like_affiliation_or_body_start(line: str) -> bool:
@@ -201,6 +200,4 @@ def looks_like_internal_pdf_title(title: str) -> bool:
     normalized = title.strip()
     if re.search(r"\d+\.\.\d+", normalized):
         return True
-    if re.fullmatch(r"[a-z]{1,4}\d+[a-z]?(?:\s+\d+\.\.\d+)?", normalized, flags=re.IGNORECASE):
-        return True
-    return False
+    return bool(re.fullmatch(r"[a-z]{1,4}\d+[a-z]?(?:\s+\d+\.\.\d+)?", normalized, flags=re.IGNORECASE))
