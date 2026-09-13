@@ -4,7 +4,7 @@ services:
     environment:
       POSTGRES_DB: litreview
       POSTGRES_USER: litreview
-      POSTGRES_PASSWORD: litreview
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-litreview}
     ports:
       - "5432:5432"
     volumes:
@@ -21,13 +21,15 @@ services:
       db:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgresql+psycopg://litreview:litreview@db:5432/litreview
+      DATABASE_URL: postgresql+psycopg://litreview:${POSTGRES_PASSWORD:-litreview}@db:5432/litreview
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       OPENAI_CHAT_MODEL: ${OPENAI_CHAT_MODEL:-gpt-4.1-mini}
       OPENAI_EMBEDDING_MODEL: ${OPENAI_EMBEDDING_MODEL:-text-embedding-3-small}
     ports:
       - "8501:8501"
     volumes:
+      # Local development convenience only (live code reload without rebuilding the image).
+      # A production image should rely solely on the code baked in by COPY above.
       - ./data:/app/data
       - ./src:/app/src
       - ./alembic:/app/alembic

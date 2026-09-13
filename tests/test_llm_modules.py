@@ -7,8 +7,16 @@ from openai import APIStatusError
 
 from lit_review_assistant.llm.claims import build_claim_extraction_input, persist_extracted_claims
 from lit_review_assistant.llm.client import LLMResult, describe_openai_error
-from lit_review_assistant.llm.review import apply_academic_citations, build_review_input, normalize_references_for_markdown
-from lit_review_assistant.pipeline.review_traceability import claim_support_map, normalize_sentence_support, unsupported_sentence_indexes
+from lit_review_assistant.llm.review import (
+    apply_academic_citations,
+    build_review_input,
+    normalize_references_for_markdown,
+)
+from lit_review_assistant.pipeline.review_traceability import (
+    claim_support_map,
+    normalize_sentence_support,
+    unsupported_sentence_indexes,
+)
 from lit_review_assistant.schemas import ExtractedClaim, ReviewDraftPayload, ReviewSentencePayload
 
 
@@ -144,12 +152,7 @@ def test_review_markdown_unquoted_uuid_citations_are_replaced() -> None:
     payload = ReviewDraftPayload(
         title="Coffee Ring Review",
         outline=["Intro"],
-        markdown=(
-            "Coffee Ring Review\n"
-            "Coffee Ring Review\n"
-            "Polymer additives suppress ring formation "
-            f"[{claim_id}]."
-        ),
+        markdown=(f"Coffee Ring Review\nCoffee Ring Review\nPolymer additives suppress ring formation [{claim_id}]."),
         sentences=[
             ReviewSentencePayload(
                 section_title="Intro",
@@ -231,8 +234,7 @@ def test_reference_fallback_infers_authors_from_filename() -> None:
     updated = apply_academic_citations(payload, [synthesis])  # type: ignore[list-item]
 
     assert (
-        "- [1] Anyfantakis, Baigl. (2015). "
-        "Modulation of the Coffee-Ring Effect in Particle-Surfactant Mixtures."
+        "- [1] Anyfantakis, Baigl. (2015). Modulation of the Coffee-Ring Effect in Particle-Surfactant Mixtures."
     ) in updated.markdown
 
 

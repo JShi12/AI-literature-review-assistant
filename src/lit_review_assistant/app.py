@@ -1,21 +1,28 @@
+"""Streamlit UI for uploading papers and running the ingestion, claims, synthesis, and review pipeline."""
+
 from __future__ import annotations
 
+import logging
 import os
-from pathlib import Path
 import re
-import importlib
+from collections.abc import Sequence
+from pathlib import Path
 
 import streamlit as st
 from sqlalchemy import func, select
+from sqlalchemy.orm import Session
 
+from lit_review_assistant import services
 from lit_review_assistant.db.models import Chunk, Claim, Paper, ReviewDraft, Synthesis
 from lit_review_assistant.db.session import session_scope
-from lit_review_assistant.llm.claims import extract_claims_for_chunk
 from lit_review_assistant.llm import client as llm_client
 from lit_review_assistant.llm import review as review_llm
+from lit_review_assistant.llm.claims import extract_claims_for_chunk
 from lit_review_assistant.llm.synthesis import generate_syntheses
-from lit_review_assistant import services
+from lit_review_assistant.logging_config import configure_logging
 
+configure_logging()
+logger = logging.getLogger(__name__)
 
 UPLOAD_DIR = Path("data/uploads")
 SYNTHESIS_TYPES = ["theme", "contradiction", "gap", "method_comparison", "insight"]
@@ -54,7 +61,9 @@ def main() -> None:
 
 def upload_papers_tab() -> None:
     UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
-    chunk_max_chars = st.selectbox("Chunk size", CHUNK_SIZE_OPTIONS, index=0, format_func=lambda value: f"{value} characters")
+    chunk_max_chars = st.selectbox(
+        "Chunk size", CHUNK_SIZE_OPTIONS, index=0, format_func=lambda value: f"{value} characters"
+    )
     chunk_overlap = st.selectbox(
         "Chunk overlap",
         [option for option in CHUNK_OVERLAP_OPTIONS if option < chunk_max_chars],
@@ -67,21 +76,25 @@ def upload_papers_tab() -> None:
         return
 
     if st.button("Ingest PDFs", type="primary"):
-        ingested: list[str] = []
-        for upload in uploads:
-            destination = UPLOAD_DIR / upload.name
-            destination.write_bytes(upload.getbuffer())
-            with session_scope() as session:
-                paper = services.ingest_pdf(
-                    session,
-                    destination,
-                    file_name=upload.name,
-                    chunk_max_chars=chunk_max_chars,
-                    chunk_overlap=chunk_overlap,
-                )
-                ingested.append(f"{paper.paper_key}: {paper.file_name}")
-        st.success(f"Ingested {len(ingested)} PDF(s).")
-        st.write(ingested)
+        try:
+            ingested: list[str] = []
+            for upload in uploads:
+                destination = UPLOAD_DIR / upload.name
+                destination.write_bytes(upload.getbuffer())
+                with session_scope() as session:
+                    paper = services.ingest_pdf(
+                        session,
+                        destination,
+                        file_name=upload.name,
+                        chunk_max_chars=chunk_max_chars,
+                        chunk_overlap=chunk_overlap,
+                    )
+                    ingested.append(f"{paper.paper_key}: {paper.file_name}")
+            st.success(f"Ingested {len(ingested)} PDF(s).")
+            st.write(ingested)
+        except Exception as exc:
+            logger.exception("PDF ingestion failed")
+            st.error(f"PDF ingestion failed: {describe_error(exc)}")
 
 
 def paper_structure_tab() -> None:
@@ -115,7 +128,7 @@ def claims_tab() -> None:
         st.info("Upload and ingest at least one PDF before extracting claims.")
         return
 
-    paper_options = {"All papers": None}
+    paper_options: dict[str, str | None] = {"All papers": None}
     paper_options.update({f"{paper.paper_key}: {paper.file_name}": paper.id for paper in papers})
     selected_label = st.selectbox("Paper", list(paper_options.keys()))
     selected_paper_id = paper_options[selected_label]
@@ -156,6 +169,7 @@ def claims_tab() -> None:
                         created += len(extract_claims_for_chunk(session, chunk))
                 st.success(f"Extracted {created} claim(s) from {len(chunks)} chunk(s).")
             except Exception as exc:
+                logger.exception("Claim extraction failed")
                 st.error(f"Claim extraction failed: {describe_error(exc)}")
 
 
@@ -198,9 +212,7 @@ def syntheses_tab() -> None:
         with st.spinner("Generating syntheses from claims..."):
             try:
                 with session_scope() as session:
-                    claims = session.scalars(
-                        select(Claim).order_by(Claim.created_at.asc()).limit(max_claims)
-                    ).all()
+                    claims = session.scalars(select(Claim).order_by(Claim.created_at.asc()).limit(max_claims)).all()
                     total_created = 0
                     for synthesis_type in synthesis_types:
                         syntheses = generate_syntheses(
@@ -211,6 +223,7 @@ def syntheses_tab() -> None:
                         total_created += len(syntheses)
                 st.success(f"Generated {total_created} synthesis item(s) across {len(synthesis_types)} type(s).")
             except Exception as exc:
+                logger.exception("Synthesis generation failed")
                 st.error(f"Synthesis generation failed: {describe_error(exc)}")
 
 
@@ -257,6 +270,7 @@ def review_drafts_tab() -> None:
                     st.success(f"Generated review draft: {draft.title}")
                     st.rerun()
             except Exception as exc:
+                logger.exception("Review draft generation failed")
                 st.error(f"Review draft generation failed: {describe_error(exc)}")
 
     selected_draft = select_review_draft(drafts)
@@ -264,7 +278,7 @@ def review_drafts_tab() -> None:
         render_review_markdown(selected_draft.markdown)
 
 
-def select_review_draft(drafts: list[ReviewDraft]) -> ReviewDraft | None:
+def select_review_draft(drafts: Sequence[ReviewDraft]) -> ReviewDraft | None:
     if not drafts:
         st.info("No review drafts have been generated yet.")
         return None
@@ -291,17 +305,11 @@ def ensure_openai_key() -> bool:
 
 
 def describe_error(exc: Exception) -> str:
-    formatter = getattr(llm_client, "describe_openai_error", None)
-    if callable(formatter):
-        return formatter(exc)
-    return str(exc)
+    return llm_client.describe_openai_error(exc)
 
 
 def format_review_markdown(markdown: str) -> str:
-    formatter = getattr(review_llm, "normalize_references_for_markdown", None)
-    if callable(formatter):
-        return formatter(markdown)
-    return markdown
+    return review_llm.normalize_references_for_markdown(markdown)
 
 
 def render_review_markdown(markdown: str) -> None:
@@ -319,12 +327,6 @@ def render_review_markdown(markdown: str) -> None:
         reference = reference.strip()
         if reference:
             st.markdown(reference)
-
-
-def table_count_tab(label: str, model: type) -> None:
-    with session_scope() as session:
-        count = session.scalar(select(func.count(model.id))) or 0
-    st.metric(label, count)
 
 
 def database_tab() -> None:
@@ -355,20 +357,16 @@ def database_tab() -> None:
                 updated = backfill_metadata(session, UPLOAD_DIR)
             st.success(f"Updated metadata for {updated} paper(s). Refresh the page to see updated rows.")
         except Exception as exc:
+            logger.exception("Paper metadata backfill failed")
             st.error(f"Paper metadata backfill failed: {describe_error(exc)}")
 
     if paper_rows:
         st.dataframe(paper_rows, use_container_width=True)
 
 
-def backfill_metadata(session, upload_dir: Path) -> int:
-    backfill = getattr(services, "backfill_paper_metadata", None)
-    if not callable(backfill):
-        reloaded_services = importlib.reload(services)
-        backfill = getattr(reloaded_services, "backfill_paper_metadata", None)
-    if not callable(backfill):
-        raise RuntimeError("Paper metadata backfill is not available. Restart Streamlit and try again.")
-    return backfill(session, upload_dir)
+def backfill_metadata(session: Session, upload_dir: Path) -> int:
+    """Backfill missing paper title/author/year metadata for already-ingested papers."""
+    return services.backfill_paper_metadata(session, upload_dir)
 
 
 if __name__ == "__main__":

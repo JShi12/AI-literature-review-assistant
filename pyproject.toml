@@ -5,7 +5,7 @@ description = "Local AI literature review assistant MVP with PostgreSQL, pgvecto
 requires-python = ">=3.12"
 dependencies = [
     "alembic>=1.13.2",
-    "openai>=1.40.0",
+    "openai>=1.40.0,<2.0.0",
     "pgvector>=0.3.2",
     "psycopg[binary]>=3.2.1",
     "pydantic>=2.8.2",
@@ -18,6 +18,10 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=8.3.2",
+    "pytest-cov>=5.0.0",
+    "ruff>=0.6.8",
+    "mypy>=1.11.2",
+    "pre-commit>=3.8.0",
 ]
 
 [build-system]
@@ -27,7 +31,35 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = ["alembic/versions"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "C4"]
+ignore = [
+    # ParsedModel is a shared module-level TypeVar correlating multiple classes/functions;
+    # PEP 695 per-class/function type params would break that sharing.
+    "UP046",
+    "UP047",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.mypy]
+python_version = "3.12"
+files = ["src"]
+mypy_path = "src"
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+check_untyped_defs = true
+no_implicit_optional = true
+ignore_missing_imports = true
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
-addopts = "-q"
+addopts = "-q --cov=lit_review_assistant --cov-report=term-missing"
