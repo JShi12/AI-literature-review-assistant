@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hmac
 import logging
 import os
 import re
@@ -31,8 +32,40 @@ CHUNK_SIZE_OPTIONS = [1_500, 3_000, 4_000]
 CHUNK_OVERLAP_OPTIONS = [150, 250, 300]
 
 
+def check_password() -> bool:
+    """Gate the app behind a single shared password when APP_PASSWORD is set.
+
+    No-ops (always allows access) when APP_PASSWORD is unset, so local development is never
+    blocked by a login screen -- only a deployment where the env var has been set explicitly
+    (e.g. a public demo link) is gated.
+    """
+    expected = os.getenv("APP_PASSWORD")
+    if not expected:
+        return True
+    if st.session_state.get("authenticated"):
+        return True
+
+    st.title("AI Literature Review Assistant")
+    password = st.text_input("Password", type="password")
+    if st.button("Log in", type="primary"):
+        if hmac.compare_digest(password, expected):
+            st.session_state["authenticated"] = True
+            st.rerun()
+        else:
+            st.error("Incorrect password.")
+    return False
+
+
 def main() -> None:
     st.set_page_config(page_title="AI Literature Review Assistant", layout="wide")
+    if not check_password():
+        return
+
+    with st.sidebar:
+        if os.getenv("APP_PASSWORD") and st.button("Log out"):
+            st.session_state["authenticated"] = False
+            st.rerun()
+
     st.title("AI Literature Review Assistant")
 
     tabs = st.tabs(
