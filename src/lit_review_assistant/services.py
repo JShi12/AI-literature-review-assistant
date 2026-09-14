@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+from collections.abc import Sequence
 from pathlib import Path
 
 from sqlalchemy import func, select
@@ -121,6 +122,55 @@ def recalculate_synthesis_support_counts(session: Session, synthesis_id: str) ->
     synthesis.supporting_papers = len(paper_ids)
     session.flush()
     return synthesis
+
+
+def select_chunks_for_claim_extraction(session: Session, paper_id: str | None, limit: int) -> list[Chunk]:
+    """Pick up to `limit` chunks that don't have claims yet, round-robin across papers.
+
+    A plain "order by paper, then page" selection exhausts one paper's chunks before ever
+    reaching the next, so a modest limit across a multi-paper corpus can silently only ever
+    touch the alphabetically-first paper. Round-robining keeps every paper represented.
+    """
+    query = (
+        select(Chunk)
+        .where(~Chunk.claims.any())
+        .order_by(Chunk.paper_id.asc(), Chunk.page_start.asc(), Chunk.start_char.asc())
+    )
+    if paper_id is not None:
+        query = query.where(Chunk.paper_id == paper_id)
+    candidates = session.scalars(query).all()
+    return round_robin_by_paper(candidates, limit)
+
+
+def round_robin_by_paper(chunks: Sequence[Chunk], limit: int) -> list[Chunk]:
+    """Interleave chunks by paper_id so a limited selection spreads evenly across papers.
+
+    Assumes `chunks` is already ordered per-paper (e.g. by page/offset) -- that per-paper
+    order is preserved, only the across-paper interleaving changes.
+    """
+    by_paper: dict[str, list[Chunk]] = {}
+    paper_order: list[str] = []
+    for chunk in chunks:
+        if chunk.paper_id not in by_paper:
+            by_paper[chunk.paper_id] = []
+            paper_order.append(chunk.paper_id)
+        by_paper[chunk.paper_id].append(chunk)
+
+    selected: list[Chunk] = []
+    index = 0
+    while len(selected) < limit:
+        progressed = False
+        for paper_id in paper_order:
+            bucket = by_paper[paper_id]
+            if index < len(bucket):
+                selected.append(bucket[index])
+                progressed = True
+                if len(selected) == limit:
+                    break
+        if not progressed:
+            break
+        index += 1
+    return selected
 
 
 def backfill_paper_metadata(session: Session, upload_dir: str | Path = "data/uploads") -> int:

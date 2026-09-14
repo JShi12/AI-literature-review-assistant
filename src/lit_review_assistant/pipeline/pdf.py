@@ -8,6 +8,11 @@ from pathlib import Path
 
 import fitz
 
+# Symbols journals use as author/affiliation footnote markers (beyond the plain "*†‡§¶#" set):
+# ⊥ (up tack) and ∥ / ‖ (parallel, two Unicode variants) are common in ACS/RSC-style chemistry
+# journals once a paper has more affiliations than the standard symbol sequence covers.
+_AFFILIATION_MARKERS = r"*†‡§¶#⊥∥‖"
+
 
 @dataclass(frozen=True)
 class PageText:
@@ -146,7 +151,7 @@ def _looks_like_name_list(line: str) -> bool:
     A bare comma is too weak a signal on its own -- ordinary sentences have commas too -- so this
     requires every comma/'and'-separated segment to look like a short run of capitalized name words.
     """
-    cleaned = re.sub(r"[*†‡§¶#0-9]+", "", line).strip(" ,")
+    cleaned = re.sub(rf"[{re.escape(_AFFILIATION_MARKERS)}0-9]+", "", line).strip(" ,")
     if not cleaned:
         return False
     tokens = [token.strip() for token in re.split(r"\s*(?:,|;|\band\b|&)\s*", cleaned, flags=re.IGNORECASE)]
@@ -187,7 +192,7 @@ def parse_authors(value: object) -> list[str]:
         return []
 
     text = normalize_pdf_text(text)
-    text = re.sub(r"[*†‡§¶#]+", "", text)
+    text = re.sub(rf"[{re.escape(_AFFILIATION_MARKERS)}]+", "", text)
     text = re.sub(r"(?<=[A-Za-z])\d+\b", "", text)
     text = re.sub(r"([A-Z]\.)(?=[A-Z][a-z])", r"\1 ", text)
     text = text.strip(" -_,")

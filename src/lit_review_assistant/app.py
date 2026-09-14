@@ -142,7 +142,10 @@ def claims_tab() -> None:
         value=min(3, max(selected_chunk_count, 1)),
         step=1,
     )
-    st.caption("Chunks are processed in paper order, then page order, then character-offset order.")
+    st.caption(
+        "Chunks without claims yet are processed round-robin across papers (so a small limit still "
+        "covers every paper), then in page and character-offset order within each paper."
+    )
 
     if st.button("Extract Claims", type="primary"):
         if not ensure_openai_key():
@@ -150,25 +153,14 @@ def claims_tab() -> None:
         with st.spinner("Extracting claims from chunks..."):
             try:
                 with session_scope() as session:
-                    query = (
-                        select(Chunk)
-                        .join(Paper, Paper.id == Chunk.paper_id)
-                        .order_by(Paper.paper_key.asc(), Chunk.page_start.asc(), Chunk.start_char.asc())
-                        .limit(max_chunks)
-                    )
-                    if selected_paper_id is not None:
-                        query = (
-                            select(Chunk)
-                            .join(Paper, Paper.id == Chunk.paper_id)
-                            .where(Chunk.paper_id == selected_paper_id)
-                            .order_by(Paper.paper_key.asc(), Chunk.page_start.asc(), Chunk.start_char.asc())
-                            .limit(max_chunks)
-                        )
-                    chunks = session.scalars(query).all()
+                    chunks = services.select_chunks_for_claim_extraction(session, selected_paper_id, max_chunks)
                     created = 0
                     for chunk in chunks:
                         created += len(extract_claims_for_chunk(session, chunk))
-                st.success(f"Extracted {created} claim(s) from {len(chunks)} chunk(s).")
+                if not chunks:
+                    st.info("No unprocessed chunks in this scope -- every chunk already has claims.")
+                else:
+                    st.success(f"Extracted {created} claim(s) from {len(chunks)} chunk(s).")
             except Exception as exc:
                 logger.exception("Claim extraction failed")
                 st.error(f"Claim extraction failed: {describe_error(exc)}")
