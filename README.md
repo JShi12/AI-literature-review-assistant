@@ -148,6 +148,40 @@ postgresql+psycopg://litreview:litreview@localhost:5432/litreview
 
 PostgreSQL must have the `vector` extension available.
 
+## Deployment (Render free tier)
+
+The repo includes a `Dockerfile` that auto-runs `alembic upgrade head` on startup and binds to the
+`PORT` environment variable most PaaS hosts inject (falling back to 8501 locally), plus a `render.yaml`
+Blueprint for a one-click deploy. Render's Blueprint YAML fields change over time, so if the Blueprint
+doesn't work as-is, use the manual steps below instead -- they don't depend on `render.yaml` at all.
+
+**Manual setup:**
+
+1. Push this repo to GitHub (it already is, if you're reading this from there).
+2. On [Render](https://render.com), create a **PostgreSQL** instance (free plan). Note its *Internal
+   Database URL*.
+3. Create a **Web Service** from the same GitHub repo, runtime **Docker** (it will pick up the
+   `Dockerfile` automatically).
+4. Set these environment variables on the web service:
+   - `DATABASE_URL` -- the Postgres instance's Internal Database URL from step 2 (any `postgres://` or
+     `postgresql://` scheme is fine; the app normalizes it to the driver it needs).
+   - `OPENAI_API_KEY` -- your key.
+   - `OPENAI_CHAT_MODEL` / `OPENAI_EMBEDDING_MODEL` -- optional, default to `gpt-4.1-mini` /
+     `text-embedding-3-small`.
+5. Set the health check path to `/_stcore/health`.
+6. Deploy. The `vector` extension is created automatically by the first migration.
+
+**Free tier limitations worth knowing before relying on this for anything long-lived:** Render's free
+PostgreSQL plan has historically been temporary (databases expire after a fixed period and get deleted
+-- check Render's current pricing page), and free web services spin down after ~15 minutes of
+inactivity, so the first request after idling takes a while to cold-start. Fine for a portfolio demo
+link; upgrade to a paid Postgres plan for anything you need to keep.
+
+**One-click alternative:** click "New Blueprint Instance" on Render and point it at this repo --
+`render.yaml` provisions both the web service and the database and wires `DATABASE_URL` between them
+automatically. You'll still need to set `OPENAI_API_KEY` manually (it's intentionally not stored in the
+Blueprint).
+
 ## Testing
 
 ```bash
@@ -155,9 +189,10 @@ pytest
 ```
 
 The tests cover PDF extraction, section detection, chunking offsets, metadata extraction, structured LLM
-prompt construction, schema validation, support counting, and review traceability helpers. All 27 tests
-are self-contained unit tests (fakes and `monkeypatch`, no live database or `OPENAI_API_KEY` required).
-`pytest --cov` (configured by default) reports coverage.
+prompt construction, schema validation, support counting, review traceability helpers, embedding
+generation/retrieval, and database URL handling. All tests are self-contained unit tests (fakes and
+`monkeypatch`, no live database or `OPENAI_API_KEY` required). `pytest --cov` (configured by default)
+reports coverage.
 
 ## Code Quality / CI
 
