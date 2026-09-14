@@ -1,0 +1,29 @@
+# Render Blueprint - https://render.com/docs/blueprint-spec
+#
+# Render's Blueprint YAML fields do change over time; if a one-click "New Blueprint Instance"
+# deploy from this file doesn't work as expected, cross-check the field names below (`runtime`,
+# `envVars`, `fromDatabase`, etc.) against Render's current Blueprint reference, or just follow
+# the manual dashboard steps in README.md instead -- they don't depend on this file at all.
+services:
+  - type: web
+    name: ai-literature-review-assistant
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /_stcore/health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ai-literature-review-db
+          property: connectionString
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_CHAT_MODEL
+        value: gpt-4.1-mini
+      - key: OPENAI_EMBEDDING_MODEL
+        value: text-embedding-3-small
+
+databases:
+  - name: ai-literature-review-db
+    plan: free
+    postgresMajorVersion: 16

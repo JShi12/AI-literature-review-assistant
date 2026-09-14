@@ -14,10 +14,22 @@ logger = logging.getLogger(__name__)
 
 
 def get_database_url() -> str:
-    return os.getenv(
+    """Read DATABASE_URL, normalized to the psycopg (v3) driver.
+
+    Hosting providers (Render, Heroku-style platforms, ...) typically hand out a bare
+    "postgres://" or "postgresql://" URL. SQLAlchemy needs an explicit driver in the scheme,
+    and this project depends on psycopg (v3), not psycopg2, so rewrite the scheme rather than
+    asking every deployment target to know that detail.
+    """
+    url = os.getenv(
         "DATABASE_URL",
         "postgresql+psycopg://litreview:litreview@localhost:5432/litreview",
     )
+    if url.startswith("postgres://"):
+        return "postgresql+psycopg://" + url[len("postgres://") :]
+    if url.startswith("postgresql://"):
+        return "postgresql+psycopg://" + url[len("postgresql://") :]
+    return url
 
 
 engine = create_engine(get_database_url(), pool_pre_ping=True)
