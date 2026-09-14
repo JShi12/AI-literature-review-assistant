@@ -26,4 +26,3 @@ services:
 databases:
   - name: ai-literature-review-db
     plan: free
-    postgresMajorVersion: 16
