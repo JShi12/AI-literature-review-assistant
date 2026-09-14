@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from lit_review_assistant.db.models import Chunk, Claim
 from lit_review_assistant.llm.client import OpenAIStructuredLLM, StructuredLLM, create_llm_run
+from lit_review_assistant.llm.embeddings import embed_and_persist_claims
 from lit_review_assistant.schemas import ExtractedClaim
 
 PROMPT_VERSION = "claims.v1"
@@ -35,6 +36,7 @@ def extract_claims_for_chunk(
     )
     run = create_llm_run(session, result)
     claims = persist_extracted_claims(session, result.parsed.claims, run.id, chunk=chunk)
+    embed_and_persist_claims(session, claims)
     session.flush()
     return claims
 

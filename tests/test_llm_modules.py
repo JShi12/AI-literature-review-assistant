@@ -7,6 +7,11 @@ from openai import APIStatusError
 
 from lit_review_assistant.llm.claims import build_claim_extraction_input, persist_extracted_claims
 from lit_review_assistant.llm.client import LLMResult, describe_openai_error
+from lit_review_assistant.llm.embeddings import (
+    embed_and_persist_claims,
+    embed_texts,
+    find_similar_claims,
+)
 from lit_review_assistant.llm.review import (
     apply_academic_citations,
     build_review_input,
@@ -108,6 +113,123 @@ def test_persist_extracted_claims_uses_authoritative_chunk_ids() -> None:
     assert claims[0].paper_id == "P001"
     assert claims[0].chunk_id == "CH001"
     assert claims[0].section_id == "SEC001"
+
+
+@dataclass
+class FakeEmbeddingItem:
+    index: int
+    embedding: list[float]
+
+
+@dataclass
+class FakeEmbeddingsResponse:
+    data: list[FakeEmbeddingItem]
+
+
+class FakeEmbeddingsAPI:
+    def create(self, *, model: str, input: list[str]):
+        # Return out of input order to prove callers re-sort by index rather than trust response order.
+        return FakeEmbeddingsResponse(
+            [FakeEmbeddingItem(index=i, embedding=[float(i)]) for i in reversed(range(len(input)))]
+        )
+
+
+class FakeOpenAIClient:
+    def __init__(self) -> None:
+        self.embeddings = FakeEmbeddingsAPI()
+
+
+class FailingEmbeddingsAPI:
+    def create(self, *, model: str, input: list[str]):
+        raise RuntimeError("embedding API unavailable")
+
+
+class FailingOpenAIClient:
+    def __init__(self) -> None:
+        self.embeddings = FailingEmbeddingsAPI()
+
+
+class ExplodingEmbeddingsAPI:
+    def create(self, *, model: str, input: list[str]):
+        raise AssertionError("should not call the embeddings API for a blank topic")
+
+
+class ExplodingOpenAIClient:
+    def __init__(self) -> None:
+        self.embeddings = ExplodingEmbeddingsAPI()
+
+
+class ExplodingSession:
+    def scalars(self, *args: object, **kwargs: object) -> object:
+        raise AssertionError("should not query the database for a blank topic")
+
+
+def test_embed_texts_reorders_response_to_match_input() -> None:
+    vectors = embed_texts(["first", "second", "third"], client=FakeOpenAIClient())  # type: ignore[arg-type]
+
+    assert vectors == [[0.0], [1.0], [2.0]]
+
+
+def test_embed_and_persist_claims_stores_one_embedding_per_claim() -> None:
+    class FakeSession:
+        def __init__(self) -> None:
+            self.added: list = []
+
+        def add(self, model) -> None:
+            self.added.append(model)
+
+        def flush(self) -> None:
+            return None
+
+    @dataclass
+    class FakeClaimForEmbedding:
+        id: str
+        claim_text: str
+        normalized_text: str | None = None
+
+    claims = [
+        FakeClaimForEmbedding(id="CL001", claim_text="Text one", normalized_text="Normalized one"),
+        FakeClaimForEmbedding(id="CL002", claim_text="Text two"),
+    ]
+    session = FakeSession()
+
+    embed_and_persist_claims(session, claims, client=FakeOpenAIClient())  # type: ignore[arg-type]
+
+    assert len(session.added) == 2
+    assert {row.entity_id for row in session.added} == {"CL001", "CL002"}
+    assert all(row.entity_type == "claim" for row in session.added)
+
+
+def test_embed_and_persist_claims_swallows_client_errors() -> None:
+    class ExplodingSessionForAdd:
+        def add(self, model) -> None:
+            raise AssertionError("should not persist an embedding when the API call fails")
+
+        def flush(self) -> None:
+            return None
+
+    @dataclass
+    class FakeClaimForEmbedding:
+        id: str
+        claim_text: str
+
+    # Should not raise, even though the embeddings API call fails.
+    embed_and_persist_claims(
+        ExplodingSessionForAdd(),  # type: ignore[arg-type]
+        [FakeClaimForEmbedding(id="CL001", claim_text="x")],
+        client=FailingOpenAIClient(),  # type: ignore[arg-type]
+    )
+
+
+def test_find_similar_claims_short_circuits_on_blank_topic() -> None:
+    result = find_similar_claims(
+        ExplodingSession(),  # type: ignore[arg-type]
+        "   ",
+        limit=5,
+        client=ExplodingOpenAIClient(),  # type: ignore[arg-type]
+    )
+
+    assert result == []
 
 
 def test_review_input_includes_syntheses_and_claim_ids() -> None:

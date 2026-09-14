@@ -18,6 +18,7 @@ from lit_review_assistant.db.session import session_scope
 from lit_review_assistant.llm import client as llm_client
 from lit_review_assistant.llm import review as review_llm
 from lit_review_assistant.llm.claims import extract_claims_for_chunk
+from lit_review_assistant.llm.embeddings import find_similar_claims, find_similar_syntheses
 from lit_review_assistant.llm.synthesis import generate_syntheses
 from lit_review_assistant.logging_config import configure_logging
 
@@ -194,6 +195,11 @@ def syntheses_tab() -> None:
         return
 
     synthesis_types = st.multiselect("Synthesis types", SYNTHESIS_TYPES, default=SYNTHESIS_TYPES)
+    topic = st.text_input(
+        "Topic (optional)",
+        value="",
+        help="When set, the claims most relevant to this topic are used instead of the most recent ones.",
+    )
     max_claims = st.number_input(
         "Claims to use",
         min_value=1,
@@ -212,7 +218,11 @@ def syntheses_tab() -> None:
         with st.spinner("Generating syntheses from claims..."):
             try:
                 with session_scope() as session:
-                    claims = session.scalars(select(Claim).order_by(Claim.created_at.asc()).limit(max_claims)).all()
+                    claims: Sequence[Claim] = []
+                    if topic.strip():
+                        claims = find_similar_claims(session, topic, limit=max_claims)
+                    if not claims:
+                        claims = session.scalars(select(Claim).order_by(Claim.created_at.asc()).limit(max_claims)).all()
                     total_created = 0
                     for synthesis_type in synthesis_types:
                         syntheses = generate_syntheses(
@@ -242,13 +252,16 @@ def review_drafts_tab() -> None:
 
     topic = st.text_input("Review topic", value="AI literature review")
     max_syntheses = st.number_input(
-        "Max recent syntheses to use",
+        "Max syntheses to use",
         min_value=1,
         max_value=synthesis_count,
         value=min(20, synthesis_count),
         step=1,
     )
-    st.caption(f"Up to {synthesis_count} available synthesis item(s) can be used.")
+    st.caption(
+        f"Up to {synthesis_count} available synthesis item(s) can be used, "
+        "selected by relevance to the topic above when embeddings are available."
+    )
 
     if st.button("Generate Review Draft", type="primary"):
         if not ensure_openai_key():
@@ -256,9 +269,13 @@ def review_drafts_tab() -> None:
         with st.spinner("Generating review draft..."):
             try:
                 with session_scope() as session:
-                    syntheses = session.scalars(
-                        select(Synthesis).order_by(Synthesis.created_at.desc()).limit(max_syntheses)
-                    ).all()
+                    syntheses: Sequence[Synthesis] = []
+                    if topic.strip():
+                        syntheses = find_similar_syntheses(session, topic, limit=max_syntheses)
+                    if not syntheses:
+                        syntheses = session.scalars(
+                            select(Synthesis).order_by(Synthesis.created_at.desc()).limit(max_syntheses)
+                        ).all()
                     draft = review_llm.generate_review_draft(
                         session,
                         topic=topic,
