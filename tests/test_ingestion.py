@@ -11,6 +11,7 @@ from lit_review_assistant.pipeline.pdf import (
     extract_pages,
     infer_paper_metadata_from_first_page,
     infer_paper_metadata_from_name,
+    looks_like_internal_pdf_title,
 )
 from lit_review_assistant.pipeline.sections import detect_sections
 from lit_review_assistant.services import ingest_pdf
@@ -114,6 +115,36 @@ def test_infer_paper_metadata_from_first_page_title_and_authors() -> None:
         "Sergii Rudiuk",
         "Damien Baigl",
     ]
+
+
+def test_infer_paper_metadata_from_first_page_handles_full_name_byline() -> None:
+    # Author lines using full first names (no "J. Smith"-style initials) previously went
+    # undetected, causing the title/author split to swallow the byline, affiliation, and
+    # part of the abstract into "title" instead.
+    metadata = infer_paper_metadata_from_first_page(
+        "Control of Colloidal Particle Deposit Patterns within Picoliter Droplets\n"
+        "Ejected by Ink-Jet Printing\n"
+        "Jungho Park and Jooho Moon*\n"
+        "Department of Materials Science and Engineering, Yonsei University, Seoul, Korea\n"
+        "Particle deposit morphologies that resulted from evaporating ink-jetted microdroplets, "
+        "while a uniform two-dimensional monolayer was also observed.\n"
+    )
+
+    assert metadata.title == (
+        "Control of Colloidal Particle Deposit Patterns within Picoliter Droplets Ejected by Ink-Jet Printing"
+    )
+    assert metadata.authors == ["Jungho Park", "Jooho Moon"]
+
+
+def test_looks_like_internal_pdf_title_recognizes_known_placeholders() -> None:
+    # Some PDF producers (older Distiller-based publishing pipelines, "Print to PDF" drivers,
+    # word processors) leave the document Title metadata as a literal placeholder rather than
+    # the real title, or leave it empty. These should be treated as junk, not a real title.
+    assert looks_like_internal_pdf_title("No Job Name") is True
+    assert looks_like_internal_pdf_title("no job name") is True
+    assert looks_like_internal_pdf_title("Untitled") is True
+    assert looks_like_internal_pdf_title("Microsoft Word - manuscript.docx") is True
+    assert looks_like_internal_pdf_title("Modulation of the Coffee-Ring Effect") is False
 
 
 def test_ingest_pdf_passes_chunk_settings(monkeypatch, tmp_path: Path) -> None:

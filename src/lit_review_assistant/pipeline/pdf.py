@@ -135,7 +135,31 @@ def looks_like_author_line(line: str) -> bool:
         return False
     if re.search(r"\babstract\b|\bkeywords\b|\bintroduction\b", lowered):
         return False
-    return bool("," in line or re.search(r"\b[A-Z]\.\s*(?:[A-Z]\.\s*)?[A-Z][A-Za-z-]+", line))
+    if re.search(r"\b[A-Z]\.\s*(?:[A-Z]\.\s*)?[A-Z][A-Za-z-]+", line):
+        return True
+    return _looks_like_name_list(line)
+
+
+def _looks_like_name_list(line: str) -> bool:
+    """Detect a comma/'and'-separated list of proper names (e.g. full-name author bylines).
+
+    A bare comma is too weak a signal on its own -- ordinary sentences have commas too -- so this
+    requires every comma/'and'-separated segment to look like a short run of capitalized name words.
+    """
+    cleaned = re.sub(r"[*†‡§¶#0-9]+", "", line).strip(" ,")
+    if not cleaned:
+        return False
+    tokens = [token.strip() for token in re.split(r"\s*(?:,|;|\band\b|&)\s*", cleaned, flags=re.IGNORECASE)]
+    tokens = [token for token in tokens if token]
+    if len(tokens) < 2:
+        return False
+    for token in tokens:
+        words = token.split()
+        if not (1 <= len(words) <= 3):
+            return False
+        if not all(re.fullmatch(r"[A-Z][A-Za-z'-]*\.?", word) for word in words):
+            return False
+    return True
 
 
 def looks_like_affiliation_or_body_start(line: str) -> bool:
@@ -196,8 +220,24 @@ def best_title(document_title: str | None, text_title: str | None) -> str | None
     return document_title or text_title
 
 
+_KNOWN_JUNK_TITLES = {
+    "no job name",
+    "untitled",
+    "untitled document",
+    "untitled-1",
+    "(no title)",
+    "adobe pdf",
+}
+_JUNK_TITLE_PREFIXES = ("microsoft word - ",)
+
+
 def looks_like_internal_pdf_title(title: str) -> bool:
     normalized = title.strip()
+    lowered = normalized.casefold()
+    if lowered in _KNOWN_JUNK_TITLES:
+        return True
+    if lowered.startswith(_JUNK_TITLE_PREFIXES):
+        return True
     if re.search(r"\d+\.\.\d+", normalized):
         return True
     return bool(re.fullmatch(r"[a-z]{1,4}\d+[a-z]?(?:\s+\d+\.\.\d+)?", normalized, flags=re.IGNORECASE))
