@@ -65,6 +65,7 @@ PDFs -> pages -> sections -> chunks -> claims -> syntheses -> review draft
 - Pydantic
 - OpenAI Python SDK
 - Pytest, Ruff, Mypy, pre-commit, GitHub Actions
+- Deployed on Render (Docker) with a managed Postgres from Neon/Supabase
 
 ## Project Structure
 
@@ -216,7 +217,9 @@ Ruff (lint + format), Mypy, and the full test suite run in GitHub Actions on eve
 - There's no backfill for embeddings: claims/syntheses created before this feature (or created while
   embedding generation failed) won't be selectable by topic similarity until they're regenerated.
 - Scanned/image-only PDFs are not OCR'd.
-- No authentication; this is a local, single-user MVP.
+- Authentication is a single shared password (`APP_PASSWORD`), not per-user accounts — the app has no
+  user/tenant concept, so everyone with the password sees the same shared workspace and data. See
+  [Deployment](#deployment-render-free-tier--external-postgres) for how it's configured.
 
 ## License
 
