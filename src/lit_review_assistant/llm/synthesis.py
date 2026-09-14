@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 
 from lit_review_assistant.db.models import Claim, Synthesis, SynthesisClaim
 from lit_review_assistant.llm.client import OpenAIStructuredLLM, StructuredLLM, create_llm_run
+from lit_review_assistant.llm.embeddings import embed_and_persist_syntheses
 from lit_review_assistant.pipeline.support import ClaimSupport, calculate_support_counts
 from lit_review_assistant.schemas import GeneratedSynthesis
 
@@ -45,6 +46,7 @@ def generate_syntheses(
     )
     run = create_llm_run(session, result)
     syntheses = persist_generated_syntheses(session, result.parsed.syntheses, run.id)
+    embed_and_persist_syntheses(session, syntheses)
     session.flush()
     return syntheses
 

@@ -16,6 +16,9 @@ An AI tool to summarize research-paper PDFs into structured, citation-grounded l
   structured outputs into Pydantic schemas, rather than parsed out of free-form text.
 - **A real, if small, extraction pipeline**: PDFs are split into pages, academic sections are detected
   heuristically, and text is chunked section-aware before ever reaching the LLM.
+- **Retrieval-augmented selection**: claims and syntheses are embedded (pgvector) as they're created, so
+  entering a topic pulls in the claims/syntheses most semantically relevant to it instead of just the
+  most recently created ones — falling back to recency automatically if no matching embeddings exist yet.
 
 ## Architecture
 
@@ -42,6 +45,8 @@ PDFs -> pages -> sections -> chunks -> claims -> syntheses -> review draft
 - Extract page text, paper metadata, academic sections, and section-aware chunks.
 - Use OpenAI structured outputs to extract source-grounded claims from paper chunks.
 - Generate claim-backed syntheses across themes, contradictions, gaps, method comparisons, and insights.
+- Select the claims/syntheses most relevant to a given topic via pgvector embedding similarity, falling
+  back to recency when no matching embeddings exist yet.
 - Produce Markdown literature review drafts with numeric citations and references.
 - Store papers, chunks, claims, syntheses, review drafts, and traceability links in PostgreSQL.
 - Run locally with Docker Compose or a Python environment.
@@ -161,7 +166,8 @@ Ruff (lint + format), Mypy, and the full test suite run in GitHub Actions on eve
 
 ## What's not done yet
 
-- Embedding storage is modeled, but embedding generation and retrieval are not yet exposed in the UI.
+- There's no backfill for embeddings: claims/syntheses created before this feature (or created while
+  embedding generation failed) won't be selectable by topic similarity until they're regenerated.
 - Scanned/image-only PDFs are not OCR'd.
 - No authentication; this is a local, single-user MVP.
 
