@@ -8,7 +8,7 @@ An AI tool to summarize research-paper PDFs into structured, citation-grounded l
 
 **Live demo:** [ai-literature-review-assistant-2jld.onrender.com](https://ai-literature-review-assistant-2jld.onrender.com/)
 (hosted on Render's free tier — the first request after a period of inactivity may take a little while to
-wake up)
+wake up). The demo is password-protected; reach out if you'd like access.
 
 ![Upload Papers tab of the Streamlit app](docs/screenshot.png)
 
