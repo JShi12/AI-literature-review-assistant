@@ -13,6 +13,7 @@ from lit_review_assistant.pipeline.pdf import (
     infer_paper_metadata_from_first_page,
     infer_paper_metadata_from_name,
     looks_like_internal_pdf_title,
+    parse_authors,
 )
 from lit_review_assistant.pipeline.sections import detect_sections
 from lit_review_assistant.services import ingest_pdf, round_robin_by_paper
@@ -135,6 +136,25 @@ def test_infer_paper_metadata_from_first_page_handles_full_name_byline() -> None
         "Control of Colloidal Particle Deposit Patterns within Picoliter Droplets Ejected by Ink-Jet Printing"
     )
     assert metadata.authors == ["Jungho Park", "Jooho Moon"]
+
+
+def test_parse_authors_strips_acs_style_affiliation_markers() -> None:
+    # Regression: "*†‡§¶#" were stripped as footnote markers, but "⊥" (up tack) and "∥"/"‖"
+    # (parallel) -- also used by ACS/RSC-style journals once a paper has more affiliations
+    # than the standard symbol sequence covers -- were not, leaving them stuck to author
+    # names (e.g. "⊥Simon R. Biggs") or as a standalone bogus "author" entry (e.g. "∥").
+    authors = parse_authors(
+        "Emma L. Talbot,† Huai N. Yow,§,¶ Lisong Yang,† Arganthael Berson,‡,⊥Simon R. Biggs,§,∥ and Colin D. Bain*,†"
+    )
+
+    assert authors == [
+        "Emma L. Talbot",
+        "Huai N. Yow",
+        "Lisong Yang",
+        "Arganthael Berson",
+        "Simon R. Biggs",
+        "Colin D. Bain",
+    ]
 
 
 def test_looks_like_internal_pdf_title_recognizes_known_placeholders() -> None:
