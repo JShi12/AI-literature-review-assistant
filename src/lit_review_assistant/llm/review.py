@@ -268,14 +268,18 @@ def rebuild_references_section(
 
     body = re.split(r"(?im)^\s{0,3}#{0,6}\s*references\s*$", markdown, maxsplit=1)[0].rstrip()
     reference_lines = [
-        f"- [{citation_number}] {format_reference(paper_id, syntheses, extra_claims=extra_claims)}"
+        f"[{citation_number}] {format_reference(paper_id, syntheses, extra_claims=extra_claims)}"
         for paper_id, citation_number in citation_by_paper_id.items()
     ]
     return body + "\n\n## References\n\n" + "\n".join(reference_lines)
 
 
 def normalize_references_for_markdown(markdown: str) -> str:
-    """Tidy up the References section heading and entries for display."""
+    """Tidy up the References section for display as a plain, bullet-free numbered list --
+    like a published paper's reference list -- regardless of whether the stored markdown has
+    "[N]" entries already on separate lines, crammed onto one line, or "-" bullet-prefixed
+    from an older draft format.
+    """
     parts = re.split(r"(?im)^\s{0,3}#{0,6}\s*references\s*$", markdown, maxsplit=1)
     if len(parts) != 2:
         return markdown
@@ -284,13 +288,11 @@ def normalize_references_for_markdown(markdown: str) -> str:
     references = re.sub(r"\s+(?=\[\d+\]\s)", "\n", references.strip())
     reference_lines = []
     for line in references.splitlines():
-        line = line.strip()
+        line = re.sub(r"^-\s*", "", line.strip()).strip()
         if not line:
             continue
-        if line.startswith("- "):
+        if re.match(r"^\[\d+\]\s", line):
             reference_lines.append(improve_unknown_reference_line(line))
-        elif re.match(r"^\[\d+\]\s", line):
-            reference_lines.append(improve_unknown_reference_line(f"- {line}"))
         else:
             reference_lines.append(line)
     if not reference_lines:

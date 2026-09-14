@@ -324,9 +324,9 @@ def test_review_references_are_separated_by_blank_lines() -> None:
     updated = apply_academic_citations(payload, [synthesis])  # type: ignore[list-item]
 
     assert (
-        "- [1] Ada Lovelace, Grace Hopper. (2024). First Paper.\n"
-        "- [2] Ada Lovelace, Grace Hopper. (2024). Second Paper."
+        "[1] Ada Lovelace, Grace Hopper. (2024). First Paper.\n[2] Ada Lovelace, Grace Hopper. (2024). Second Paper."
     ) in updated.markdown
+    assert "- [" not in updated.markdown
 
 
 def test_reference_fallback_infers_authors_from_filename() -> None:
@@ -356,8 +356,10 @@ def test_reference_fallback_infers_authors_from_filename() -> None:
     updated = apply_academic_citations(payload, [synthesis])  # type: ignore[list-item]
 
     assert (
-        "- [1] Anyfantakis, Baigl. (2015). Modulation of the Coffee-Ring Effect in Particle-Surfactant Mixtures."
+        "## References\n\n"
+        "[1] Anyfantakis, Baigl. (2015). Modulation of the Coffee-Ring Effect in Particle-Surfactant Mixtures."
     ) in updated.markdown
+    assert "- [" not in updated.markdown
 
 
 def test_inline_references_are_normalized_for_markdown_display() -> None:
@@ -370,9 +372,10 @@ def test_inline_references_are_normalized_for_markdown_display() -> None:
     normalized = normalize_references_for_markdown(markdown)
 
     assert "## References" in normalized
-    assert "- [1] Unknown authors. (n.d.). First paper." in normalized
-    assert "- [2] Unknown authors. (n.d.). Second paper." in normalized
+    assert "[1] Unknown authors. (n.d.). First paper." in normalized
+    assert "[2] Unknown authors. (n.d.). Second paper." in normalized
     assert "First paper. [2]" not in normalized
+    assert "- [" not in normalized
 
 
 def test_inline_unknown_references_are_improved_from_titles() -> None:
@@ -384,9 +387,31 @@ def test_inline_unknown_references_are_improved_from_titles() -> None:
 
     normalized = normalize_references_for_markdown(markdown)
 
-    assert "- [1] Anyfantakis, Baigl. (2015). Modulation of the Coffee-Ring Effect." in normalized
-    assert "- [2] Cui, B. Yang. (2014). Suppression of the Coffee Ring Effect." in normalized
+    assert "[1] Anyfantakis, Baigl. (2015). Modulation of the Coffee-Ring Effect." in normalized
+    assert "[2] Cui, B. Yang. (2014). Suppression of the Coffee Ring Effect." in normalized
     assert "Unknown authors" not in normalized
+    assert "- [" not in normalized
+
+
+def test_dash_prefixed_references_are_normalized_without_a_stray_bullet() -> None:
+    # Regression: references already stored in the older "- [N] ..." bullet format (one per
+    # line) previously ended up with an extra bare "-" line inserted before each real entry,
+    # which Streamlit renders as a visible empty bullet point. The dash prefix itself should
+    # also be dropped entirely -- references should read like a plain published-paper list,
+    # not a bulleted list.
+    markdown = (
+        "Draft body.\n\n"
+        "## References\n\n"
+        "- [1] Ada Lovelace. (2020). First paper.\n"
+        "- [2] Grace Hopper. (2021). Second paper."
+    )
+
+    normalized = normalize_references_for_markdown(markdown)
+
+    assert "[1] Ada Lovelace. (2020). First paper." in normalized
+    assert "[2] Grace Hopper. (2021). Second paper." in normalized
+    assert "- [" not in normalized
+    assert "\n-\n" not in normalized
     assert "Effect. [2]" not in normalized
 
 
