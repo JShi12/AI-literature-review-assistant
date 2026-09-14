@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from pathlib import Path
 
 import fitz
@@ -14,7 +15,7 @@ from lit_review_assistant.pipeline.pdf import (
     looks_like_internal_pdf_title,
 )
 from lit_review_assistant.pipeline.sections import detect_sections
-from lit_review_assistant.services import ingest_pdf
+from lit_review_assistant.services import ingest_pdf, round_robin_by_paper
 
 
 def write_sample_pdf(path: Path) -> None:
@@ -145,6 +146,51 @@ def test_looks_like_internal_pdf_title_recognizes_known_placeholders() -> None:
     assert looks_like_internal_pdf_title("Untitled") is True
     assert looks_like_internal_pdf_title("Microsoft Word - manuscript.docx") is True
     assert looks_like_internal_pdf_title("Modulation of the Coffee-Ring Effect") is False
+
+
+@dataclass
+class FakeChunkForRoundRobin:
+    id: str
+    paper_id: str
+
+
+def test_round_robin_by_paper_covers_every_paper_before_repeating() -> None:
+    # Regression: a strict "order by paper, then page" selection with a small limit would
+    # exhaust paper A's chunks before ever reaching paper B or C. Round-robining must give
+    # every paper a chunk in the first pass instead.
+    chunks = [
+        FakeChunkForRoundRobin("A1", "paper-a"),
+        FakeChunkForRoundRobin("A2", "paper-a"),
+        FakeChunkForRoundRobin("A3", "paper-a"),
+        FakeChunkForRoundRobin("B1", "paper-b"),
+        FakeChunkForRoundRobin("B2", "paper-b"),
+        FakeChunkForRoundRobin("C1", "paper-c"),
+    ]
+
+    selected = round_robin_by_paper(chunks, limit=3)  # type: ignore[arg-type]
+
+    assert {chunk.paper_id for chunk in selected} == {"paper-a", "paper-b", "paper-c"}
+    assert [chunk.id for chunk in selected] == ["A1", "B1", "C1"]
+
+
+def test_round_robin_by_paper_continues_into_second_round() -> None:
+    chunks = [
+        FakeChunkForRoundRobin("A1", "paper-a"),
+        FakeChunkForRoundRobin("A2", "paper-a"),
+        FakeChunkForRoundRobin("B1", "paper-b"),
+    ]
+
+    selected = round_robin_by_paper(chunks, limit=3)  # type: ignore[arg-type]
+
+    assert [chunk.id for chunk in selected] == ["A1", "B1", "A2"]
+
+
+def test_round_robin_by_paper_returns_everything_when_limit_exceeds_total() -> None:
+    chunks = [FakeChunkForRoundRobin("A1", "paper-a"), FakeChunkForRoundRobin("B1", "paper-b")]
+
+    selected = round_robin_by_paper(chunks, limit=10)  # type: ignore[arg-type]
+
+    assert [chunk.id for chunk in selected] == ["A1", "B1"]
 
 
 def test_ingest_pdf_passes_chunk_settings(monkeypatch, tmp_path: Path) -> None:
