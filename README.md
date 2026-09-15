@@ -130,6 +130,22 @@ http://localhost:8501
 
 ## Local Development
 
+This runs the Python app directly on your machine, but it still needs a real PostgreSQL + pgvector
+server to talk to -- the Python packages installed below are just client libraries (`psycopg`,
+`sqlalchemy`, `pgvector`), not a database server. Easiest way to get one: reuse the `db` service
+from `docker-compose.yml` (same as [Quick Start](#quick-start)), without running the app in Docker too:
+
+```bash
+docker compose up -d db
+```
+
+That starts Postgres 16 with pgvector on `localhost:5432` with the default credentials the app
+expects (see below). Alternatively, install PostgreSQL natively and add the `vector` extension
+yourself (e.g. via [pgvector's own install instructions](https://github.com/pgvector/pgvector#installation))
+-- more setup, but no Docker dependency.
+
+Then set up the Python app itself:
+
 macOS/Linux:
 
 ```bash
