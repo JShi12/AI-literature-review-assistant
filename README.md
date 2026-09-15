@@ -207,8 +207,6 @@ Ruff (lint + format), Mypy, and the full test suite run in GitHub Actions on eve
 
 ## What's not done yet
 
-- There's no backfill for embeddings: claims/syntheses created before this feature (or created while
-  embedding generation failed) won't be selectable by topic similarity until they're regenerated.
 - Scanned or image-only PDFs aren't supported -- there's no OCR step, so the pipeline only works with
   PDFs that already have a selectable text layer.
 - Authentication is a single shared password (`APP_PASSWORD`), not per-user accounts — the app has no
