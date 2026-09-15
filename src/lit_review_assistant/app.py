@@ -79,6 +79,15 @@ def main() -> None:
 
     st.title("AI Literature Review Assistant")
 
+    if is_read_only_demo():
+        st.info(
+            "This is a read-only demo pre-loaded with example papers, claims, syntheses, and a "
+            "generated review draft. Actions that call the OpenAI API or change stored data are "
+            "disabled here to avoid unexpected costs -- browse around, but new content can't be "
+            "generated from this deployment.",
+            icon="ℹ️",
+        )
+
     tabs = st.tabs(
         [
             "Upload Papers",
