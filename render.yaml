@@ -27,3 +27,5 @@ services:
         value: text-embedding-3-small
       - key: APP_PASSWORD
         sync: false
+      - key: READ_ONLY_DEMO
+        sync: false
