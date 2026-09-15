@@ -18,6 +18,8 @@ but claim/synthesis/review-draft generation is not, so running it twice would cr
 from __future__ import annotations
 
 import tempfile
+import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -28,6 +30,8 @@ from lit_review_assistant.llm.claims import extract_claims_for_chunk
 from lit_review_assistant.llm.review import generate_review_draft
 from lit_review_assistant.llm.synthesis import generate_syntheses
 
+# arXiv (and many hosts) reject urllib's default "Python-urllib/x.y" User-Agent as a bot.
+DOWNLOAD_HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; lit-review-assistant-demo-seed/1.0)"}
 DEMO_PAPERS = [
     ("https://arxiv.org/pdf/1604.07316.pdf", "nvidia_end_to_end_self_driving.pdf"),
     ("https://arxiv.org/pdf/1812.03079.pdf", "chauffeurnet.pdf"),
@@ -35,6 +39,20 @@ DEMO_PAPERS = [
 ]
 SYNTHESIS_TYPES = ["theme", "contradiction", "gap", "method_comparison", "insight"]
 REVIEW_TOPIC = "Autonomous driving: end-to-end learning, imitation learning, and simulation"
+
+
+def download(url: str, path: Path, attempts: int = 3) -> None:
+    request = urllib.request.Request(url, headers=DOWNLOAD_HEADERS)
+    for attempt in range(1, attempts + 1):
+        try:
+            with urllib.request.urlopen(request, timeout=30) as response:
+                path.write_bytes(response.read())
+            return
+        except urllib.error.HTTPError as exc:
+            if attempt == attempts:
+                raise
+            print(f"    Download attempt {attempt} failed ({exc}); retrying...")
+            time.sleep(2 * attempt)
 
 
 def ingest_papers() -> list[str]:
@@ -45,7 +63,7 @@ def ingest_papers() -> list[str]:
             for url, filename in DEMO_PAPERS:
                 path = tmp_dir / filename
                 print(f"Downloading {filename} from {url} ...")
-                urllib.request.urlretrieve(url, path)
+                download(url, path)
                 paper = services.ingest_pdf(session, path, file_name=filename)
                 paper_ids.append(paper.id)
                 print(f"  Ingested as {paper.paper_key}: {paper.title!r} ({len(paper.chunks)} chunk(s))")
