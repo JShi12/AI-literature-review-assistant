@@ -72,8 +72,9 @@ PDFs -> pages -> sections -> chunks -> claims -> syntheses -> review draft
 - SQLAlchemy + Alembic
 - PyMuPDF
 - Pydantic
-- OpenAI Python SDK -- `gpt-4.1-mini` for claim/synthesis/review-draft generation, `text-embedding-3-small`
-  for embeddings, both configurable via `OPENAI_CHAT_MODEL` / `OPENAI_EMBEDDING_MODEL`
+- OpenAI Python SDK 
+  
+  In the demo I used `gpt-4.1-mini` for claim/synthesis/review-draft generation, and `text-embedding-3-small` for embeddings, both configurable via `OPENAI_CHAT_MODEL` / `OPENAI_EMBEDDING_MODEL`. Different LLM models were not evaluated in this repo. 
 - Pytest, Ruff, Mypy, pre-commit, GitHub Actions
 - Deployed on Render (Docker) with a managed Postgres from Neon/Supabase
 
