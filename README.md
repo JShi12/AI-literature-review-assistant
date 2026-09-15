@@ -41,7 +41,7 @@ flowchart LR
     UI --> Services["services.py / pipeline/*"]
     Services --> DB[("PostgreSQL + pgvector")]
     Services --> LLM["llm/* (claims, synthesis, review)"]
-    LLM -->|structured outputs| OpenAI[("OpenAI API")]
+    LLM -->|calls, requesting structured output| OpenAI[("OpenAI API")]
     LLM --> DB
     UI --> DB
 ```
@@ -72,7 +72,8 @@ PDFs -> pages -> sections -> chunks -> claims -> syntheses -> review draft
 - SQLAlchemy + Alembic
 - PyMuPDF
 - Pydantic
-- OpenAI Python SDK
+- OpenAI Python SDK -- `gpt-4.1-mini` for claim/synthesis/review-draft generation, `text-embedding-3-small`
+  for embeddings, both configurable via `OPENAI_CHAT_MODEL` / `OPENAI_EMBEDDING_MODEL`
 - Pytest, Ruff, Mypy, pre-commit, GitHub Actions
 - Deployed on Render (Docker) with a managed Postgres from Neon/Supabase
 
