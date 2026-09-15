@@ -204,6 +204,17 @@ DATABASE_URL=<your Neon/Supabase connection string> OPENAI_API_KEY=<your key> \
 It's not designed to be re-run repeatedly against the same database -- paper ingestion is
 deduplicated by file hash, but claim/synthesis/review-draft generation is not.
 
+If you already ran an older version of this script and the References section of the generated
+draft looks garbled (author names mixed into titles, "Anonymous, Submission" as an author, etc.),
+that's a known extraction quirk for these three papers' specific byline format, fixed as of this
+version. Rather than re-run the whole (billed) pipeline, `scripts/fix_demo_paper_metadata.py`
+corrects the three papers' stored title/author/year and regenerates only the review draft:
+
+```bash
+DATABASE_URL=<your Neon/Supabase connection string> OPENAI_API_KEY=<your key> \
+  python scripts/fix_demo_paper_metadata.py
+```
+
 **Why an external database:** Render's free PostgreSQL plan is a fixed-length trial -- the database is
 deleted after it expires, not just paused, regardless of activity. Neon and Supabase both have a
 pgvector-capable free tier that pauses/scales to zero on inactivity instead of being deleted, which

@@ -46,6 +46,32 @@ DEMO_PAPERS = [
     ("https://export.arxiv.org/pdf/1812.03079.pdf", "chauffeurnet.pdf"),
     ("https://export.arxiv.org/pdf/1711.03938.pdf", "carla_simulator.pdf"),
 ]
+
+# These three papers' bylines (one author per line, each followed by repeated affiliation
+# lines -- plus, for the CARLA paper, "Anonymous" submission metadata) break the general
+# title/author extraction heuristics in pipeline/pdf.py in a way that's specific to this byline
+# style, producing garbled references. Rather than build general support for yet another byline
+# format, these are the verified-correct values for these three specific, known papers -- this
+# is deliberate curation of demo content, not a claim that the general pipeline handles this
+# byline style now.
+KNOWN_METADATA = {
+    "nvidia_end_to_end_self_driving.pdf": {
+        "title": "End to End Learning for Self-Driving Cars",
+        "authors": ["Mariusz Bojarski", "Davide Del Testa", "Daniel Dworakowski", "Bernhard Firner", "et al."],
+        "year": 2016,
+    },
+    "chauffeurnet.pdf": {
+        "title": "ChauffeurNet: Learning to Drive by Imitating the Best and Synthesizing the Worst",
+        "authors": ["Mayank Bansal", "Alex Krizhevsky", "et al."],
+        "year": 2018,
+    },
+    "carla_simulator.pdf": {
+        "title": "CARLA: An Open Urban Driving Simulator",
+        "authors": ["Alexey Dosovitskiy", "German Ros", "Felipe Codevilla", "Antonio Lopez", "Vladlen Koltun"],
+        "year": 2017,
+    },
+}
+
 SYNTHESIS_TYPES = ["theme", "contradiction", "gap", "method_comparison", "insight"]
 REVIEW_TOPIC = "Autonomous driving: end-to-end learning, imitation learning, and simulation"
 
@@ -77,6 +103,11 @@ def ingest_papers() -> list[str]:
                 print(f"Downloading {filename} from {url} ...")
                 download(url, path)
                 paper = services.ingest_pdf(session, path, file_name=filename)
+                known = KNOWN_METADATA.get(filename)
+                if known is not None:
+                    paper.title = known["title"]
+                    paper.authors = known["authors"]
+                    paper.year = known["year"]
                 paper_ids.append(paper.id)
                 print(f"  Ingested as {paper.paper_key}: {paper.title!r} ({len(paper.chunks)} chunk(s))")
         return paper_ids
