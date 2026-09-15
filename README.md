@@ -12,6 +12,11 @@ wake up). The demo is password-protected; reach out if you'd like access.
 
 ![Upload Papers tab of the Streamlit app](docs/screenshot.png)
 
+Example output — a review draft generated end to end from three real papers on autonomous driving
+(the same example data the live demo above is seeded with):
+
+![Generated review draft with citation-grounded body text and a bullet-free reference list](docs/demo-review-draft.png)
+
 ## Why this is interesting
 
 - **Sentence-level citation traceability**: every sentence in a generated review draft is linked back to
@@ -178,8 +183,26 @@ not on Render's own managed Postgres -- see "Why an external database" below.
      `text-embedding-3-small`.
    - `APP_PASSWORD` -- optional; set this to put a login screen in front of the whole app, since a
      public URL otherwise has no access control. Leave unset for no login screen.
+   - `READ_ONLY_DEMO` -- optional; set to `true` to disable every action that calls the OpenAI API
+     or writes to the database (uploading, extracting claims, generating syntheses/review drafts,
+     backfilling metadata). Recommended alongside `APP_PASSWORD` for a public demo, since a shared
+     password can end up more widely known than intended -- visitors can browse real, pre-seeded
+     output without being able to trigger new (billed) API calls. See "Seeding example data" below.
 5. Set the health check path to `/_stcore/health`.
 6. Deploy. The `vector` extension is created automatically by the first migration.
+
+**Seeding example data for a read-only demo:** `scripts/seed_demo_data.py` downloads three real,
+open-access papers on autonomous driving from arXiv, ingests them, and runs the full pipeline
+(claims -> syntheses -> a review draft) so a `READ_ONLY_DEMO` deployment has real content to show.
+Run it once, locally, with `DATABASE_URL` pointed at your production database (not local Postgres):
+
+```bash
+DATABASE_URL=<your Neon/Supabase connection string> OPENAI_API_KEY=<your key> \
+  python scripts/seed_demo_data.py
+```
+
+It's not designed to be re-run repeatedly against the same database -- paper ingestion is
+deduplicated by file hash, but claim/synthesis/review-draft generation is not.
 
 **Why an external database:** Render's free PostgreSQL plan is a fixed-length trial -- the database is
 deleted after it expires, not just paused, regardless of activity. Neon and Supabase both have a

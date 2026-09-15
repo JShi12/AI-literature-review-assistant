@@ -26,6 +26,7 @@ services:
       OPENAI_CHAT_MODEL: ${OPENAI_CHAT_MODEL:-gpt-4.1-mini}
       OPENAI_EMBEDDING_MODEL: ${OPENAI_EMBEDDING_MODEL:-text-embedding-3-small}
       APP_PASSWORD: ${APP_PASSWORD:-}
+      READ_ONLY_DEMO: ${READ_ONLY_DEMO:-}
     ports:
       - "8501:8501"
     volumes:

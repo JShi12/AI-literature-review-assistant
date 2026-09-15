@@ -32,6 +32,17 @@ CHUNK_SIZE_OPTIONS = [1_500, 3_000, 4_000]
 CHUNK_OVERLAP_OPTIONS = [150, 250, 300]
 
 
+def is_read_only_demo() -> bool:
+    """True when READ_ONLY_DEMO is set, disabling every action that calls the OpenAI API or
+    writes to the database.
+
+    For a public deployment where the shared password might end up more widely known than
+    intended: visitors can browse pre-seeded example data, but can't trigger new (and billed)
+    API calls. No-ops (returns False) when unset, so local development is unaffected.
+    """
+    return os.getenv("READ_ONLY_DEMO", "").strip().lower() in {"1", "true", "yes"}
+
+
 def check_password() -> bool:
     """Gate the app behind a single shared password when APP_PASSWORD is set.
 
@@ -109,7 +120,9 @@ def upload_papers_tab() -> None:
     if not uploads:
         return
 
-    if st.button("Ingest PDFs", type="primary"):
+    if is_read_only_demo():
+        st.caption("Demo mode: uploading new papers is disabled. Explore the pre-loaded example instead.")
+    if st.button("Ingest PDFs", type="primary", disabled=is_read_only_demo()):
         try:
             ingested: list[str] = []
             for upload in uploads:
@@ -180,7 +193,9 @@ def claims_tab() -> None:
         "covers every paper), then in page and character-offset order within each paper."
     )
 
-    if st.button("Extract Claims", type="primary"):
+    if is_read_only_demo():
+        st.caption("Demo mode: extracting new claims is disabled.")
+    if st.button("Extract Claims", type="primary", disabled=is_read_only_demo()):
         if not ensure_openai_key():
             return
         with st.spinner("Extracting claims from chunks..."):
@@ -234,7 +249,9 @@ def syntheses_tab() -> None:
     )
     st.caption(f"Up to {claim_count} available claim(s) can be used.")
 
-    if st.button("Generate Syntheses", type="primary"):
+    if is_read_only_demo():
+        st.caption("Demo mode: generating new syntheses is disabled.")
+    if st.button("Generate Syntheses", type="primary", disabled=is_read_only_demo()):
         if not ensure_openai_key():
             return
         if not synthesis_types:
@@ -288,7 +305,9 @@ def review_drafts_tab() -> None:
         "selected by relevance to the topic above when embeddings are available."
     )
 
-    if st.button("Generate Review Draft", type="primary"):
+    if is_read_only_demo():
+        st.caption("Demo mode: generating new review drafts is disabled. Browse the example below.")
+    if st.button("Generate Review Draft", type="primary", disabled=is_read_only_demo()):
         if not ensure_openai_key():
             return
         with st.spinner("Generating review draft..."):
@@ -393,7 +412,9 @@ def database_tab() -> None:
         ]
     st.json(counts)
 
-    if st.button("Backfill Paper Metadata"):
+    if is_read_only_demo():
+        st.caption("Demo mode: modifying stored data is disabled.")
+    if st.button("Backfill Paper Metadata", disabled=is_read_only_demo()):
         try:
             with session_scope() as session:
                 updated = backfill_metadata(session, UPLOAD_DIR)

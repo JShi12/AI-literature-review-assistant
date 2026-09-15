@@ -9,6 +9,7 @@ COPY pyproject.toml README.md ./
 COPY src ./src
 COPY alembic.ini ./
 COPY alembic ./alembic
+COPY scripts ./scripts
 
 RUN pip install --no-cache-dir -e . \
     && useradd --create-home --uid 1000 appuser \
