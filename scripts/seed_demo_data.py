@@ -30,12 +30,21 @@ from lit_review_assistant.llm.claims import extract_claims_for_chunk
 from lit_review_assistant.llm.review import generate_review_draft
 from lit_review_assistant.llm.synthesis import generate_syntheses
 
-# arXiv (and many hosts) reject urllib's default "Python-urllib/x.y" User-Agent as a bot.
-DOWNLOAD_HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; lit-review-assistant-demo-seed/1.0)"}
+# arXiv (and many hosts) reject urllib's default "Python-urllib/x.y" User-Agent as a bot, and some
+# bot-detection also checks for a plausible Accept/Accept-Language profile, not just User-Agent.
+DOWNLOAD_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    ),
+    "Accept": "application/pdf,text/html,*/*",
+    "Accept-Language": "en-US,en;q=0.9",
+}
+# export.arxiv.org is arXiv's mirror explicitly intended for programmatic/bulk access.
 DEMO_PAPERS = [
-    ("https://arxiv.org/pdf/1604.07316.pdf", "nvidia_end_to_end_self_driving.pdf"),
-    ("https://arxiv.org/pdf/1812.03079.pdf", "chauffeurnet.pdf"),
-    ("https://arxiv.org/pdf/1711.03938.pdf", "carla_simulator.pdf"),
+    ("https://export.arxiv.org/pdf/1604.07316.pdf", "nvidia_end_to_end_self_driving.pdf"),
+    ("https://export.arxiv.org/pdf/1812.03079.pdf", "chauffeurnet.pdf"),
+    ("https://export.arxiv.org/pdf/1711.03938.pdf", "carla_simulator.pdf"),
 ]
 SYNTHESIS_TYPES = ["theme", "contradiction", "gap", "method_comparison", "insight"]
 REVIEW_TOPIC = "Autonomous driving: end-to-end learning, imitation learning, and simulation"
@@ -49,7 +58,10 @@ def download(url: str, path: Path, attempts: int = 3) -> None:
                 path.write_bytes(response.read())
             return
         except urllib.error.HTTPError as exc:
+            body = exc.read(500).decode("utf-8", errors="replace")
             if attempt == attempts:
+                print(f"    Final attempt failed. Response headers: {dict(exc.headers)}")
+                print(f"    Response body (first 500 bytes): {body!r}")
                 raise
             print(f"    Download attempt {attempt} failed ({exc}); retrying...")
             time.sleep(2 * attempt)
