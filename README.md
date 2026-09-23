@@ -43,7 +43,8 @@ flowchart LR
     User -->|uploads PDFs| UI["Streamlit UI (app.py)"]
     UI --> Services["services.py / pipeline/*"]
     Services --> DB[("PostgreSQL + pgvector")]
-    Services --> LLM["llm/* (claims, synthesis, review)"]
+    Services --> LLM["llm/* (claims, synthesis, review, agent)"]
+    UI -->|"Ask the Assistant tab"| LLM
     LLM -->|calls, requesting structured output| OpenAI[("OpenAI API")]
     LLM --> DB
     UI --> DB
