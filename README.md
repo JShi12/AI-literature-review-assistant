@@ -32,6 +32,9 @@ Example output — a review draft generated end to end from three real papers on
 - **Retrieval-augmented selection**: claims and syntheses are embedded (pgvector) as they're created, so
   entering a topic pulls in the claims/syntheses most semantically relevant to it instead of just the
   most recently created ones — falling back to recency automatically if no matching embeddings exist yet.
+- **Agentic orchestration**: a PydanticAI agent (the **Ask the Assistant** tab) can chain the retrieval,
+  synthesis, and review-drafting steps above from a single natural-language request, calling the same
+  underlying functions as their respective tabs and showing exactly which tools it called.
 
 ## Architecture
 
