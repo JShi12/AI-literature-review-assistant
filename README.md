@@ -62,6 +62,9 @@ PDFs -> pages -> sections -> chunks -> claims -> syntheses -> review draft
   back to recency when no matching embeddings exist yet.
 - Produce Markdown literature review drafts with numeric citations and references.
 - Store papers, chunks, claims, syntheses, review drafts, and traceability links in PostgreSQL.
+- Ask a PydanticAI agent (**Ask the Assistant** tab) to chain the retrieval/synthesis/review-drafting
+  steps above from a single natural-language request, calling the same underlying functions as their
+  respective tabs and showing which tools it called along the way.
 - Run locally with Docker Compose or a Python environment.
 
 ## Tech Stack
@@ -72,6 +75,7 @@ PDFs -> pages -> sections -> chunks -> claims -> syntheses -> review draft
 - SQLAlchemy + Alembic
 - PyMuPDF
 - Pydantic
+- PydanticAI (the **Ask the Assistant** tab's agent and tool calls)
 - OpenAI Python SDK 
   
   In the demo I used `gpt-4.1-mini` for claim/synthesis/review-draft generation, and `text-embedding-3-small` for embeddings, both configurable via `OPENAI_CHAT_MODEL` / `OPENAI_EMBEDDING_MODEL`. Different LLM models were not evaluated in this repo. 
