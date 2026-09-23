@@ -18,6 +18,7 @@ from lit_review_assistant.db.models import Chunk, Claim, Paper, ReviewDraft, Syn
 from lit_review_assistant.db.session import session_scope
 from lit_review_assistant.llm import client as llm_client
 from lit_review_assistant.llm import review as review_llm
+from lit_review_assistant.llm.agent import AgentDeps, build_agent, summarize_tool_calls
 from lit_review_assistant.llm.claims import extract_claims_for_chunk
 from lit_review_assistant.llm.embeddings import find_similar_claims, find_similar_syntheses
 from lit_review_assistant.llm.synthesis import generate_syntheses
@@ -96,6 +97,7 @@ def main() -> None:
             "Syntheses",
             "Review Drafts",
             "Database",
+            "Ask the Assistant",
         ]
     )
 
@@ -111,6 +113,8 @@ def main() -> None:
         review_drafts_tab()
     with tabs[5]:
         database_tab()
+    with tabs[6]:
+        assistant_tab()
 
 
 def upload_papers_tab() -> None:
@@ -439,6 +443,46 @@ def database_tab() -> None:
 def backfill_metadata(session: Session, upload_dir: Path) -> int:
     """Backfill missing paper title/author/year metadata for already-ingested papers."""
     return services.backfill_paper_metadata(session, upload_dir)
+
+
+def assistant_tab() -> None:
+    st.caption(
+        "Ask the assistant to find relevant claims or syntheses, generate new syntheses, or draft a "
+        "review -- it decides which of the pipeline steps above to run, in what order, using the "
+        "same underlying functions as their respective tabs."
+    )
+    prompt = st.text_area(
+        "What do you want to do?",
+        value="",
+        placeholder="e.g. Find claims about transformer architectures and draft a short review.",
+    )
+
+    if is_read_only_demo():
+        st.caption(
+            "Demo mode: the assistant is disabled here since it can call the OpenAI API and write to the database."
+        )
+    if st.button("Ask", type="primary", disabled=is_read_only_demo()):
+        if not ensure_openai_key():
+            return
+        if not prompt.strip():
+            st.warning("Enter a request first.")
+            return
+        with st.spinner("Working..."):
+            try:
+                with session_scope() as session:
+                    agent = build_agent()
+                    result = agent.run_sync(prompt, deps=AgentDeps(session=session))
+                    tool_calls = summarize_tool_calls(result)
+                    answer = result.output
+                st.markdown(answer)
+                if tool_calls:
+                    with st.expander(f"Tool calls made ({len(tool_calls)})"):
+                        for call in tool_calls:
+                            st.write(f"**{call.tool_name}**")
+                            st.json(call.args)
+            except Exception as exc:
+                logger.exception("Assistant run failed")
+                st.error(f"Assistant run failed: {describe_error(exc)}")
 
 
 if __name__ == "__main__":

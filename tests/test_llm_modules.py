@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-import httpx
+import httpx2
 from openai import APIStatusError
 
 from lit_review_assistant.llm.claims import build_claim_extraction_input, persist_extracted_claims
@@ -474,7 +474,7 @@ def test_llm_result_carries_run_metadata() -> None:
 
 
 def test_describe_openai_error_expands_permission_denied() -> None:
-    response = httpx.Response(403, request=httpx.Request("POST", "https://api.openai.com/v1/responses"))
+    response = httpx2.Response(403, request=httpx2.Request("POST", "https://api.openai.com/v1/responses"))
     exc = APIStatusError(
         "Error code: 403",
         response=response,
