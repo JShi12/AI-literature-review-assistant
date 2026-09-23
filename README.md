@@ -56,6 +56,10 @@ Data flows through the pipeline in stages, each persisted for traceability:
 PDFs -> pages -> sections -> chunks -> claims -> syntheses -> review draft
 ```
 
+From claims onward, these stages can be driven either by hand (the Claims/Syntheses/Review Drafts
+tabs) or by the **Ask the Assistant** agent from a single natural-language request — either way, the
+same underlying functions run and the same data is persisted.
+
 ## Features
 
 - Upload and ingest academic PDFs.
