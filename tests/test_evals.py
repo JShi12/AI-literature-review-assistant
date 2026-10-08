@@ -8,8 +8,18 @@ from pathlib import Path
 
 import pytest
 from pydantic import BaseModel
+from pydantic_ai.messages import (
+    ModelRequest,
+    ModelResponse,
+    TextPart,
+    ToolCallPart,
+    ToolReturnPart,
+    UserPromptPart,
+)
+from pydantic_ai.models.test import TestModel
 
 from evals import run as eval_run
+from evals.agent_eval import AgentCase, RecordingModel, check_trajectory, reports_results, run_agent_stage, tool_results
 from evals.calibrate import agreement, cohen_kappa
 from evals.gate import compare, config_mismatches, gated_metrics, write_baseline
 from evals.gold import GoldHeading, RetrievalQuery, locate_line
@@ -363,6 +373,9 @@ def test_eval_run_end_to_end_records_then_replays(tmp_path: Path, monkeypatch: p
         str(tmp_path / "reports"),
         "--limit",
         "0",
+        # The agent stage has its own offline test; here it would need a fake agent model too.
+        "--stop-after",
+        "review",
     ]
 
     assert eval_run.main(common) == 0
@@ -626,3 +639,76 @@ def test_gate_refuses_to_compare_runs_with_different_settings(tmp_path: Path) ->
     assert config_mismatches(report, json.loads(baseline_path.read_text())) == [
         "prompt_versions: baseline ['claims.v2'], report ['claims.v3']"
     ]
+
+
+CLAIM_A = "11111111-1111-4111-8111-111111111111"
+INVENTED = "99999999-9999-4999-8999-999999999999"
+
+
+def _conversation(generate_args: dict, output: str = "Done.") -> list:
+    return [
+        ModelRequest(parts=[UserPromptPart("Find gaps")]),
+        ModelResponse(parts=[ToolCallPart("find_claims", {"topic": "gaps"}, tool_call_id="1")]),
+        ModelRequest(
+            parts=[
+                ToolReturnPart(
+                    "find_claims",
+                    [{"claim_id": CLAIM_A, "paper_id": "p", "text": "The network learns to steer from camera pixels"}],
+                    tool_call_id="1",
+                )
+            ]
+        ),
+        ModelResponse(parts=[ToolCallPart("generate_new_syntheses", generate_args, tool_call_id="2")]),
+        ModelRequest(parts=[ToolReturnPart("generate_new_syntheses", [], tool_call_id="2")]),
+        ModelResponse(parts=[TextPart(output)]),
+    ]
+
+
+def test_check_trajectory_scores_tools_order_type_and_invented_ids() -> None:
+    case = AgentCase(
+        id="c",
+        prompt="p",
+        must_call=["find_claims", "generate_new_syntheses"],
+        must_not_call=["generate_draft"],
+        order=[["find_claims", "generate_new_syntheses"]],
+        synthesis_type="gap",
+    )
+
+    good = check_trajectory(case, _conversation({"claim_ids": [CLAIM_A], "synthesis_type": "gap"}), "Saved.")
+    bad = check_trajectory(case, _conversation({"claim_ids": [CLAIM_A, INVENTED], "synthesis_type": "theme"}), "")
+
+    assert good["passed"] and good["n_tool_calls"] == 2
+    assert not bad["passed"]
+    assert bad["invented_ids"] == [INVENTED]
+    assert bad["checks"]["synthesis_type gap"] is False
+    assert bad["checks"]["find_claims before generate_new_syntheses"] is True
+
+
+def test_reports_results_needs_an_id_title_or_the_substance_of_a_result() -> None:
+    results = tool_results(_conversation({"claim_ids": [CLAIM_A], "synthesis_type": "gap"}))
+
+    assert reports_results(f"See claim {CLAIM_A}.", results)
+    assert reports_results("We found that the network learns to steer from camera pixels.", results)
+    assert not reports_results("I looked into it and found some relevant material.", results)
+
+
+class _FailingModel(TestModel):
+    async def request(self, *args, **kwargs):  # type: ignore[override]
+        raise AssertionError("replay must not call the wrapped model")
+
+
+def test_agent_stage_records_then_replays_without_calling_the_model(tmp_path: Path) -> None:
+    claims = [Claim(id=CLAIM_A, claim_text="We steer from pixels", chunk_id="c", paper_id="p")]
+    cases = [AgentCase(id="lookup", prompt="What do we know about steering?", must_call=["find_claims"])]
+    embeddings = FakeEmbeddingsClient()
+
+    def run(mode: str, wrapped: TestModel) -> list[dict]:
+        model = RecordingModel("test-model", mode=mode, recordings_dir=tmp_path, wrapped=wrapped)  # type: ignore[arg-type]
+        return run_agent_stage(cases, claims, [], model, FakePipelineLLM(), embeddings)
+
+    recorded = run("record", TestModel(call_tools=["find_claims"]))
+    replayed = run("replay", _FailingModel())
+
+    assert recorded[0]["checks"]["calls find_claims"] is True
+    assert [call["tool"] for call in replayed[0]["tool_calls"]] == ["find_claims"]
+    assert replayed[0]["output"] == recorded[0]["output"]

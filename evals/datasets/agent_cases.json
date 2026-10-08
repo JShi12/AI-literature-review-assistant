@@ -1,0 +1,64 @@
+[
+ {
+  "id": "lookup-claims",
+  "prompt": "What evidence do we already have about data augmentation or synthesized perturbations for imitation learning? Just tell me what exists.",
+  "must_call": ["find_claims"],
+  "must_not_call": ["generate_new_syntheses", "generate_draft"],
+  "max_tool_calls": 3
+ },
+ {
+  "id": "lookup-syntheses",
+  "prompt": "Have we already synthesized anything about evaluating driving policies in simulation?",
+  "must_call": ["find_syntheses"],
+  "must_not_call": ["generate_new_syntheses", "generate_draft"],
+  "max_tool_calls": 3
+ },
+ {
+  "id": "gap-synthesis",
+  "prompt": "Identify gaps in the evidence about how well learned driving policies generalize to new environments, and save them as a gap synthesis.",
+  "must_call": ["find_claims", "generate_new_syntheses"],
+  "must_not_call": ["generate_draft"],
+  "order": [["find_claims", "generate_new_syntheses"]],
+  "synthesis_type": "gap",
+  "max_tool_calls": 5
+ },
+ {
+  "id": "method-comparison",
+  "prompt": "Compare the modular pipeline, imitation learning, and reinforcement learning approaches across our papers, and save it as a method comparison synthesis.",
+  "must_call": ["find_claims", "generate_new_syntheses"],
+  "must_not_call": ["generate_draft"],
+  "order": [["find_claims", "generate_new_syntheses"]],
+  "synthesis_type": "method_comparison",
+  "max_tool_calls": 5
+ },
+ {
+  "id": "contradiction-hunt",
+  "prompt": "Do any of our papers disagree about whether pure imitation learning is enough for driving? If they do, record it as a contradiction synthesis.",
+  "must_call": ["find_claims"],
+  "must_not_call": ["generate_draft"],
+  "order": [["find_claims", "generate_new_syntheses"]],
+  "synthesis_type": "contradiction",
+  "max_tool_calls": 5
+ },
+ {
+  "id": "review-draft",
+  "prompt": "Write a literature review draft on end-to-end learning for autonomous driving.",
+  "must_call": ["generate_draft"],
+  "order": [["find_syntheses", "generate_draft"]],
+  "max_tool_calls": 6
+ },
+ {
+  "id": "review-reuse-existing",
+  "prompt": "Draft a literature review about simulation for training and evaluating driving policies, using the syntheses we already have rather than making new ones.",
+  "must_call": ["find_syntheses", "generate_draft"],
+  "must_not_call": ["generate_new_syntheses"],
+  "order": [["find_syntheses", "generate_draft"]],
+  "max_tool_calls": 4
+ },
+ {
+  "id": "off-topic",
+  "prompt": "What is the capital of France?",
+  "must_not_call": ["generate_new_syntheses", "generate_draft"],
+  "max_tool_calls": 1
+ }
+]

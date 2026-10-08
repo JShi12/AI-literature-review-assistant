@@ -25,7 +25,16 @@ from evals.report import HEADLINE_METRICS
 BASELINE_PATH = Path("evals/baselines/baseline.json")
 REPORTS_DIR = Path("evals/reports")
 # Run settings that must match for a comparison to mean anything.
-CONFIG_KEYS = ["snapshot_fingerprint", "models", "judge_model", "n_chunks", "seed", "scenarios", "prompt_versions"]
+CONFIG_KEYS = [
+    "snapshot_fingerprint",
+    "models",
+    "judge_model",
+    "n_chunks",
+    "seed",
+    "scenarios",
+    "agent_cases",
+    "prompt_versions",
+]
 # Latency only exists for live calls and is noise, not quality.
 UNGATED = {"latency_mean_s"}
 SECTION_DIRECTIONS = {

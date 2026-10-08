@@ -11,6 +11,16 @@
    "driving-overview",
    "simulation-and-data"
   ],
+  "agent_cases": [
+   "lookup-claims",
+   "lookup-syntheses",
+   "gap-synthesis",
+   "method-comparison",
+   "contradiction-hunt",
+   "review-draft",
+   "review-reuse-existing",
+   "off-topic"
+  ],
   "prompt_versions": [
    "claims.v2",
    "synthesis.v2",
@@ -18,6 +28,10 @@
   ]
  },
  "metrics": {
+  "gpt-4.1-mini/agent/answer_reports_results_rate": 1.0,
+  "gpt-4.1-mini/agent/check_pass_rate": 0.977,
+  "gpt-4.1-mini/agent/invented_id_case_rate": 0.0,
+  "gpt-4.1-mini/agent/pass_rate": 0.875,
   "gpt-4.1-mini/claims/errors": 0,
   "gpt-4.1-mini/claims/gold_f1": 0.813,
   "gpt-4.1-mini/claims/gold_precision": 0.791,
@@ -58,13 +72,17 @@
   "gpt-4.1-mini/synthesis/multi_paper_rate": 0.909,
   "gpt-4.1-mini/synthesis/type_match_rate": 1.0,
   "gpt-4.1-mini/synthesis/unsupported_rate": 0.0,
-  "gpt-4.1-mini/usage/cost_usd": 0.0528248,
+  "gpt-4.1-mini/usage/cost_usd": 0.0599088,
   "sections/chunk_type_accuracy": 0.861,
   "sections/heading_precision": 1.0,
   "sections/heading_recall": 0.986,
   "sections/matched_type_accuracy": 0.957
  },
  "directions": {
+  "gpt-4.1-mini/agent/answer_reports_results_rate": "up",
+  "gpt-4.1-mini/agent/check_pass_rate": "up",
+  "gpt-4.1-mini/agent/invented_id_case_rate": "down",
+  "gpt-4.1-mini/agent/pass_rate": "up",
   "gpt-4.1-mini/claims/errors": "down",
   "gpt-4.1-mini/claims/gold_f1": "up",
   "gpt-4.1-mini/claims/gold_precision": "up",

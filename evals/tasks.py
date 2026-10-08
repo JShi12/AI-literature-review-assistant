@@ -46,6 +46,7 @@ from lit_review_assistant.pipeline.pdf import PageText
 from lit_review_assistant.pipeline.quotes import strip_control_chars
 from lit_review_assistant.pipeline.sections import detect_sections
 from lit_review_assistant.pipeline.support import ClaimSupport, calculate_support_counts
+from lit_review_assistant.schemas import GeneratedSynthesis
 
 
 @dataclass(frozen=True)
@@ -291,6 +292,32 @@ def select_claim_pool(claims: Sequence[Claim], limit: int) -> list[Claim]:
     return pool
 
 
+def build_syntheses(
+    generated: Sequence[GeneratedSynthesis], claims_by_id: Mapping[str, Claim], id_prefix: str
+) -> list[Synthesis]:
+    """Build Synthesis objects the way persist_generated_syntheses does: unknown claim ids are dropped and
+    support counts recomputed from the claims that remain. Ids are stable so replayed prompts match."""
+    built = []
+    for index, item in enumerate(generated):
+        supporting = [
+            claims_by_id[claim_id] for claim_id in dict.fromkeys(item.supporting_claim_ids) if claim_id in claims_by_id
+        ]
+        counts = calculate_support_counts([ClaimSupport(claim.id, claim.paper_id) for claim in supporting])
+        synthesis = Synthesis(
+            id=stable_id("synthesis", f"{id_prefix}:{index}"),
+            synthesis_type=item.synthesis_type,
+            title=item.title,
+            body=item.body,
+            supporting_papers=counts.supporting_papers,
+            supporting_claims=counts.supporting_claims,
+            confidence=Decimal(str(item.confidence)).quantize(Decimal("0.001")),
+            run_id="eval",
+        )
+        synthesis.claims = supporting
+        built.append(synthesis)
+    return built
+
+
 def run_synthesis_stage(
     scenario: Scenario, claim_pool: Sequence[Claim], llm: StructuredLLM, judge: StructuredLLM | None = None
 ) -> tuple[list[dict[str, Any]], list[Synthesis]]:
@@ -318,31 +345,14 @@ def run_synthesis_stage(
             continue
 
         generated = result.parsed.syntheses
+        built = build_syntheses(generated, claims_by_id, id_prefix=f"{scenario.id}:{synthesis_type}")
         per_synthesis = []
-        for index, item in enumerate(generated):
+        for item, synthesis in zip(generated, built, strict=True):
             per_synthesis.append({"title": item.title, **synthesis_metrics(item, synthesis_type, paper_id_by_claim_id)})
-            supporting = [
-                claims_by_id[claim_id]
-                for claim_id in dict.fromkeys(item.supporting_claim_ids)
-                if claim_id in claims_by_id
-            ]
-            counts = calculate_support_counts([ClaimSupport(claim.id, claim.paper_id) for claim in supporting])
-            synthesis = Synthesis(
-                id=stable_id("synthesis", f"{scenario.id}:{synthesis_type}:{index}"),
-                synthesis_type=item.synthesis_type,
-                title=item.title,
-                body=item.body,
-                supporting_papers=counts.supporting_papers,
-                supporting_claims=counts.supporting_claims,
-                confidence=Decimal(str(item.confidence)).quantize(Decimal("0.001")),
-                run_id="eval",
-            )
-            synthesis.claims = supporting
-            syntheses.append(synthesis)
             if judge is not None:
-                per_synthesis[-1].update(
-                    judge_one_synthesis(item.synthesis_type, item.title, item.body, supporting, judge)
-                )
+                judgment = judge_one_synthesis(item.synthesis_type, item.title, item.body, synthesis.claims, judge)
+                per_synthesis[-1].update(judgment)
+        syntheses.extend(built)
         cases.append({**case, "n_syntheses": len(generated), "syntheses": per_synthesis})
     return cases, syntheses
 

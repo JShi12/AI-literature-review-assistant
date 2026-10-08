@@ -1,0 +1,46 @@
+{
+ "model": "gpt-4.1-mini",
+ "response": {
+  "parts": [
+   {
+    "tool_name": "find_syntheses",
+    "args": "{\"topic\":\"simulation for training and evaluating driving policies\",\"limit\":10}",
+    "tool_call_id": "call_g1r7trpFJ6qq2LK3DumWafIR",
+    "tool_kind": null,
+    "id": "fc_01fba1548eece187006ac7971d5c9487d2a5148418b837251f",
+    "provider_name": "openai",
+    "provider_details": null,
+    "part_kind": "tool-call"
+   }
+  ],
+  "usage": {
+   "input_tokens": 370,
+   "cache_write_tokens": 0,
+   "cache_read_tokens": 0,
+   "output_tokens": 27,
+   "input_audio_tokens": 0,
+   "cache_audio_read_tokens": 0,
+   "output_audio_tokens": 0,
+   "details": {
+    "reasoning_tokens": 0
+   },
+   "cost": null,
+   "output_reasoning_tokens": 0
+  },
+  "model_name": "gpt-4.1-mini-2025-04-14",
+  "timestamp": "2026-10-08T13:14:05.937305Z",
+  "kind": "response",
+  "provider_name": "openai",
+  "provider_url": "https://api.openai.com/v1/",
+  "provider_details": {
+   "finish_reason": "completed",
+   "timestamp": "2026-10-08T13:14:04Z"
+  },
+  "provider_response_id": "resp_01fba1548eece187006ac7971ceae487d2a344917c00e64806",
+  "finish_reason": "stop",
+  "run_id": null,
+  "conversation_id": null,
+  "metadata": null,
+  "state": "complete"
+ }
+}

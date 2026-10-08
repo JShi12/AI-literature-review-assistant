@@ -1,0 +1,33 @@
+{
+ "key": "490c9853c9ad61a9dcdbc67cdd3dab74c99f21c6dfd16b1583a508db0e1175ac",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "synthesis.v2",
+ "temperature": 0.2,
+ "input_tokens": 1489,
+ "output_tokens": 632,
+ "latency_s": 6.45,
+ "recorded_at": "2026-10-08T13:13:33+00:00",
+ "parsed": {
+  "syntheses": [
+   {
+    "synthesis_type": "method_comparison",
+    "title": "Comparison of Modular Pipeline and Imitation Learning Performance in Autonomous Driving",
+    "body": "Paper A compares the modular pipeline and imitation learning approaches, finding their performance differs by less than 10% (claim 32a49fa0-8395-506b-9794-efc1f7fa2a8f). The modular pipeline shows bimodal performance depending on perception stack success (claim 878110a6-7623-50b9-ab7c-962de08a0fea) and underperforms in navigation tasks in new town and new weather conditions (claim 7d810d97-44b8-5100-a86d-c8d16cb6be0a), with failures linked to perception stack issues under complex weather (claim 56269aff-3ea5-551f-8de8-8c658e1870fe). Paper B focuses on imitation learning improvements, showing that imitation dropout is more effective than re-weighting imitation losses (claims fab08fe9-9a3f-574a-80b1-ef95478330f6 and f1f0ef71-20f9-593d-a66f-3cf2bb27c155). However, pure imitation learning is insufficient even with large datasets and mid-level representations (claims 639f88c8-001d-587a-bae9-390fb3c89dcf and 09081b52-e1ad-5843-9bbc-8565cf5aea59). Mid-level representations facilitate training on simulated or real data and closed-loop testing (claim 5fc32090-a96e-5352-b867-05795d95ae56). Thus, the two papers provide complementary insights into modular pipeline and imitation learning methods, highlighting strengths and limitations in performance and training strategies.",
+    "supporting_claim_ids": [
+     "32a49fa0-8395-506b-9794-efc1f7fa2a8f",
+     "878110a6-7623-50b9-ab7c-962de08a0fea",
+     "7d810d97-44b8-5100-a86d-c8d16cb6be0a",
+     "56269aff-3ea5-551f-8de8-8c658e1870fe",
+     "fab08fe9-9a3f-574a-80b1-ef95478330f6",
+     "f1f0ef71-20f9-593d-a66f-3cf2bb27c155",
+     "639f88c8-001d-587a-bae9-390fb3c89dcf",
+     "09081b52-e1ad-5843-9bbc-8565cf5aea59",
+     "5fc32090-a96e-5352-b867-05795d95ae56"
+    ],
+    "supporting_papers": 2,
+    "supporting_claims": 9,
+    "confidence": 0.95
+   }
+  ]
+ }
+}
