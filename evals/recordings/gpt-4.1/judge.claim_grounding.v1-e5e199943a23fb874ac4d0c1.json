@@ -1,0 +1,54 @@
+{
+ "key": "e5e199943a23fb874ac4d0c1574718857cafd736452259d9285a4660b02064d3",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 902,
+ "output_tokens": 456,
+ "latency_s": 2.555,
+ "recorded_at": "2026-10-08T10:30:34+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage explicitly states: 'The memory Mk is an additive memory consisting of a single channel image.'",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage says: 'At iteration k of the AgentRNN, the memory is incremented by 1 at the location pk predicted by the AgentRNN, and this memory is then fed to the next iteration.' This matches the claim exactly.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 3,
+    "reason": "The passage states: 'The AgentRNN outputs a heatmap image over the next pose of the agent, and we use the arg-max operation to obtain the coarse pose prediction pk from this heatmap.' This is a direct restatement.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 4,
+    "reason": "The passage says: 'The AgentRNN then employs a shallow convolutional meta-prediction network with a fully-connected layer that predicts a sub-pixel refinement of the pose δpk and also estimates the heading θk and the speed sk.' This matches the claim.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 5,
+    "reason": "The passage states: 'the AgentRNN is unrolled at training time for a fixed number of iterations, and the losses described below are summed together over the unrolled iterations.' This is directly supported.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 6,
+    "reason": "The passage says: 'This is possible because of the non-traditional RNN design where we employ an explicitly crafted memory model instead of a learned memory.' This matches the claim.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 7,
+    "reason": "The passage states: 'At each time, the updated state of our agent and the environment is obtained via a perception system that processes sensory output from the real-world or from a simulation environment as the case may be.' This is a direct restatement.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 8,
+    "reason": "The passage says: 'The intended route is obtained from the router, and is updated dynamically conditioned on whether our agent was able to execute past intents or not.' This matches the claim.",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

@@ -1,0 +1,59 @@
+{
+ "key": "b1756f04f05dc0eafbd6fa211fc2e4722ade0518489c4346205c085e1f871900",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 793,
+ "output_tokens": 360,
+ "latency_s": 2.458,
+ "recorded_at": "2026-10-08T10:30:29+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage and Figure 3 caption state that the trained network is used to generate steering commands from a single front-facing center camera.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage explicitly says that training data was collected by driving on a wide variety of roads and in a diverse set of lighting and weather conditions.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 3,
+    "reason": "The passage states that most road data was collected in central New Jersey, and highway data was also collected from Illinois, Michigan, Pennsylvania, and New York.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 4,
+    "reason": "The passage lists other road types as including two-lane roads (with and without lane markings), residential roads with parked cars, tunnels, and unpaved roads.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 5,
+    "reason": "The passage says data was collected in clear, cloudy, foggy, snowy, and rainy weather, both day and night.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 6,
+    "reason": "The passage states that in some instances, the sun was low in the sky, resulting in glare reflecting from the road surface and scattering from the windshield.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 7,
+    "reason": "The passage says data was acquired using either a 2016 Lincoln MKZ or a 2013 Ford Focus with cameras placed in similar positions to those in the Lincoln.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 8,
+    "reason": "The passage explicitly states that the system has no dependencies on any particular vehicle make or model.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 9,
+    "reason": "The passage says drivers were encouraged to maintain full attentiveness, but otherwise drive as they usually do.",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

@@ -1,0 +1,19 @@
+{
+ "key": "57e8d56f3e514b74ba86bcef235521771ee9c13c40e360f620d603908aea1d7c",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 451,
+ "output_tokens": 73,
+ "latency_s": 1.843,
+ "recorded_at": "2026-10-08T10:30:28+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The claim is a direct restatement of the passage: 'The simulator takes pre-recorded videos from a forward-facing on-board camera on a human-driven data-collection vehicle and generates images that approximate what would appear if the CNN were, instead, steering the vehicle.'",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

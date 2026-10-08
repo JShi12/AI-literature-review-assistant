@@ -1,0 +1,24 @@
+{
+ "key": "1441e1494904bdce27dcfb819708d31157f123cc6c86f7dec6b2e7ccb10dff86",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 534,
+ "output_tokens": 89,
+ "latency_s": 1.298,
+ "recorded_at": "2026-10-08T10:30:41+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The claim accurately lists the five types of infractions and states that approaches are characterized by average distance travelled between these infractions, which matches the passage exactly.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The claim directly restates the passage's explanation about violation duration and the example given (10 seconds on sidewalk = 5 violations).",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

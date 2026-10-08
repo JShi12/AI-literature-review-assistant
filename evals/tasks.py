@@ -19,6 +19,7 @@ from openai import APIError
 from sqlalchemy.orm import Session
 
 from evals.gold import GoldClaim, GoldHeading, RetrievalQuery
+from evals.judges import CitedClaim, judge_claims, judge_review_citations, judge_synthesis
 from evals.llm_cache import RecordingMissError
 from evals.metrics import (
     chunk_claims_metrics,
@@ -42,6 +43,7 @@ from lit_review_assistant.llm.review import (
 from lit_review_assistant.llm.synthesis import SynthesisType, request_syntheses
 from lit_review_assistant.pipeline.chunking import chunk_pages_with_sections
 from lit_review_assistant.pipeline.pdf import PageText
+from lit_review_assistant.pipeline.quotes import strip_control_chars
 from lit_review_assistant.pipeline.sections import detect_sections
 from lit_review_assistant.pipeline.support import ClaimSupport, calculate_support_counts
 
@@ -80,6 +82,24 @@ def describe_error(exc: Exception) -> dict[str, Any]:
     # (A third kind, "upstream", marks a case skipped because an earlier stage produced nothing to use.)
     infra = isinstance(exc, RecordingMissError | APIError)
     return {"error": f"{type(exc).__name__}: {exc}"[:500], "error_kind": "infra" if infra else "model"}
+
+
+def to_cited(claim: Claim) -> CitedClaim:
+    return CitedClaim(paper=claim.paper.title or claim.paper.paper_key, text=claim.claim_text)
+
+
+def judge_one_synthesis(
+    synthesis_type: str, title: str, body: str, supporting: Sequence[Claim], judge: StructuredLLM
+) -> dict[str, Any]:
+    try:
+        judgment = judge_synthesis(synthesis_type, title, body, [to_cited(claim) for claim in supporting], judge)
+    except Exception as exc:
+        return {"judge_error": describe_error(exc)}
+    return {
+        "judge_faithfulness": judgment.faithfulness,
+        "judge_type_appropriate": judgment.type_appropriate,
+        "judge_unsupported_statements": judgment.unsupported_statements,
+    }
 
 
 # --- ORM conversion -------------------------------------------------------------------------------
@@ -147,6 +167,7 @@ def run_claims_stage(
     llm: StructuredLLM,
     workers: int = 4,
     gold: Mapping[str, list[GoldClaim]] | None = None,
+    judge: StructuredLLM | None = None,
 ) -> ClaimsStageResult:
     papers = {paper.key: to_orm_paper(paper) for paper in snapshot.papers}
 
@@ -172,6 +193,16 @@ def run_claims_stage(
             # Each predicted claim is matched by the source passage it was located at.
             predicted = [(claim["span_text"], claim["claim_type"]) for claim in metrics["claims"]]
             metrics["gold"] = gold_claim_metrics(predicted, gold_pairs, chunk.text)
+
+        if judge is not None and extracted:
+            try:
+                verdicts = judge_claims(
+                    strip_control_chars(chunk.text), [claim.claim_text for claim in extracted], judge
+                )
+                for claim_case, verdict in zip(metrics["claims"], verdicts, strict=True):
+                    claim_case["judge"] = verdict
+            except Exception as exc:
+                metrics["judge_error"] = describe_error(exc)
 
         accepted: list[Claim] = []
         if not metrics["rejected"]:
@@ -261,7 +292,7 @@ def select_claim_pool(claims: Sequence[Claim], limit: int) -> list[Claim]:
 
 
 def run_synthesis_stage(
-    scenario: Scenario, claim_pool: Sequence[Claim], llm: StructuredLLM
+    scenario: Scenario, claim_pool: Sequence[Claim], llm: StructuredLLM, judge: StructuredLLM | None = None
 ) -> tuple[list[dict[str, Any]], list[Synthesis]]:
     claims_by_id = {claim.id: claim for claim in claim_pool}
     paper_id_by_claim_id = {claim.id: claim.paper_id for claim in claim_pool}
@@ -308,12 +339,20 @@ def run_synthesis_stage(
             )
             synthesis.claims = supporting
             syntheses.append(synthesis)
+            if judge is not None:
+                per_synthesis[-1].update(
+                    judge_one_synthesis(item.synthesis_type, item.title, item.body, supporting, judge)
+                )
         cases.append({**case, "n_syntheses": len(generated), "syntheses": per_synthesis})
     return cases, syntheses
 
 
 def run_review_stage(
-    scenario: Scenario, syntheses: Sequence[Synthesis], all_claims: Sequence[Claim], llm: StructuredLLM
+    scenario: Scenario,
+    syntheses: Sequence[Synthesis],
+    all_claims: Sequence[Claim],
+    llm: StructuredLLM,
+    judge: StructuredLLM | None = None,
 ) -> dict[str, Any]:
     case: dict[str, Any] = {"scenario": scenario.id, "topic": scenario.topic, "n_input_syntheses": len(syntheses)}
     if not syntheses:
@@ -331,8 +370,22 @@ def run_review_stage(
     final = apply_academic_citations(raw, syntheses, extra_claims=extra_claims)
     citation_map = build_citation_map(syntheses, extra_claims=extra_claims)
 
+    judged: dict[str, Any] = {}
+    if judge is not None:
+        cited_sentences = [
+            (sentence.sentence_text, [to_cited(claims_by_id[i]) for i in ids if i in claims_by_id])
+            for sentence in raw.sentences
+            if (ids := list(dict.fromkeys(sentence.supporting_claim_ids)))
+            and any(claim_id in claims_by_id for claim_id in ids)
+        ]
+        try:
+            judged["judge_citation_verdicts"] = judge_review_citations(cited_sentences, judge)
+        except Exception as exc:
+            judged["judge_error"] = describe_error(exc)
+
     return {
         **case,
+        **judged,
         **review_metrics(raw, final.markdown, citation_map.values(), known_claim_ids=set(claims_by_id)),
         "title": final.title,
         "markdown": final.markdown,

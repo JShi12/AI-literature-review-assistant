@@ -1,0 +1,41 @@
+{
+ "key": "16a4292ce55ad5ceca9a0e2484cb7f4b0845f476355335db027f7d6e9139c569",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.synthesis.v2",
+ "temperature": 0.0,
+ "input_tokens": 867,
+ "output_tokens": 245,
+ "latency_s": 1.944,
+ "recorded_at": "2026-10-08T10:32:39+00:00",
+ "parsed": {
+  "statements": [
+   {
+    "statement": "CARLA is an open-source urban driving simulator widely used for autonomous driving research.",
+    "supporting_claims": [],
+    "supported": false
+   },
+   {
+    "statement": "It supports development, training, prototyping, and validation of autonomous driving models including perception and control.",
+    "supporting_claims": [],
+    "supported": false
+   },
+   {
+    "statement": "CARLA provides flexible specification of sensor suites and environmental conditions.",
+    "supporting_claims": [],
+    "supported": false
+   },
+   {
+    "statement": "CARLA includes free digital assets such as urban layouts, buildings, vehicles, pedestrians, and street signs created by a dedicated team of digital artists.",
+    "supporting_claims": [],
+    "supported": false
+   },
+   {
+    "statement": "It enables controlled scenario evaluation of multiple autonomous driving approaches including classic modular pipelines, end-to-end imitation learning, and reinforcement learning.",
+    "supporting_claims": [],
+    "supported": false
+   }
+  ],
+  "type_evidence": "none",
+  "type_appropriate": false
+ }
+}

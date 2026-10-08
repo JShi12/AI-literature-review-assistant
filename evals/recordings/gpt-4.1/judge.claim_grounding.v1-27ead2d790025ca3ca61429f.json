@@ -1,0 +1,29 @@
+{
+ "key": "27ead2d790025ca3ca61429fc87a8656a70212fa53512dd8049463b4b4c12d1d",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 697,
+ "output_tokens": 154,
+ "latency_s": 2.136,
+ "recorded_at": "2026-10-08T10:30:34+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage explicitly states 'We employ L1 loss for both of these outputs' and provides the corresponding equations.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage states 'During training, the model is provided the past motion history as one of the inputs (Fig. 1(g)).' This matches the claim exactly.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 3,
+    "reason": "The passage says 'we introduce a dropout on the past pose history, where for 50% of the examples, we keep only the current position (u0, v0) of the agent in the past agent poses channel of the input data.' This matches the claim.",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

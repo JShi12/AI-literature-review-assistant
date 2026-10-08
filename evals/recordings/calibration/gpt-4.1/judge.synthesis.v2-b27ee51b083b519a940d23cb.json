@@ -1,0 +1,50 @@
+{
+ "key": "b27ee51b083b519a940d23cbd4824ed6419fce805ba307540f6ccb8d8cc8c917",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.synthesis.v2",
+ "temperature": 0.0,
+ "input_tokens": 1040,
+ "output_tokens": 263,
+ "latency_s": 2.662,
+ "recorded_at": "2026-10-08T10:32:02+00:00",
+ "parsed": {
+  "statements": [
+   {
+    "statement": "Mid-level representations and closed-loop simulation testing are employed to facilitate training and deployment of autonomous driving models.",
+    "supporting_claims": [
+     1,
+     2
+    ],
+    "supported": true
+   },
+   {
+    "statement": "There remains a significant limitation due to error accumulation and distribution shift during closed-loop operation.",
+    "supporting_claims": [
+     3
+    ],
+    "supported": true
+   },
+   {
+    "statement": "This limitation contributes to failures such as the model getting stuck or colliding with parked vehicles despite viable passing options.",
+    "supporting_claims": [
+     4
+    ],
+    "supported": true
+   },
+   {
+    "statement": "Pure imitation learning approaches have been found insufficient even with large datasets and mid-level input/output representations.",
+    "supporting_claims": [
+     5
+    ],
+    "supported": true
+   },
+   {
+    "statement": "Current methods do not adequately address these challenges, indicating a gap in effective strategies to mitigate error accumulation and distribution shift in closed-loop imitation learning for autonomous driving.",
+    "supporting_claims": [],
+    "supported": false
+   }
+  ],
+  "type_evidence": "none",
+  "type_appropriate": false
+ }
+}

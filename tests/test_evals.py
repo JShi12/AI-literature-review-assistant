@@ -10,7 +10,20 @@ import pytest
 from pydantic import BaseModel
 
 from evals import run as eval_run
+from evals.calibrate import agreement, cohen_kappa
 from evals.gold import GoldHeading, RetrievalQuery, locate_line
+from evals.judges import (
+    CitedClaim,
+    ClaimGroundingJudgments,
+    ClaimJudgment,
+    ReviewCitationJudgments,
+    SentenceCheck,
+    StatementCheck,
+    SynthesisJudgment,
+    judge_claims,
+    judge_review_citations,
+    support_from_checks,
+)
 from evals.llm_cache import RecordingEmbeddings, RecordingLLM, RecordingMissError
 from evals.metrics import (
     cited_numbers,
@@ -94,6 +107,34 @@ class FakePipelineLLM:
                     ClaimCandidate(
                         claim_text="Invented", claim_type="finding", source_quote="no such text here", confidence=0.5
                     ),
+                ]
+            )
+        elif text_format is ClaimGroundingJudgments:
+            n_claims = len(re.findall(r"^\d+\. ", input_text.split("Claims:\n", 1)[1], flags=re.MULTILINE))
+            parsed = ClaimGroundingJudgments(
+                judgments=[
+                    ClaimJudgment(claim_number=n, reason="r", verdict="supported") for n in range(1, n_claims + 1)
+                ]
+            )
+        elif text_format is SynthesisJudgment:
+            parsed = SynthesisJudgment(
+                statements=[
+                    StatementCheck(statement="a", supporting_claims=[1], supported=True),
+                    StatementCheck(statement="b", supporting_claims=[1], supported=True),
+                    StatementCheck(statement="c", supporting_claims=[], supported=False),
+                ],
+                type_evidence="claims 1 and 2",
+                type_appropriate=True,
+            )
+        elif text_format is ReviewCitationJudgments:
+            n_sentences = len(re.findall(r"^\d+\. Sentence:", input_text, flags=re.MULTILINE))
+            parsed = ReviewCitationJudgments(
+                judgments=[
+                    SentenceCheck(
+                        sentence_number=n,
+                        assertions=[StatementCheck(statement="x", supporting_claims=[], supported=False)],
+                    )
+                    for n in range(1, n_sentences + 1)
                 ]
             )
         elif text_format is GeneratedSynthesesBatch:
@@ -320,7 +361,8 @@ def test_eval_run_end_to_end_records_then_replays(tmp_path: Path, monkeypatch: p
     calls_after_record = fake.calls
     assert eval_run.main([*common, "--mode", "replay"]) == 0
 
-    assert calls_after_record == 4 + 1 + 1  # one per chunk, one synthesis type, one review
+    # Pipeline: one per chunk, one synthesis type, one review. Judge: one per chunk, synthesis, and draft.
+    assert calls_after_record == (4 + 1 + 1) + (4 + 1 + 1)
     assert fake.calls == calls_after_record
     reports = sorted((tmp_path / "reports").glob("*/report.json"))
     report = json.loads(reports[-1].read_text())
@@ -332,6 +374,10 @@ def test_eval_run_end_to_end_records_then_replays(tmp_path: Path, monkeypatch: p
     assert summary["review"]["sentence_supported_rate"] == 1.0
     assert summary["review"]["leaked_ids"] == 0
     assert summary["usage"]["cache_hits"] == summary["usage"]["calls"]
+    assert summary["claims"]["judge_supported_rate"] == 1.0
+    assert summary["synthesis"]["judge_partially_faithful_rate"] == 1.0
+    assert summary["review"]["judge_unsupported_rate"] == 1.0
+    assert summary["judge_usage"]["calls"] == 6
 
 
 def test_gold_claim_metrics_match_by_source_span_not_wording() -> None:
@@ -433,3 +479,90 @@ def test_retrieval_stage_ranks_claims_from_relevant_chunks_first(tmp_path: Path)
     assert case["n_relevant"] == 1
     assert case["mrr"] == 1.0
     assert case["top5_relevant"] == [True, False]
+
+
+class FixedJudge:
+    """Returns a canned parsed result, recording the prompt it was given."""
+
+    def __init__(self, parsed: BaseModel) -> None:
+        self.parsed = parsed
+        self.inputs: list[str] = []
+
+    def parse(self, *, text_format, prompt_version, instructions, input_text, temperature=0.1):
+        self.inputs.append(input_text)
+        return LLMResult(parsed=self.parsed, model="judge", prompt_version=prompt_version, temperature=temperature)
+
+
+def test_judge_claims_aligns_verdicts_by_number_and_marks_skipped_claims() -> None:
+    judge = FixedJudge(
+        ClaimGroundingJudgments(
+            judgments=[
+                ClaimJudgment(claim_number=3, reason="r", verdict="unsupported"),
+                ClaimJudgment(claim_number=1, reason="r", verdict="supported"),
+            ]
+        )
+    )
+
+    verdicts = judge_claims("passage", ["a", "b", "c"], judge)
+
+    assert verdicts == ["supported", None, "unsupported"]
+    assert "1. a\n2. b\n3. c" in judge.inputs[0]
+
+
+def test_judge_review_citations_includes_each_sentences_own_evidence() -> None:
+    judge = FixedJudge(
+        ReviewCitationJudgments(
+            judgments=[
+                SentenceCheck(
+                    sentence_number=1,
+                    assertions=[StatementCheck(statement="Cars steer", supporting_claims=[1], supported=True)],
+                )
+            ]
+        )
+    )
+
+    verdicts = judge_review_citations([("Cars steer.", [CitedClaim(paper="P1", text="CNN steers cars")])], judge)
+
+    assert verdicts == ["supported"]
+    assert "1. Sentence: Cars steer." in judge.inputs[0] and "[P1] CNN steers cars" in judge.inputs[0]
+
+
+def test_cohen_kappa_and_agreement() -> None:
+    labels = ["supported", "unsupported"]
+    assert cohen_kappa([("supported", "supported"), ("unsupported", "unsupported")], labels) == 1.0
+    assert cohen_kappa([("supported", "unsupported"), ("unsupported", "supported")], labels) == -1.0
+
+    items = [
+        {"label": "supported", "predicted": "supported", "origin": "real"},
+        {"label": "unsupported", "predicted": "partially_supported", "origin": "perturbed"},
+        {"label": "partially_supported", "predicted": "supported", "origin": "perturbed"},
+        {"label": "supported", "predicted": None, "origin": "real"},
+    ]
+    stats = agreement(items, ["supported", "partially_supported", "unsupported"], "supported")
+
+    assert stats["judge_skipped"] == 1
+    assert stats["accuracy"] == pytest.approx(0.333)
+    assert stats["binary_accuracy"] == pytest.approx(0.667)
+    assert stats["constructed_negatives_caught"] == 0.5
+    assert stats["real_accuracy"] == 1.0
+
+
+def test_statement_level_checks_derive_the_overall_verdict() -> None:
+    def checks(*supported: bool) -> list[StatementCheck]:
+        return [StatementCheck(statement=str(i), supporting_claims=[], supported=s) for i, s in enumerate(supported)]
+
+    assert support_from_checks(checks(True, True)) == "supported"
+    assert support_from_checks(checks(True, False)) == "partially_supported"
+    assert support_from_checks(checks(False, False)) == "unsupported"
+    assert (
+        SynthesisJudgment(statements=checks(True, True, True), type_evidence="", type_appropriate=True).faithfulness
+        == "faithful"
+    )
+    assert (
+        SynthesisJudgment(statements=checks(True, True, False), type_evidence="", type_appropriate=True).faithfulness
+        == "partially_faithful"
+    )
+    assert (
+        SynthesisJudgment(statements=checks(True, False), type_evidence="", type_appropriate=True).faithfulness
+        == "unfaithful"
+    )

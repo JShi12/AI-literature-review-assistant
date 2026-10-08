@@ -1,0 +1,36 @@
+{
+ "key": "a751cb9e444d9e1f28ade3f6a5fad2cbe0e10edc0d75cbb71ce6c20a3d836ba3",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.synthesis.v2",
+ "temperature": 0.0,
+ "input_tokens": 1186,
+ "output_tokens": 255,
+ "latency_s": 2.663,
+ "recorded_at": "2026-10-08T10:32:28+00:00",
+ "parsed": {
+  "statements": [
+   {
+    "statement": "CARLA is an open-source urban driving simulator designed to support development, training, and validation of autonomous driving systems, providing flexible specification of sensor suites, environmental conditions, and detailed urban environment content created by digital artists.",
+    "supporting_claims": [],
+    "supported": false
+   },
+   {
+    "statement": "CARLA supports multiple autonomous driving approaches including classic modular pipelines, end-to-end imitation learning, and reinforcement learning, evaluated in controlled scenarios with specific metrics.",
+    "supporting_claims": [],
+    "supported": false
+   },
+   {
+    "statement": "The DARPA Autonomous Vehicle (DAVE) project involved a sub-scale RC car trained on human driving data with video from two cameras and steering commands, focusing on real-world data collection and end-to-end CNN training.",
+    "supporting_claims": [],
+    "supported": false
+   },
+   {
+    "statement": "This comparison illustrates the difference between simulation-based and real-world data-driven methods in autonomous driving research.",
+    "supporting_claims": [],
+    "supported": false
+   }
+  ],
+  "type_evidence": "none",
+  "type_appropriate": false
+ }
+}

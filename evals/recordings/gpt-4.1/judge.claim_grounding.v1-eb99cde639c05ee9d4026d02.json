@@ -1,0 +1,44 @@
+{
+ "key": "eb99cde639c05ee9d4026d02da531c49999966a63a504b01df84db23b26d105f",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 721,
+ "output_tokens": 266,
+ "latency_s": 2.726,
+ "recorded_at": "2026-10-08T10:30:38+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage explicitly states: 'In this paper, we introduce CARLA (Car Learning to Act) – an open simulator for urban driving.'",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage says: 'CARLA has been developed from the ground up to support training, prototyping, and validation of autonomous driving models, including both perception and control.' This matches the claim exactly.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 3,
+    "reason": "The passage states: 'CARLA is an open platform.' This is a direct match to the claim.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 4,
+    "reason": "The passage says: 'Uniquely, the content of urban environments provided with CARLA is also free.' This matches the claim.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 5,
+    "reason": "The passage states: 'The content was created from scratch by a dedicated team of digital artists employed for this purpose.' This matches the claim.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 6,
+    "reason": "The passage says: 'It includes urban layouts, a multitude of vehicle models, buildings, pedestrians, street signs, etc.' This matches the claim.",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

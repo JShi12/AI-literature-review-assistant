@@ -1,0 +1,40 @@
+{
+ "key": "1a75a4379477bd4679b739171f75d2710dfcdd99a45169dcf8fd326129dbfe76",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.synthesis.v2",
+ "temperature": 0.0,
+ "input_tokens": 937,
+ "output_tokens": 193,
+ "latency_s": 2.044,
+ "recorded_at": "2026-10-08T10:32:09+00:00",
+ "parsed": {
+  "statements": [
+   {
+    "statement": "Early autonomous driving systems like ALVINN demonstrated the feasibility of end-to-end neural network steering using relatively small fully-connected networks and limited data.",
+    "supporting_claims": [
+     1,
+     2
+    ],
+    "supported": true
+   },
+   {
+    "statement": "Modern approaches leverage convolutional neural networks (CNNs) with greater computational power and more extensive data, enabling the learning of the entire processing pipeline for steering.",
+    "supporting_claims": [
+     3,
+     4
+    ],
+    "supported": true
+   },
+   {
+    "statement": "This progression reflects significant improvements in model capacity and data utilization, leading to more robust and vehicle-independent steering control.",
+    "supporting_claims": [
+     4,
+     5
+    ],
+    "supported": false
+   }
+  ],
+  "type_evidence": "none",
+  "type_appropriate": false
+ }
+}

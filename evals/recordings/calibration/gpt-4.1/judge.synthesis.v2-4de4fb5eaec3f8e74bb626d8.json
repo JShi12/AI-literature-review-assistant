@@ -1,0 +1,39 @@
+{
+ "key": "4de4fb5eaec3f8e74bb626d82bf7776796745361cc23d61dbdf050dc2c2ffe6b",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.synthesis.v2",
+ "temperature": 0.0,
+ "input_tokens": 917,
+ "output_tokens": 173,
+ "latency_s": 3.501,
+ "recorded_at": "2026-10-08T10:32:45+00:00",
+ "parsed": {
+  "statements": [
+   {
+    "statement": "CARLA is used to study and evaluate three autonomous driving approaches: classic modular pipeline, end-to-end imitation learning, and end-to-end reinforcement learning.",
+    "supporting_claims": [
+     34863
+    ],
+    "supported": false
+   },
+   {
+    "statement": "These approaches are evaluated in controlled scenarios of increasing difficulty using CARLA's metrics.",
+    "supporting_claims": [
+     7
+    ],
+    "supported": false
+   },
+   {
+    "statement": "The platform provides measurements of agent state and traffic rule compliance important for training and evaluation.",
+    "supporting_claims": [
+     2,
+     4,
+     45
+    ],
+    "supported": false
+   }
+  ],
+  "type_evidence": "none",
+  "type_appropriate": false
+ }
+}

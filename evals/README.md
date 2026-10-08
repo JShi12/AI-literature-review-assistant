@@ -28,6 +28,7 @@ Useful flags:
 | `--stop-after claims\|retrieval\|synthesis\|review` | Run only the first stages |
 | `--mode record\|replay\|refresh` | Reuse recordings and record misses / recordings only / always call the API |
 | `--workers N` | Concurrent claim-extraction calls (default 4) |
+| `--judge-model M` / `--no-judge` | Model for the LLM-as-judge checks (default `gpt-4.1`), or skip them |
 | `--prune` | Afterwards, delete recordings the run didn't use, e.g. after a prompt change. Use the same `--limit`/`--seed`/models you replay with |
 
 The exit code is 1 if any case couldn't be evaluated (missing recording, API/auth/network error).
@@ -56,7 +57,8 @@ The exit code is 1 if any case couldn't be evaluated (missing recording, API/aut
 
 ## Metrics
 
-All metrics are deterministic and computed in `evals/metrics.py`; none use an LLM judge yet.
+Most metrics are deterministic and computed in `evals/metrics.py`. The LLM-judge metrics are described
+under [LLM judges](#llm-judges).
 
 **Section detection** (runs the *current* `detect_sections` and chunking on the frozen pages)
 - *Heading precision / recall*: detected headings that start on the same line as a gold heading.
@@ -106,9 +108,56 @@ All metrics are deterministic and computed in `evals/metrics.py`; none use an LL
 **Usage**: calls, recorded vs live, tokens, cost (from `evals/pricing.py`, since production
 doesn't compute cost), and live latency.
 
+## LLM judges
+
+`evals/judges.py` checks what string matching can't: whether content is actually *supported*. Each judge
+sees only the evidence the pipeline gave the model (`gpt-4.1`, temperature 0, versioned rubrics):
+
+- **Claim grounding**: is each claim supported by its chunk? Gives one holistic verdict per claim,
+  batched per chunk.
+- **Synthesis faithfulness**: the judge splits the title and body into statements and checks each one
+  against the cited claims. The verdict is derived in code: all supported is *faithful*, at least half
+  unsupported is *unfaithful*, anything else is *partially faithful*. It also checks whether the
+  synthesis really is its type, e.g. whether a "contradiction" has two claims that actually disagree.
+- **Review citations**: the same statement-level check for each review sentence against its own cited
+  claims.
+
+Statement-level checking replaced a single holistic verdict (v1). A single verdict let the judge pass
+exactly the subtle overstatements that matter: an extra list item, "widely used", or a finding
+attributed to the wrong paper.
+
+### Calibration
+
+`python -m evals.calibrate` scores the judges against `evals/datasets/judge_calibration.json`. The set
+has 98 items: real pipeline outputs labelled independently, plus constructed negatives with labels known
+by construction. The constructed negatives are claims perturbed to be wrong or overstated, and synthesis
+bodies or review sentences paired with someone else's citations. Results with `gpt-4.1`:
+
+| | Claim grounding | Synthesis faithfulness | Review citations |
+|---|---|---|---|
+| Supported vs. not, binary accuracy | 100% | 89% | 84% |
+| Cohen's kappa (3-class) | 0.91 | 0.59 | 0.70 |
+| Constructed negatives caught | 100% | 100% | 100% |
+| Synthesis-type accuracy | | 63% | |
+
+How to read these:
+
+- The claim judge is reliable.
+- The synthesis and review judges reliably catch real failures. Where they disagree with the reference,
+  it's mostly at the partial/full boundary, where the reference labels are themselves debatable.
+- Type judgement is the weakest check. Treat it as indicative only.
+- Caveats:
+  - The v2 rubrics were revised after seeing calibration results on the same items, with no separate
+    holdout.
+  - The reference labels were written by Claude and still need human review.
+  - Repeat runs move by a few points, because the judge isn't fully deterministic even at temperature 0.
+
+Calibration recordings live in `evals/recordings/calibration/`, so `evals.run --prune` never deletes
+them.
+
 ## Not covered yet
 
-- LLM-judge metrics (claim grounding/entailment, synthesis faithfulness, citation precision).
+- A held-out calibration set, and human review of the judge reference labels.
 - Human review of the gold labels.
 - Agent tool-trajectory evals.
 - A replay-mode CI gate against committed baseline numbers.

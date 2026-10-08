@@ -1,0 +1,89 @@
+{
+ "key": "8a8d36f4612c64befdd3b2b20ae946e30a58ea430e122da6e6f82f487867e288",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 1202,
+ "output_tokens": 688,
+ "latency_s": 4.625,
+ "recorded_at": "2026-10-08T10:30:38+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The table shows M0 as 'Imitation with Past Dropout' with wimit=1.0 and wenv=0.0.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The table shows M1 as 'M0 + Traj Perturbation' with wimit=1.0 and wenv=0.0.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 3,
+    "reason": "The table shows M2 as 'M1 + Environment Losses' with wimit=1.0 and wenv=1.0.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 4,
+    "reason": "The table shows M3 as 'M2 with less imitation' with wimit=0.5 and wenv=1.0.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 5,
+    "reason": "The table shows M4 as 'M2 with Imitation Dropout' and specifies dropout probability = 0.5.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 6,
+    "reason": "Figure 7 row for 'Nudging for a Parked Car' and M0 shows Passes 20%, Collides 50%, Gets Stuck 30%.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 7,
+    "reason": "Figure 7 row for 'Nudging for a Parked Car' and M2 shows Passes 55%, Collides 45%, Gets Stuck 0%.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 8,
+    "reason": "Figure 7 row for 'Nudging for a Parked Car' and M4 shows Passes 90%, Collides 10%, Gets Stuck 0%.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 9,
+    "reason": "Figure 7 row for 'Trajectory Perturbation' and M0 shows Recovers 0%, Gets Stuck 100%.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 10,
+    "reason": "Figure 7 row for 'Trajectory Perturbation' and M2 shows Recovers 50%, Gets Stuck 50%.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 11,
+    "reason": "Figure 7 row for 'Slowing for a Slow Car' and M0 shows Slows Down 75%, Collides 0%, Gets Stuck 25%.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 12,
+    "reason": "Figure 7 row for 'Slowing for a Slow Car' and M2 shows Slows Down 95%, Collides 5%, Gets Stuck 0%.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 13,
+    "reason": "The passage describes the scenario setup as placing the agent at an arbitrary distance from a stop-sign on an undivided two-way street with a parked vehicle on the right shoulder between the agent and the stop-sign.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 14,
+    "reason": "The passage states that 4 separate locations with both straight and curved roads and 5 different starting speeds create a total of 20 scenarios.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 15,
+    "reason": "The passage says they observe if the agent would stop and get stuck behind, collide with, or correctly pass around the parked car.",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "key": "7013b531c741d18b86d1b9492b7cafd500ee5691fd9e1076bdc743fa283c4d96",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 789,
+ "output_tokens": 115,
+ "latency_s": 1.199,
+ "recorded_at": "2026-10-08T10:30:34+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage explicitly states: 'To further increase the effectiveness of the environment losses, we experimented with randomly dropping out the imitation losses for a random subset of training examples. We refer to this as “imitation dropout”.' This matches the claim exactly.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage says: 'In the experiments, we show that imitation dropout yields a better driving model than simply under-weighting the imitation losses.' This directly supports the claim.",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

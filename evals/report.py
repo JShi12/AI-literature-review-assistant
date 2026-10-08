@@ -42,6 +42,9 @@ HEADLINE_METRICS: list[tuple[str, str, str, str, str]] = [
     ("claims", "Extracted claims matching a gold claim", "gold_precision", "pct", "up"),
     ("claims", "Gold F1", "gold_f1", "float", "up"),
     ("claims", "Claim type agrees with gold", "gold_type_agreement", "pct", "up"),
+    ("claims", "Judge: claims supported by chunk", "judge_supported_rate", "pct", "up"),
+    ("claims", "Judge: partially supported", "judge_partially_supported_rate", "pct", "down"),
+    ("claims", "Judge: unsupported", "judge_unsupported_rate", "pct", "down"),
     ("retrieval", "Queries scored", "queries_scored", "int", ""),
     ("retrieval", "Precision@5", "p@5", "pct", "up"),
     ("retrieval", "Precision@10", "p@10", "pct", "up"),
@@ -55,6 +58,10 @@ HEADLINE_METRICS: list[tuple[str, str, str, str, str]] = [
     ("synthesis", "Type matches request", "type_match_rate", "pct", "up"),
     ("synthesis", "Draws on 2+ papers", "multi_paper_rate", "pct", "up"),
     ("synthesis", "Self-reported counts wrong", "count_mismatch_rate", "pct", "down"),
+    ("synthesis", "Judge: faithful to cited claims", "judge_faithful_rate", "pct", "up"),
+    ("synthesis", "Judge: partially faithful", "judge_partially_faithful_rate", "pct", "down"),
+    ("synthesis", "Judge: unfaithful", "judge_unfaithful_rate", "pct", "down"),
+    ("synthesis", "Judge: genuinely the requested type", "judge_type_appropriate_rate", "pct", "up"),
     ("review", "Drafts generated", "drafts", "int", ""),
     ("review", "Structured sentences with linked claims", "sentence_supported_rate", "pct", "up"),
     ("review", "Phantom-supported sentences", "sentence_phantom_support_rate", "pct", "down"),
@@ -64,10 +71,15 @@ HEADLINE_METRICS: list[tuple[str, str, str, str, str]] = [
     ("review", "Invalid citation numbers", "invalid_citation_numbers", "int", "down"),
     ("review", "Leaked ids in Markdown", "leaked_ids", "int", "down"),
     ("review", "References section complete", "references_complete_rate", "pct", "up"),
+    ("review", "Judge: cited claims support the sentence", "judge_supported_rate", "pct", "up"),
+    ("review", "Judge: partially supported", "judge_partially_supported_rate", "pct", "down"),
+    ("review", "Judge: unsupported", "judge_unsupported_rate", "pct", "down"),
     ("usage", "LLM calls (recorded / live)", "calls", "calls", ""),
     ("usage", "Input / output tokens", "tokens", "tokens", ""),
     ("usage", "Cost to run live (USD)", "cost_usd", "usd", "down"),
     ("usage", "Mean live latency (s)", "latency_mean_s", "float", "down"),
+    ("judge_usage", "Judge calls (recorded / live)", "calls", "calls", ""),
+    ("judge_usage", "Judge cost to run live (USD)", "cost_usd", "usd", "down"),
 ]
 
 
@@ -82,6 +94,19 @@ def _mean(values: Iterable[float]) -> float | None:
 
 def _ok(cases: Sequence[Case]) -> list[Case]:
     return [case for case in cases if "error" not in case]
+
+
+def verdict_rates(verdicts: Sequence[str | None], labels: Sequence[str]) -> dict[str, Any]:
+    """Share of each judge label among judged items (None = judge skipped the item)."""
+    judged = [verdict for verdict in verdicts if verdict is not None]
+    rates: dict[str, Any] = {"judged": len(judged), "judge_skipped": len(verdicts) - len(judged)}
+    for label in labels:
+        rates[f"judge_{label}_rate"] = _rate(sum(verdict == label for verdict in judged), len(judged))
+    return rates
+
+
+SUPPORT_LABELS = ("supported", "partially_supported", "unsupported")
+FAITHFULNESS_LABELS = ("faithful", "partially_faithful", "unfaithful")
 
 
 def summarize_claims(cases: Sequence[Case]) -> dict[str, Any]:
@@ -105,6 +130,7 @@ def summarize_claims(cases: Sequence[Case]) -> dict[str, Any]:
         "confidence_mean": _mean(claim["confidence"] for claim in claims),
         "claim_types": dict(Counter(claim["claim_type"] for claim in claims).most_common()),
         **summarize_gold_claims([case["gold"] for case in scored if "gold" in case]),
+        **verdict_rates([claim["judge"] for claim in claims if "judge" in claim], SUPPORT_LABELS),
     }
 
 
@@ -166,6 +192,13 @@ def summarize_syntheses(cases: Sequence[Case]) -> dict[str, Any]:
         "type_match_rate": _rate(sum(item["type_matches"] for item in items), len(items)),
         "multi_paper_rate": _rate(sum(item["multi_paper"] for item in items), len(items)),
         "count_mismatch_rate": _rate(sum(item["count_mismatch"] for item in items), len(items)),
+        **verdict_rates(
+            [item["judge_faithfulness"] for item in items if "judge_faithfulness" in item], FAITHFULNESS_LABELS
+        ),
+        "judge_type_appropriate_rate": _rate(
+            sum(bool(item.get("judge_type_appropriate")) for item in items if "judge_faithfulness" in item),
+            sum("judge_faithfulness" in item for item in items),
+        ),
     }
 
 
@@ -184,6 +217,9 @@ def summarize_reviews(cases: Sequence[Case]) -> dict[str, Any]:
         summary[key] = _mean(case[key] for case in scored if case[key] is not None)
     summary["invalid_citation_numbers"] = sum(len(case["invalid_citation_numbers"]) for case in scored)
     summary["leaked_ids"] = sum(case["leaked_ids"] for case in scored)
+    summary.update(
+        verdict_rates([v for case in scored for v in case.get("judge_citation_verdicts", [])], SUPPORT_LABELS)
+    )
     summary["references_complete_rate"] = _rate(sum(bool(case["references_complete"]) for case in scored), len(scored))
     return summary
 
@@ -202,7 +238,12 @@ def summarize_usage(calls: Sequence[CallRecord]) -> dict[str, Any]:
     }
 
 
-def build_model_run(model: str, stages: dict[str, list[Case]], calls: Sequence[CallRecord]) -> dict[str, Any]:
+def build_model_run(
+    model: str,
+    stages: dict[str, list[Case]],
+    calls: Sequence[CallRecord],
+    judge_calls: Sequence[CallRecord] = (),
+) -> dict[str, Any]:
     summaries: dict[str, Any] = {}
     if "claims" in stages:
         summaries["claims"] = summarize_claims(stages["claims"])
@@ -213,6 +254,8 @@ def build_model_run(model: str, stages: dict[str, list[Case]], calls: Sequence[C
     if "review" in stages:
         summaries["review"] = summarize_reviews(stages["review"])
     summaries["usage"] = summarize_usage(calls)
+    if judge_calls:
+        summaries["judge_usage"] = summarize_usage(judge_calls)
     return {"model": model, "summary": summaries, "cases": stages}
 
 
@@ -220,7 +263,14 @@ def infra_errors(runs: Sequence[dict[str, Any]]) -> list[str]:
     errors: list[str] = []
     for run in runs:
         for stage_cases in run["cases"].values():
-            errors.extend(str(case["error"]) for case in stage_cases if case.get("error_kind") == "infra")
+            for case in stage_cases:
+                nested = [case, *case.get("syntheses", [])]
+                errors.extend(str(item["error"]) for item in nested if item.get("error_kind") == "infra")
+                errors.extend(
+                    str(item["judge_error"]["error"])
+                    for item in nested
+                    if item.get("judge_error", {}).get("error_kind") == "infra"
+                )
     return errors
 
 

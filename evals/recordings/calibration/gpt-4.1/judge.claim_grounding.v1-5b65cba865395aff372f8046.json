@@ -1,0 +1,24 @@
+{
+ "key": "5b65cba865395aff372f80460f73a065465999ae165e6bac121319dab02807ae",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 695,
+ "output_tokens": 126,
+ "latency_s": 2.786,
+ "recorded_at": "2026-10-08T10:31:34+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage states: 'lights and dynamic objects are sampled over the past Tscene seconds, while the past agent poses are sampled over a potentially longer interval of Tpose seconds.' The claim accurately reflects this information.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage says 'the past agent poses are sampled over a potentially longer interval of Tpose seconds,' which means it is possible but not always the case. The claim says 'are always sampled over a longer interval,' which overstates the certainty and changes the meaning.",
+    "verdict": "unsupported"
+   }
+  ]
+ }
+}

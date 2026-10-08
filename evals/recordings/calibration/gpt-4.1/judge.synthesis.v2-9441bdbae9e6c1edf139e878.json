@@ -1,0 +1,48 @@
+{
+ "key": "9441bdbae9e6c1edf139e878a54cc039630a56b1bdadde4583c572366dc92e3d",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.synthesis.v2",
+ "temperature": 0.0,
+ "input_tokens": 1242,
+ "output_tokens": 310,
+ "latency_s": 2.046,
+ "recorded_at": "2026-10-08T10:32:36+00:00",
+ "parsed": {
+  "statements": [
+   {
+    "statement": "ChauffeurNet and similar models leverage mid-level representations to enable training on real or simulated data and facilitate closed-loop simulation testing.",
+    "supporting_claims": [
+     5
+    ],
+    "supported": false
+   },
+   {
+    "statement": "CARLA provides a flexible simulation environment for development and validation.",
+    "supporting_claims": [],
+    "supported": false
+   },
+   {
+    "statement": "There remains a critical gap in addressing the problem of error accumulation and distribution shift during closed-loop operation.",
+    "supporting_claims": [],
+    "supported": false
+   },
+   {
+    "statement": "This limitation leads to model failures such as getting stuck or collisions despite viable passing options.",
+    "supporting_claims": [],
+    "supported": false
+   },
+   {
+    "statement": "Current methods have not resolved these issues sufficiently to enable reliable autonomous driving purely from imitation learning, as evidenced by findings that pure imitation learning is insufficient even with large datasets and mid-level representations.",
+    "supporting_claims": [],
+    "supported": false
+   },
+   {
+    "statement": "There is a need for novel approaches or enhancements to mitigate error accumulation and distribution shift in closed-loop imitation learning systems for autonomous driving.",
+    "supporting_claims": [],
+    "supported": false
+   }
+  ],
+  "type_evidence": "none",
+  "type_appropriate": false
+ }
+}

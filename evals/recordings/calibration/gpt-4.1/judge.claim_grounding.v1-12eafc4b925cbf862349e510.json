@@ -1,0 +1,24 @@
+{
+ "key": "12eafc4b925cbf862349e510c7e1ad3ad3c2b559bd90f814288d405702e003ec",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 624,
+ "output_tokens": 84,
+ "latency_s": 2.581,
+ "recorded_at": "2026-10-08T10:31:40+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage explicitly states, 'the modular pipeline performs better under the “New weather” condition than under the training conditions.'",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage states the opposite: the modular pipeline performs better, not worse, under the 'New weather' condition compared to the training conditions.",
+    "verdict": "unsupported"
+   }
+  ]
+ }
+}

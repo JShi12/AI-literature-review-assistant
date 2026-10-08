@@ -1,0 +1,34 @@
+{
+ "key": "79e3b586e087414de4ae3ab57694f6bea90600b8ea3e39935f3e4eae5e4b26f5",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 837,
+ "output_tokens": 229,
+ "latency_s": 1.658,
+ "recorded_at": "2026-10-08T10:30:36+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage states that the model was evaluated on the self-driving car by replacing the existing planner with M4 and that the driving behaviors observed in simulation were replicated. This matches the claim exactly.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage says videos are available and that they illustrate the smoothness of the network’s driving ability, its ability to deal with stop-signs and turns, and to drive for long durations in full closed-loop control without deviating from the trajectory. This matches the claim.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 3,
+    "reason": "The passage defines open-loop evaluation as taking test examples of expert driving data and computing the L2 distance error between predicted and ground-truth waypoints for each example. This matches the claim.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 4,
+    "reason": "The passage states that Fig. 8a shows the L2 distance metric in the open-loop evaluation setting for models M0 and M4 on a test set of 10,000 examples. This matches the claim.",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

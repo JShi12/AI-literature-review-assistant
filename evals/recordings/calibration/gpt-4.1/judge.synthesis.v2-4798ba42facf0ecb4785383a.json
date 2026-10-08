@@ -1,0 +1,42 @@
+{
+ "key": "4798ba42facf0ecb4785383a78ad5bda3849ef29cb4e17eedccc5f445d8d8348",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.synthesis.v2",
+ "temperature": 0.0,
+ "input_tokens": 1173,
+ "output_tokens": 236,
+ "latency_s": 1.74,
+ "recorded_at": "2026-10-08T10:31:52+00:00",
+ "parsed": {
+  "statements": [
+   {
+    "statement": "Early autonomous driving projects like DARPA's DAVE involved sub-scale RC cars trained on human driving data including video and steering commands.",
+    "supporting_claims": [
+     1,
+     2
+    ],
+    "supported": true
+   },
+   {
+    "statement": "ALVINN demonstrated end-to-end trained neural networks steering cars on public roads using smaller fully-connected networks.",
+    "supporting_claims": [
+     3,
+     4
+    ],
+    "supported": true
+   },
+   {
+    "statement": "Training datasets include diverse roads, lighting, weather conditions, and effects like sun glare, collected with vehicles such as Lincoln MKZ and Ford Focus.",
+    "supporting_claims": [
+     5,
+     6,
+     7,
+     8
+    ],
+    "supported": true
+   }
+  ],
+  "type_evidence": "[Claims 1, 2, 3, 4, 5, 6, 7, 8] all describe similar themes of historical context, dataset diversity, and vehicle platforms for autonomous driving models.",
+  "type_appropriate": true
+ }
+}

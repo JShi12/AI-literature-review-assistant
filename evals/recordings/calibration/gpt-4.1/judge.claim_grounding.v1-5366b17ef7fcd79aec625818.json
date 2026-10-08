@@ -1,0 +1,24 @@
+{
+ "key": "5366b17ef7fcd79aec62581874337b8fea891fa44b47d435c7b7133e0a281063",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 711,
+ "output_tokens": 82,
+ "latency_s": 1.082,
+ "recorded_at": "2026-10-08T10:31:32+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage explicitly states that for 50% of the examples, only the current position is kept in the past agent poses channel.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage states the dropout is applied to 50% of the examples, not 25%. The claim changes this detail.",
+    "verdict": "unsupported"
+   }
+  ]
+ }
+}

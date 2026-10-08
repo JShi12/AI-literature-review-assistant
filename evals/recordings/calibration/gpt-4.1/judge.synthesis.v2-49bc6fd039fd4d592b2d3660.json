@@ -1,0 +1,51 @@
+{
+ "key": "49bc6fd039fd4d592b2d3660ddc39f5f1775d1fecccf3780b7c8212626ae8944",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.synthesis.v2",
+ "temperature": 0.0,
+ "input_tokens": 930,
+ "output_tokens": 287,
+ "latency_s": 1.7,
+ "recorded_at": "2026-10-08T10:32:23+00:00",
+ "parsed": {
+  "statements": [
+   {
+    "statement": "Pure imitation learning approaches for autonomous driving face significant limitations despite large datasets and high-capacity models.",
+    "supporting_claims": [
+     1,
+     4
+    ],
+    "supported": true
+   },
+   {
+    "statement": "Even with 30 million examples and mid-level input/output representations, models can get stuck or collide with parked vehicles on narrow streets despite viable passing options.",
+    "supporting_claims": [
+     1,
+     2
+    ],
+    "supported": true
+   },
+   {
+    "statement": "Closed-loop operation introduces error accumulation and distribution shift from training data, leading to unreliable performance.",
+    "supporting_claims": [
+     3
+    ],
+    "supported": true
+   },
+   {
+    "statement": "Pure imitation learning is insufficient to replace modular off-road driving approaches.",
+    "supporting_claims": [
+     5
+    ],
+    "supported": true
+   },
+   {
+    "statement": "These findings highlight the need for additional methods beyond pure imitation learning to achieve robust autonomous driving.",
+    "supporting_claims": [],
+    "supported": false
+   }
+  ],
+  "type_evidence": "Claims 1, 4 (limitations of pure imitation learning in autonomous driving) and claim 5 (insufficiency compared to modular approaches) from two different papers.",
+  "type_appropriate": true
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "key": "53601eacb43f1c4f7b50a91497eee8fa645a10790aecb3e767c225ffe07bf2b0",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 539,
+ "output_tokens": 103,
+ "latency_s": 1.538,
+ "recorded_at": "2026-10-08T10:31:22+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage explicitly states: 'It is possible to have the same vehicle/pedestrian behavior by setting the same seed.' This directly supports the claim.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage does not state or imply that setting the same seed does not guarantee the same behavior. In fact, it suggests the opposite by saying it is possible to have the same behavior by setting the same seed.",
+    "verdict": "unsupported"
+   }
+  ]
+ }
+}

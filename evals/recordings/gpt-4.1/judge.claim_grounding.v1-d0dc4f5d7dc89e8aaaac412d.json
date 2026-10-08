@@ -1,0 +1,19 @@
+{
+ "key": "d0dc4f5d7dc89e8aaaac412d1aa7371492ac7528dd3d4f43b9454911895f926c",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 382,
+ "output_tokens": 56,
+ "latency_s": 1.064,
+ "recorded_at": "2026-10-08T10:30:31+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage explicitly states, 'Our contribution can be viewed as pushing the boundaries of what you can do with purely offline data and no RL.' This is a direct quote from the passage.",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

@@ -1,0 +1,211 @@
+{
+ "key": "5f2520d97b032b686a3cd2676e144163ab5afc86cdb6da33b976a39055fbd2d0",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.review_citations.v2",
+ "temperature": 0.0,
+ "input_tokens": 2743,
+ "output_tokens": 1170,
+ "latency_s": 15.613,
+ "recorded_at": "2026-10-08T10:33:58+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "sentence_number": 1,
+    "assertions": [
+     {
+      "statement": "The CARLA simulator serves as a comprehensive open-source platform for autonomous urban driving research.",
+      "supporting_claims": [
+       1
+      ],
+      "supported": true
+     },
+     {
+      "statement": "CARLA provides detailed urban layouts, vehicles, pedestrians, and flexible sensor suite specifications.",
+      "supporting_claims": [
+       2,
+       3
+      ],
+      "supported": false
+     }
+    ]
+   },
+   {
+    "sentence_number": 2,
+    "assertions": [
+     {
+      "statement": "Pure imitation learning, even with large datasets and mid-level representations, faces significant limitations.",
+      "supporting_claims": [],
+      "supported": false
+     },
+     {
+      "statement": "These limitations are due to error accumulation and distribution shift during closed-loop operation.",
+      "supporting_claims": [],
+      "supported": false
+     }
+    ]
+   },
+   {
+    "sentence_number": 3,
+    "assertions": [
+     {
+      "statement": "Significant gaps remain in addressing error accumulation and distribution shift in closed-loop imitation learning.",
+      "supporting_claims": [],
+      "supported": false
+     }
+    ]
+   },
+   {
+    "sentence_number": 4,
+    "assertions": [
+     {
+      "statement": "The convolutional neural network (CNN) method learns the entire processing pipeline directly from raw sensor data.",
+      "supporting_claims": [
+       1,
+       3
+      ],
+      "supported": false
+     },
+     {
+      "statement": "The CNN generates steering commands from a single front-facing camera image.",
+      "supporting_claims": [
+       2,
+       3
+      ],
+      "supported": true
+     }
+    ]
+   },
+   {
+    "sentence_number": 5,
+    "assertions": [
+     {
+      "statement": "Models like ChauffeurNet and simulators like CARLA enable closed-loop testing.",
+      "supporting_claims": [
+       1,
+       4
+      ],
+      "supported": true
+     },
+     {
+      "statement": "There remains a critical gap in effectively mitigating these issues.",
+      "supporting_claims": [],
+      "supported": false
+     },
+     {
+      "statement": "There is a need for novel methods to improve robustness and reliability in autonomous driving policies trained with simulation and synthesized data.",
+      "supporting_claims": [],
+      "supported": false
+     }
+    ]
+   },
+   {
+    "sentence_number": 6,
+    "assertions": [
+     {
+      "statement": "Comparisons between simulation-based platforms like CARLA and real-world data-driven methods such as DARPA's DAVE project illustrate differing approaches in autonomous driving research.",
+      "supporting_claims": [
+       1,
+       2,
+       4,
+       5
+      ],
+      "supported": false
+     }
+    ]
+   },
+   {
+    "sentence_number": 7,
+    "assertions": [
+     {
+      "statement": "Current methods do not adequately mitigate these challenges.",
+      "supporting_claims": [],
+      "supported": false
+     },
+     {
+      "statement": "There is a need for novel strategies to improve robustness and reliability in autonomous driving systems.",
+      "supporting_claims": [],
+      "supported": false
+     }
+    ]
+   },
+   {
+    "sentence_number": 8,
+    "assertions": [
+     {
+      "statement": "Pure imitation learning, even with large datasets and mid-level representations, faces significant limitations.",
+      "supporting_claims": [
+       1
+      ],
+      "supported": true
+     },
+     {
+      "statement": "These limitations are due to error accumulation and distribution shift during closed-loop operation.",
+      "supporting_claims": [
+       2
+      ],
+      "supported": true
+     }
+    ]
+   },
+   {
+    "sentence_number": 9,
+    "assertions": [
+     {
+      "statement": "Comparisons between simulation-based platforms like CARLA and real-world data-driven methods such as DARPA's DAVE project illustrate differing approaches in autonomous driving research.",
+      "supporting_claims": [],
+      "supported": false
+     }
+    ]
+   },
+   {
+    "sentence_number": 10,
+    "assertions": [
+     {
+      "statement": "Significant gaps remain, particularly in addressing error accumulation and distribution shift in closed-loop imitation learning.",
+      "supporting_claims": [
+       1
+      ],
+      "supported": true
+     }
+    ]
+   },
+   {
+    "sentence_number": 11,
+    "assertions": [
+     {
+      "statement": "These issues manifest as failures such as getting stuck or collisions despite viable passing options.",
+      "supporting_claims": [
+       1
+      ],
+      "supported": true
+     },
+     {
+      "statement": "This indicates that pure imitation learning alone may be insufficient for reliable autonomous driving.",
+      "supporting_claims": [],
+      "supported": false
+     }
+    ]
+   },
+   {
+    "sentence_number": 12,
+    "assertions": [
+     {
+      "statement": "Approaches like ChauffeurNet employ recurrent neural networks (RNNs) that utilize mid-level input representations to predict driving trajectories.",
+      "supporting_claims": [],
+      "supported": false
+     },
+     {
+      "statement": "These approaches facilitate training on both real and simulated data.",
+      "supporting_claims": [],
+      "supported": false
+     },
+     {
+      "statement": "These approaches enable closed-loop simulation testing before deployment.",
+      "supporting_claims": [],
+      "supported": false
+     }
+    ]
+   }
+  ]
+ }
+}

@@ -1,0 +1,44 @@
+{
+ "key": "799becee809e67550a4cc3f3f334be5de5e3f588261fe99ecca1f6e9d7981698",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 743,
+ "output_tokens": 339,
+ "latency_s": 3.525,
+ "recorded_at": "2026-10-08T10:30:40+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage states: 'the performance of the two methods typically differs by less than 10%.' This matches the claim exactly.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage says: 'the modular pipeline performs better under the “New weather” condition than under the training conditions.' This is directly stated.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 3,
+    "reason": "The passage states: 'MP underperforms on navigation in the “New town” condition and on going straight in “New town & weather”.' This matches the claim.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 4,
+    "reason": "The passage says: 'the perception stack fails systematically under complex weather conditions in the context of a new environment. If the perception stack is not able to reliably find a drivable path, the rules-based planner and the classic controller are unable to navigate to the destination in a consistent way.' This supports the claim that the perception stack's failure causes the modular pipeline to fail navigation.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 5,
+    "reason": "The passage states: 'If the perception stack is not able to reliably find a drivable path, the rules-based planner and the classic controller are unable to navigate to the destination in a consistent way.' This is a direct restatement of the claim.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 6,
+    "reason": "The passage says: 'The performance is therefore bimodal: if the perception stack works, the whole system works well; otherwise it fails completely.' This matches the claim.",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

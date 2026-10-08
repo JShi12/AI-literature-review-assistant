@@ -220,7 +220,8 @@ reports coverage.
 `evals/` is an offline harness that scores the pipeline (section detection, claims, retrieval,
 syntheses, review drafts) on a frozen snapshot of the demo papers. It uses deterministic metrics,
 including recall against gold claims, retrieval precision@k against labelled relevant chunks,
-whether claim offsets point at the claim text, and how many review sentences cite a real claim. It records LLM responses so runs can be replayed for free, and can compare models side
+whether claim offsets point at the claim text, and how many review sentences cite a real claim. It also
+runs calibrated LLM-judge checks of claim grounding, synthesis faithfulness and citation support. It records LLM responses so runs can be replayed for free, and can compare models side
 by side:
 
 ```bash
@@ -228,6 +229,7 @@ python -m evals.snapshot                 # once: build the input snapshot
 python -m evals.run                      # score all stages, recording LLM responses
 python -m evals.run --mode replay        # re-score from recordings, no API key needed
 python -m evals.run --model gpt-4.1-mini --model gpt-4.1
+python -m evals.calibrate                # how far the LLM judges can be trusted
 ```
 
 See [evals/README.md](evals/README.md) for the metrics and options.

@@ -1,0 +1,54 @@
+{
+ "key": "3e5e4b72ef5635944e75366aaf27bed5294c98e5bb85e4bdc1681db240fe7d21",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.synthesis.v2",
+ "temperature": 0.0,
+ "input_tokens": 1205,
+ "output_tokens": 312,
+ "latency_s": 2.313,
+ "recorded_at": "2026-10-08T10:29:13+00:00",
+ "parsed": {
+  "statements": [
+   {
+    "statement": "The CNN method learns the entire processing pipeline to steer an automobile directly from raw sensor data, generating steering commands from a single front-facing center camera image.",
+    "supporting_claims": [
+     1,
+     2,
+     3
+    ],
+    "supported": true
+   },
+   {
+    "statement": "ChauffeurNet employs an RNN architecture that takes mid-level input representations and outputs driving trajectories for control, incorporating components such as FeatureNet and AgentRNN, with recurrent feedback between iterations.",
+    "supporting_claims": [
+     4,
+     5,
+     7
+    ],
+    "supported": true
+   },
+   {
+    "statement": "The RNN approach benefits from mid-level representations that enable training on both real and simulated data and facilitate closed-loop simulation testing before real deployment.",
+    "supporting_claims": [
+     8
+    ],
+    "supported": true
+   },
+   {
+    "statement": "This comparison highlights the architectural and input representation differences between end-to-end CNN and RNN methods in autonomous driving control.",
+    "supporting_claims": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     7,
+     8
+    ],
+    "supported": true
+   }
+  ],
+  "type_evidence": "Claims 1, 2, 3 (CNN method details); Claims 4, 5, 7, 8 (RNN/ChauffeurNet details)",
+  "type_appropriate": true
+ }
+}

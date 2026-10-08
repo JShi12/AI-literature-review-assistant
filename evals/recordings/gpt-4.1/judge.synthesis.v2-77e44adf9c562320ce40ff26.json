@@ -1,0 +1,45 @@
+{
+ "key": "77e44adf9c562320ce40ff269fd99fa7b067e6bd58f116fefb25c53ebb83fc78",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.synthesis.v2",
+ "temperature": 0.0,
+ "input_tokens": 916,
+ "output_tokens": 222,
+ "latency_s": 2.648,
+ "recorded_at": "2026-10-08T10:29:25+00:00",
+ "parsed": {
+  "statements": [
+   {
+    "statement": "ChauffeurNet exemplifies an approach using mid-level input representations and recurrent neural networks (RNNs) to output driving trajectories for control.",
+    "supporting_claims": [
+     1
+    ],
+    "supported": true
+   },
+   {
+    "statement": "The model includes components such as FeatureNet, AgentRNN, PerceptionRNN, and a co-trained road mask prediction network.",
+    "supporting_claims": [
+     3,
+     4
+    ],
+    "supported": true
+   },
+   {
+    "statement": "Mid-level representations enable training on both real and simulated data and facilitate closed-loop simulation testing prior to real-world deployment.",
+    "supporting_claims": [
+     2
+    ],
+    "supported": true
+   },
+   {
+    "statement": "The recurrent feedback mechanism iteratively refines predictions during training.",
+    "supporting_claims": [
+     5
+    ],
+    "supported": true
+   }
+  ],
+  "type_evidence": "none",
+  "type_appropriate": false
+ }
+}

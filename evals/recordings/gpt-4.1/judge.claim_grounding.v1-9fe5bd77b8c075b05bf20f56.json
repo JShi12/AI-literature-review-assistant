@@ -1,0 +1,29 @@
+{
+ "key": "9fe5bd77b8c075b05bf20f56b52f2417e1e9fb32ca2ff5d85505e9bbd3c51ced",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 514,
+ "output_tokens": 131,
+ "latency_s": 1.693,
+ "recorded_at": "2026-10-08T10:30:31+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage explicitly states that the CNN learned to detect useful road features on its own, with only the human steering angle as training signal.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage directly states, 'We never explicitly trained it to detect the outlines of roads.'",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 3,
+    "reason": "The passage says, 'The activations of the first two feature maps appear to contain mostly noise, i. e., the CNN doesn’t recognize any useful features in this image.' This matches the claim exactly.",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

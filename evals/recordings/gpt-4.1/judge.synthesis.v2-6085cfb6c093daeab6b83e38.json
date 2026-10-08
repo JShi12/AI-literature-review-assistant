@@ -1,0 +1,51 @@
+{
+ "key": "6085cfb6c093daeab6b83e383dced8494102dd745b048a29d66856843ee1575e",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.synthesis.v2",
+ "temperature": 0.0,
+ "input_tokens": 857,
+ "output_tokens": 315,
+ "latency_s": 2.866,
+ "recorded_at": "2026-10-08T10:29:08+00:00",
+ "parsed": {
+  "statements": [
+   {
+    "statement": "There is a contradiction between claims about the reliability of end-to-end trained networks for autonomous driving.",
+    "supporting_claims": [],
+    "supported": false
+   },
+   {
+    "statement": "ALVINN demonstrated that an end-to-end trained neural network can steer a car on public roads.",
+    "supporting_claims": [
+     1
+    ],
+    "supported": true
+   },
+   {
+    "statement": "The system is vehicle-make and model independent.",
+    "supporting_claims": [
+     2
+    ],
+    "supported": true
+   },
+   {
+    "statement": "DAVE's performance, which also used end-to-end training on human driving data, was not reliable enough to replace modular off-road driving approaches.",
+    "supporting_claims": [
+     3
+    ],
+    "supported": true
+   },
+   {
+    "statement": "The contradiction concerns the reliability and generalizability of end-to-end networks across different driving contexts and vehicle platforms.",
+    "supporting_claims": [
+     1,
+     2,
+     3
+    ],
+    "supported": false
+   }
+  ],
+  "type_evidence": "Claims 1 and 3: Claim 1 describes ALVINN's success on public roads, while claim 3 describes DAVE's insufficient reliability for off-road driving. However, these are different contexts (public roads vs. off-road), so they do not directly contradict each other on the same dimension.",
+  "type_appropriate": false
+ }
+}

@@ -1,0 +1,37 @@
+{
+ "key": "18bd75ca7e4887808095abcf418facabc5be1ce53cad76733b01d5c0c283c640",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.synthesis.v2",
+ "temperature": 0.0,
+ "input_tokens": 949,
+ "output_tokens": 191,
+ "latency_s": 1.333,
+ "recorded_at": "2026-10-08T10:32:14+00:00",
+ "parsed": {
+  "statements": [
+   {
+    "statement": "Studies show that pure imitation learning approaches, even when trained with large datasets (e.g., 30 million examples) and mid-level input/output representations, face significant challenges such as error accumulation and distribution shift during closed-loop operation.",
+    "supporting_claims": [
+     1,
+     2,
+     3
+    ],
+    "supported": true
+   },
+   {
+    "statement": "These limitations manifest in practical issues like the model getting stuck or colliding with parked vehicles despite viable passing options.",
+    "supporting_claims": [
+     4
+    ],
+    "supported": true
+   },
+   {
+    "statement": "This evidence highlights the need for approaches beyond pure imitation learning to achieve reliable autonomous driving.",
+    "supporting_claims": [],
+    "supported": false
+   }
+  ],
+  "type_evidence": "none",
+  "type_appropriate": false
+ }
+}

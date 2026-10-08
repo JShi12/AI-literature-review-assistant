@@ -1,0 +1,24 @@
+{
+ "key": "d0288b3b9dba7a1d3c8f9083a48ee48adeebbc800a296def9d9ad1af63fd8ccf",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 483,
+ "output_tokens": 82,
+ "latency_s": 1.443,
+ "recorded_at": "2026-10-08T10:30:28+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage explicitly states that the weight adjustment is accomplished using back propagation as implemented in the Torch 7 machine learning package.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage states that once trained, the network can generate steering from the video images of a single center camera, matching the claim exactly.",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

@@ -1,0 +1,59 @@
+{
+ "key": "00e00ead0cad0a3869143c2b8b5df36f7d9209fb129786722fd68702155dd51d",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 833,
+ "output_tokens": 341,
+ "latency_s": 2.401,
+ "recorded_at": "2026-10-08T10:30:38+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage states that depth and semantic segmentation are pseudo-sensors that support experiments that control for the role of perception.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage explicitly says that additional sensor models can be plugged in via the API.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 3,
+    "reason": "The passage lists the 12 semantic classes provided by the pseudo-sensor, matching the claim exactly.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 4,
+    "reason": "The passage states that CARLA provides a range of measurements associated with the state of the agent and compliance with traffic rules.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 5,
+    "reason": "The passage lists these exact measurements as examples of the agent's state: vehicle location and orientation with respect to the world coordinate system, speed, acceleration vector, and accumulated impact from collisions.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 6,
+    "reason": "The passage states that measurements concerning traffic rules include the percentage of the vehicle’s footprint that impinges on wrong-way lanes or sidewalks, as well as states of the traffic lights and the speed limit at the current location of the vehicle.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 7,
+    "reason": "The passage says that CARLA provides access to exact locations and bounding boxes of all dynamic objects in the environment.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 8,
+    "reason": "The passage states that these signals play an important role in training and evaluating driving policies.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 9,
+    "reason": "The passage says that CARLA supports development, training, and detailed performance analysis of autonomous driving systems.",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

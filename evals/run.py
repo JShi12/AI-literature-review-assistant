@@ -33,6 +33,12 @@ from evals.gold import (
     load_gold_sections,
     load_retrieval_queries,
 )
+from evals.judges import (
+    CLAIM_GROUNDING_VERSION,
+    DEFAULT_JUDGE_MODEL,
+    REVIEW_CITATIONS_VERSION,
+    SYNTHESIS_VERSION,
+)
 from evals.llm_cache import DEFAULT_RECORDINGS_DIR, RecordingEmbeddings, RecordingLLM, prune_recordings
 from evals.report import build_model_run, infra_errors, render_markdown, summarize_sections, write_report
 from evals.snapshot import DEFAULT_SNAPSHOT_PATH, Snapshot, load_snapshot, sample_chunks
@@ -80,6 +86,8 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--model", action="append", help="Chat model(s) to evaluate (repeatable).")
     parser.add_argument("--mode", choices=["record", "replay", "refresh"], default="record")
     parser.add_argument("--stop-after", choices=STAGES, default="review")
+    parser.add_argument("--judge-model", default=DEFAULT_JUDGE_MODEL, help="Model for the LLM-as-judge checks.")
+    parser.add_argument("--no-judge", action="store_true", help="Skip the LLM-as-judge checks.")
 
     parser.add_argument("--limit", type=int, default=30, help="Chunks to evaluate, spread across papers (0 = all).")
     parser.add_argument("--seed", type=int, default=0, help="Chunk sampling seed.")
@@ -114,15 +122,17 @@ def main(argv: list[str] | None = None) -> int:
         section_cases = run_sections_stage(snapshot, gold_sections)
         sections = {"summary": summarize_sections(section_cases), "cases": section_cases}
 
+    judge = None if args.no_judge else RecordingLLM(args.judge_model, mode=args.mode, recordings_dir=args.recordings)
     runs = []
     used_recordings: set[Path] = set()
     for model in models:
         llm = RecordingLLM(model, mode=args.mode, recordings_dir=args.recordings)
         embeddings = RecordingEmbeddings(mode=args.mode, recordings_dir=args.recordings)
+        judge_calls_before = len(judge.calls) if judge else 0
         stages: dict[str, list[dict[str, Any]]] = {}
 
         print(f"[{model}] claims: {len(chunks)} chunk(s)...", file=sys.stderr)
-        claims_result = run_claims_stage(snapshot, chunks, llm, workers=args.workers, gold=gold_claims)
+        claims_result = run_claims_stage(snapshot, chunks, llm, workers=args.workers, gold=gold_claims, judge=judge)
         stages["claims"] = claims_result.cases
 
         if "retrieval" in run_through and queries:
@@ -139,14 +149,17 @@ def main(argv: list[str] | None = None) -> int:
             for scenario in scenarios:
                 pool = select_claim_pool(claims_result.accepted_claims, scenario.max_claims)
                 print(f"[{model}] synthesis: {scenario.id} ({len(pool)} claim(s))...", file=sys.stderr)
-                cases, syntheses = run_synthesis_stage(scenario, pool, llm)
+                cases, syntheses = run_synthesis_stage(scenario, pool, llm, judge=judge)
                 stages["synthesis"].extend(cases)
                 if args.stop_after == "review":
                     print(f"[{model}] review: {scenario.id} ({len(syntheses)} synthesis/es)...", file=sys.stderr)
-                    stages["review"].append(run_review_stage(scenario, syntheses, claims_result.accepted_claims, llm))
+                    stages["review"].append(
+                        run_review_stage(scenario, syntheses, claims_result.accepted_claims, llm, judge=judge)
+                    )
 
-        runs.append(build_model_run(model, stages, [*llm.calls, *embeddings.calls]))
-        used_recordings |= llm.used_paths | embeddings.used_paths
+        judge_calls = judge.calls[judge_calls_before:] if judge else []
+        runs.append(build_model_run(model, stages, [*llm.calls, *embeddings.calls], judge_calls))
+        used_recordings |= llm.used_paths | embeddings.used_paths | (judge.used_paths if judge else set())
 
     git_sha, git_dirty = git_state()
     report: dict[str, Any] = {
@@ -156,6 +169,10 @@ def main(argv: list[str] | None = None) -> int:
             "git_dirty": git_dirty,
             "mode": args.mode,
             "models": models,
+            "judge_model": None if args.no_judge else args.judge_model,
+            "judge_versions": []
+            if args.no_judge
+            else [CLAIM_GROUNDING_VERSION, SYNTHESIS_VERSION, REVIEW_CITATIONS_VERSION],
             "snapshot_path": str(snapshot.path),
             "snapshot_fingerprint": snapshot.fingerprint,
             "snapshot_pymupdf_version": snapshot.pymupdf_version,

@@ -1,0 +1,44 @@
+{
+ "key": "d7dbdb9e4c0285c5087be8dd073acfd5c6bcf16396f1640b3a2f4a33528e2906",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 759,
+ "output_tokens": 288,
+ "latency_s": 2.351,
+ "recorded_at": "2026-10-08T10:30:36+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage explicitly states: 'We introduce CARLA, an open-source simulator for autonomous driving research.'",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage says CARLA 'has been developed from the ground up to support development, training, and validation of autonomous urban driving systems.' This matches the claim exactly.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 3,
+    "reason": "The passage states: 'CARLA provides open digital assets (urban layouts, buildings, vehicles) that were created for this purpose and can be used freely.' This matches the claim.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 4,
+    "reason": "The passage says: 'The simulation platform supports flexible specification of sensor suites and environmental conditions.' This is directly stated.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 5,
+    "reason": "The passage says: 'We use CARLA to study the performance of three approaches to autonomous driving: a classic modular pipeline, an end-to-end model trained via imitation learning, and an end-to-end model trained via reinforcement learning.' This matches the claim.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 6,
+    "reason": "The passage states: 'The approaches are evaluated in controlled scenarios of increasing difficulty, and their performance is examined via metrics provided by CARLA.' This matches the claim.",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

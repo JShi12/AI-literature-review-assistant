@@ -1,0 +1,29 @@
+{
+ "key": "29270e548a02efaae0513b0f639be289b7ad8f3d28ff1ecc6d9134d4ea08fef4",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 472,
+ "output_tokens": 141,
+ "latency_s": 2.186,
+ "recorded_at": "2026-10-08T10:30:34+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "This claim is a direct restatement of the first sentence of the passage, with no added or omitted details.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "This claim accurately reflects the passage, which states that environment information is rendered into input images (as described in Fig. 1) and given to the RNN, which outputs a future trajectory.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 3,
+    "reason": "This claim matches the passage, which says the future trajectory is fed to a controls optimizer that outputs low-level control signals to drive the vehicle, either in the real world or in simulation.",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

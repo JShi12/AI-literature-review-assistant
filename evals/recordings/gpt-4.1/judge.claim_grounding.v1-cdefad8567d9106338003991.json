@@ -1,0 +1,19 @@
+{
+ "key": "cdefad8567d9106338003991bbb17f58e83011f22fbefcb3e98542807ba8e068",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 630,
+ "output_tokens": 54,
+ "latency_s": 1.497,
+ "recorded_at": "2026-10-08T10:30:40+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The claim lists all the types of information the client receives from the server, matching the passage exactly in both content and order. No information is added, omitted, or changed.",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

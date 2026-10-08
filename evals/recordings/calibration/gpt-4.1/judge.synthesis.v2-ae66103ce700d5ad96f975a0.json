@@ -1,0 +1,47 @@
+{
+ "key": "ae66103ce700d5ad96f975a0ded97236769f774fec5c18157a06100d92ed8ab4",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.synthesis.v2",
+ "temperature": 0.0,
+ "input_tokens": 863,
+ "output_tokens": 282,
+ "latency_s": 1.84,
+ "recorded_at": "2026-10-08T10:31:58+00:00",
+ "parsed": {
+  "statements": [
+   {
+    "statement": "There is a contradiction regarding the effectiveness of pure imitation learning for autonomous driving.",
+    "supporting_claims": [],
+    "supported": false
+   },
+   {
+    "statement": "One claim states that pure imitation learning is insufficient even with 30 million examples and mid-level input/output representations.",
+    "supporting_claims": [
+     1
+    ],
+    "supported": true
+   },
+   {
+    "statement": "Model failures such as getting stuck or colliding with parked vehicles despite viable passing options were found.",
+    "supporting_claims": [
+     2
+    ],
+    "supported": true
+   },
+   {
+    "statement": "Another claim highlights that this work advances capabilities using purely offline data without reinforcement learning, suggesting progress in imitation learning approaches.",
+    "supporting_claims": [
+     3
+    ],
+    "supported": true
+   },
+   {
+    "statement": "The contradiction centers on whether pure imitation learning alone is sufficient for reliable autonomous driving performance.",
+    "supporting_claims": [],
+    "supported": false
+   }
+  ],
+  "type_evidence": "Claims 1, 2, and 3 are all from the same paper ([ChauffeurNet: Learning to Drive by Imitating the Best and Synthesizing the Worst]).",
+  "type_appropriate": false
+ }
+}
