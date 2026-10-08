@@ -230,6 +230,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Build a frozen eval snapshot of ingested papers.")
     parser.add_argument("--pdf", action="append", type=Path, help="Local PDF(s) to use instead of the demo papers.")
     parser.add_argument("--out", type=Path, default=DEFAULT_SNAPSHOT_PATH)
+    parser.add_argument(
+        "--pdf-cache", type=Path, help="Keep downloaded demo PDFs here and reuse them (CI caches this directory)."
+    )
     args = parser.parse_args()
 
     # Reuse the demo seed script's paper list, download helper, and curated metadata so the eval set is
@@ -242,10 +245,13 @@ def main() -> None:
             papers.append(build_paper_record(pdf, pdf.name, KNOWN_METADATA))
     else:
         with tempfile.TemporaryDirectory() as tmp:
+            directory = args.pdf_cache or Path(tmp)
+            directory.mkdir(parents=True, exist_ok=True)
             for url, file_name in DEMO_PAPERS:
-                path = Path(tmp) / file_name
-                print(f"Downloading {file_name} from {url} ...")
-                download(url, path)
+                path = directory / file_name
+                if not path.exists():
+                    print(f"Downloading {file_name} from {url} ...")
+                    download(url, path)
                 papers.append(build_paper_record(path, file_name, KNOWN_METADATA))
 
     write_snapshot(papers, args.out)

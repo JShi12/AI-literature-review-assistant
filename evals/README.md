@@ -33,6 +33,28 @@ Useful flags:
 
 The exit code is 1 if any case couldn't be evaluated (missing recording, API/auth/network error).
 
+## In CI, and changing a prompt
+
+The `eval-replay` CI job builds the snapshot (downloading the demo PDFs, cached), replays the whole eval
+and the judge calibration from committed recordings, and runs `python -m evals.gate`. The gate fails if
+any directional metric is worse than `evals/baselines/baseline.json`, or if the run settings differ from
+the baseline's. The replay itself fails if any request has no recording. All of this is free: no API key.
+
+So a change that affects what the LLM is asked (a prompt, a post-processing step, chunking, or section
+types) needs fresh recordings and an explicit baseline update:
+
+```bash
+python -m evals.snapshot            # only if ingestion (pages, chunks, section types) changed
+python -m evals.run --prune         # live: record the new responses, drop the stale ones
+python -m evals.gate                # see exactly which metrics moved
+python -m evals.gate --update       # accept them; commit recordings + baseline with the change
+```
+
+Live runs are noisy (repeat runs moved synthesis faithfulness by ~25 points), so judge a change by
+several runs before accepting it; the gate only guarantees nothing changed *unintentionally*.
+PDF extraction is pinned in `evals/requirements-snapshot.txt` (PyMuPDF), because a different version
+can extract slightly different text and miss every recording.
+
 ## Inputs
 
 - **Snapshot** (`evals/snapshots/demo_papers.json`, gitignored): page text and section-aware chunks

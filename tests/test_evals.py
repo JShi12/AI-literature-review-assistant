@@ -11,6 +11,7 @@ from pydantic import BaseModel
 
 from evals import run as eval_run
 from evals.calibrate import agreement, cohen_kappa
+from evals.gate import compare, config_mismatches, gated_metrics, write_baseline
 from evals.gold import GoldHeading, RetrievalQuery, locate_line
 from evals.judges import (
     CitedClaim,
@@ -573,3 +574,55 @@ def test_statement_level_checks_derive_the_overall_verdict() -> None:
         SynthesisJudgment(statements=checks(True, False), type_evidence="", type_appropriate=True).faithfulness
         == "unfaithful"
     )
+
+
+def _gate_report(gold_f1: float, unsupported: float, heading_recall: float = 0.9) -> dict:
+    return {
+        "meta": {
+            "snapshot_fingerprint": "fp",
+            "models": ["m"],
+            "judge_model": "j",
+            "n_chunks": 30,
+            "seed": 0,
+            "scenarios": ["s"],
+            "prompt_versions": ["claims.v2"],
+        },
+        "sections": {"summary": {"heading_recall": heading_recall}},
+        "runs": [
+            {
+                "model": "m",
+                "summary": {
+                    "claims": {"gold_f1": gold_f1, "claims_per_chunk": 4.0, "judge_unsupported_rate": unsupported},
+                    "usage": {"latency_mean_s": 3.0},
+                },
+            }
+        ],
+    }
+
+
+def test_gate_flags_regressions_in_either_direction_and_ignores_informational_metrics(tmp_path: Path) -> None:
+    baseline_path = tmp_path / "baseline.json"
+    write_baseline(_gate_report(gold_f1=0.8, unsupported=0.1), baseline_path)
+    baseline = json.loads(baseline_path.read_text())
+
+    assert "m/claims/claims_per_chunk" not in baseline["metrics"]  # no direction: informational only
+    assert "m/usage/latency_mean_s" not in baseline["metrics"]  # live-only noise
+
+    rows = compare(gated_metrics(_gate_report(gold_f1=0.7, unsupported=0.2, heading_recall=0.95)), baseline, 0.0)
+    statuses = {row["metric"]: row["status"] for row in rows}
+
+    assert statuses["m/claims/gold_f1"] == "regressed"  # higher is better, went down
+    assert statuses["m/claims/judge_unsupported_rate"] == "regressed"  # lower is better, went up
+    assert statuses["sections/heading_recall"] == "improved"
+    assert compare(gated_metrics(_gate_report(0.79, 0.1)), baseline, 0.02)[0]["status"] != "regressed"
+
+
+def test_gate_refuses_to_compare_runs_with_different_settings(tmp_path: Path) -> None:
+    baseline_path = tmp_path / "baseline.json"
+    write_baseline(_gate_report(0.8, 0.1), baseline_path)
+    report = _gate_report(0.8, 0.1)
+    report["meta"]["prompt_versions"] = ["claims.v3"]
+
+    assert config_mismatches(report, json.loads(baseline_path.read_text())) == [
+        "prompt_versions: baseline ['claims.v2'], report ['claims.v3']"
+    ]
