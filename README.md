@@ -217,10 +217,10 @@ reports coverage.
 
 ## Evaluation
 
-`evals/` is an offline harness that scores the LLM stages (claims, syntheses, review drafts) on a
-frozen snapshot of the demo papers. It uses deterministic metrics such as whether claim offsets
-point at the claim text, how many cited claim IDs are invented, and how many review sentences cite
-a real claim. It records LLM responses so runs can be replayed for free, and can compare models side
+`evals/` is an offline harness that scores the pipeline (section detection, claims, retrieval,
+syntheses, review drafts) on a frozen snapshot of the demo papers. It uses deterministic metrics,
+including recall against gold claims, retrieval precision@k against labelled relevant chunks,
+whether claim offsets point at the claim text, and how many review sentences cite a real claim. It records LLM responses so runs can be replayed for free, and can compare models side
 by side:
 
 ```bash

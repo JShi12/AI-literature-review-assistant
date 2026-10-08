@@ -30,12 +30,17 @@ def embed_texts(texts: list[str], client: OpenAI | None = None) -> list[list[flo
     return [item.embedding for item in ordered]
 
 
+def claim_embedding_text(claim: Claim) -> str:
+    """The text a claim is embedded (and so retrieved) by."""
+    return claim.normalized_text or claim.claim_text
+
+
 def embed_and_persist_claims(session: Session, claims: list[Claim], client: OpenAI | None = None) -> None:
     """Embed and store vectors for newly created claims. Logs and continues on failure."""
     if not claims:
         return
     try:
-        texts = [claim.normalized_text or claim.claim_text for claim in claims]
+        texts = [claim_embedding_text(claim) for claim in claims]
         vectors = embed_texts(texts, client=client)
         model = _embedding_model()
         for claim, vector in zip(claims, vectors, strict=True):

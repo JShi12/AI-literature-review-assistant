@@ -16,6 +16,15 @@ Case = dict[str, Any]
 
 # (stage, label, key, format, better) -- the rows of the Markdown summary table. `better` is a hint
 # for the reader ("up"/"down"); it isn't enforced anywhere yet.
+SECTION_METRICS: list[tuple[str, str, str]] = [
+    ("Gold headings", "n_gold", "int"),
+    ("Detected headings", "n_detected", "int"),
+    ("Heading precision", "heading_precision", "pct"),
+    ("Heading recall", "heading_recall", "pct"),
+    ("Matched headings with correct type", "matched_type_accuracy", "pct"),
+    ("Chunks with correct section type", "chunk_type_accuracy", "pct"),
+]
+
 HEADLINE_METRICS: list[tuple[str, str, str, str, str]] = [
     ("claims", "Chunks evaluated", "chunks", "int", ""),
     ("claims", "Chunks errored", "errors", "int", "down"),
@@ -28,6 +37,18 @@ HEADLINE_METRICS: list[tuple[str, str, str, str, str]] = [
     ("claims", "Verbatim claims", "verbatim_rate", "pct", ""),
     ("claims", "Mean lexical coverage of chunk", "lexical_coverage_mean", "float", "up"),
     ("claims", "Ids copied exactly", "ids_copied_rate", "pct", "up"),
+    ("claims", "Gold chunks scored", "gold_chunks", "int", ""),
+    ("claims", "Gold claims recalled", "gold_recall", "pct", "up"),
+    ("claims", "Extracted claims matching a gold claim", "gold_precision", "pct", "up"),
+    ("claims", "Gold F1", "gold_f1", "float", "up"),
+    ("claims", "Claim type agrees with gold", "gold_type_agreement", "pct", "up"),
+    ("retrieval", "Queries scored", "queries_scored", "int", ""),
+    ("retrieval", "Precision@5", "p@5", "pct", "up"),
+    ("retrieval", "Precision@10", "p@10", "pct", "up"),
+    ("retrieval", "Recall@20", "r@20", "pct", "up"),
+    ("retrieval", "MRR", "mrr", "float", "up"),
+    ("retrieval", "nDCG@10", "ndcg@10", "float", "up"),
+    ("retrieval", "Random-ranking precision (baseline)", "random_precision", "pct", ""),
     ("synthesis", "Syntheses generated", "syntheses", "int", ""),
     ("synthesis", "Invented claim ids (of cited)", "invented_id_rate", "pct", "down"),
     ("synthesis", "Syntheses with no valid support", "unsupported_rate", "pct", "down"),
@@ -81,7 +102,51 @@ def summarize_claims(cases: Sequence[Case]) -> dict[str, Any]:
         "ids_copied_rate": _rate(sum(claim["ids_copied"] for claim in claims), len(claims)),
         "confidence_mean": _mean(claim["confidence"] for claim in claims),
         "claim_types": dict(Counter(claim["claim_type"] for claim in claims).most_common()),
+        **summarize_gold_claims([case["gold"] for case in scored if "gold" in case]),
     }
+
+
+def summarize_gold_claims(golds: Sequence[Case]) -> dict[str, Any]:
+    n_gold = sum(gold["n_gold"] for gold in golds)
+    n_predicted = sum(gold["n_predicted"] for gold in golds)
+    gold_matched = sum(gold["gold_matched"] for gold in golds)
+    recall = _rate(gold_matched, n_gold)
+    precision = _rate(sum(gold["predicted_matched"] for gold in golds), n_predicted)
+    return {
+        "gold_chunks": len(golds),
+        "gold_recall": recall,
+        "gold_precision": precision,
+        "gold_f1": round(2 * recall * precision / (recall + precision), 3) if recall and precision else None,
+        "gold_type_agreement": _rate(sum(gold["type_agree"] for gold in golds), gold_matched),
+        "gold_predicted_unlocatable": sum(gold["predicted_unlocatable"] for gold in golds),
+    }
+
+
+def summarize_sections(cases: Sequence[Case]) -> dict[str, Any]:
+    matched = sum(case["headings_matched"] for case in cases)
+    return {
+        "papers": len(cases),
+        "n_gold": sum(case["n_gold"] for case in cases),
+        "n_detected": sum(case["n_detected"] for case in cases),
+        "heading_precision": _rate(matched, sum(case["n_detected"] for case in cases)),
+        "heading_recall": _rate(matched, sum(case["n_gold"] for case in cases)),
+        "matched_type_accuracy": _rate(sum(case["matched_type_correct"] for case in cases), matched),
+        "chunk_type_accuracy": _rate(
+            sum(case["chunks_type_correct"] for case in cases), sum(case["n_chunks"] for case in cases)
+        ),
+    }
+
+
+def summarize_retrieval(cases: Sequence[Case]) -> dict[str, Any]:
+    scored = [case for case in _ok(cases) if case["n_relevant"] > 0]
+    summary: dict[str, Any] = {
+        "queries": len(cases),
+        "errors": len(cases) - len(_ok(cases)),
+        "queries_scored": len(scored),
+    }
+    for key in ("p@5", "p@10", "r@10", "r@20", "mrr", "ndcg@10", "random_precision"):
+        summary[key] = _mean(case[key] for case in scored)
+    return summary
 
 
 def summarize_syntheses(cases: Sequence[Case]) -> dict[str, Any]:
@@ -139,6 +204,8 @@ def build_model_run(model: str, stages: dict[str, list[Case]], calls: Sequence[C
     summaries: dict[str, Any] = {}
     if "claims" in stages:
         summaries["claims"] = summarize_claims(stages["claims"])
+    if "retrieval" in stages:
+        summaries["retrieval"] = summarize_retrieval(stages["retrieval"])
     if "synthesis" in stages:
         summaries["synthesis"] = summarize_syntheses(stages["synthesis"])
     if "review" in stages:
@@ -199,6 +266,16 @@ def render_markdown(report: dict[str, Any]) -> str:
         cells = [_format(summary.get(key), kind, summary) if summary else "–" for summary in summaries]
         lines.append(f"| {stage} | {label}{arrow} | " + " | ".join(cells) + " |")
 
+    sections = report.get("sections")
+    if sections:
+        lines.extend(["", "## Section detection (model-independent)", "", "| Metric | Value |", "|---|---|"])
+        lines.extend(
+            f"| {label} | {_format(sections['summary'].get(key), kind, sections['summary'])} |"
+            for label, key, kind in SECTION_METRICS
+        )
+        missed = [f"`{case['paper_key']}`: {', '.join(case['missed_headings'])}" for case in sections["cases"]]
+        lines.extend(["", "Missed headings:", "", *(f"- {line}" for line in missed)])
+
     for run in runs:
         worst = _worst_claim_locations(run["cases"].get("claims", []))
         if worst:
@@ -218,6 +295,8 @@ def render_markdown(report: dict[str, Any]) -> str:
 def _case_label(case: Case) -> str:
     if "chunk_key" in case:
         return str(case["chunk_key"])
+    if "query_id" in case:
+        return str(case["query_id"])
     return ":".join(str(case[key]) for key in ("scenario", "synthesis_type") if key in case)
 
 

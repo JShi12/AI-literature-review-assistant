@@ -19,6 +19,8 @@ PRICES_PER_MILLION: dict[str, tuple[Decimal, Decimal]] = {
     "gpt-5-nano": (Decimal("0.05"), Decimal("0.40")),
     "gpt-5-mini": (Decimal("0.25"), Decimal("2.00")),
     "gpt-5": (Decimal("1.25"), Decimal("10.00")),
+    "text-embedding-3-small": (Decimal("0.02"), Decimal("0")),
+    "text-embedding-3-large": (Decimal("0.13"), Decimal("0")),
 }
 
 

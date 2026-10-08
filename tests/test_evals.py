@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+from dataclasses import dataclass
 from decimal import Decimal
 from pathlib import Path
 
@@ -9,14 +10,28 @@ import pytest
 from pydantic import BaseModel
 
 from evals import run as eval_run
-from evals.llm_cache import RecordingLLM, RecordingMissError
-from evals.metrics import cited_numbers, claim_metrics, review_metrics, synthesis_metrics
+from evals.gold import GoldHeading, RetrievalQuery, locate_line
+from evals.llm_cache import RecordingEmbeddings, RecordingLLM, RecordingMissError
+from evals.metrics import (
+    cited_numbers,
+    claim_metrics,
+    gold_claim_metrics,
+    ranking_metrics,
+    review_metrics,
+    section_metrics,
+    synthesis_metrics,
+)
 from evals.pricing import estimate_cost
 from evals.snapshot import load_snapshot, sample_chunks, write_snapshot
-from evals.tasks import to_orm_chunk
+from evals.tasks import run_retrieval_stage, to_orm_chunk
+from lit_review_assistant.db.models import Claim
 from lit_review_assistant.llm.claims import ExtractedClaimsBatch
 from lit_review_assistant.llm.client import LLMResult
+from lit_review_assistant.llm.embeddings import embed_texts
 from lit_review_assistant.llm.synthesis import GeneratedSynthesesBatch
+from lit_review_assistant.pipeline.chunking import chunk_pages_with_sections
+from lit_review_assistant.pipeline.pdf import PageText
+from lit_review_assistant.pipeline.sections import detect_sections
 from lit_review_assistant.schemas import (
     ExtractedClaim,
     GeneratedSynthesis,
@@ -323,3 +338,122 @@ def test_eval_run_end_to_end_records_then_replays(tmp_path: Path, monkeypatch: p
     assert summary["review"]["sentence_supported_rate"] == 1.0
     assert summary["review"]["leaked_ids"] == 0
     assert summary["usage"]["cache_hits"] == summary["usage"]["calls"]
+
+
+def test_gold_claim_metrics_match_by_source_span_not_wording() -> None:
+    chunk_text = "We train a CNN to steer a car from raw pixels. It drives without lane markings."
+    gold = [("We train a CNN to steer a car from raw pixels", "method"), ("It drives without lane markings", "finding")]
+    predicted = [
+        ExtractedClaim(
+            claim_text="We train a CNN to steer a car from raw camera pixels.",
+            claim_type="method",
+            paper_id="P",
+            chunk_id="C",
+            page=1,
+            start_char=0,
+            end_char=10,
+            confidence=0.9,
+        ),
+        ExtractedClaim(
+            claim_text="Completely unrelated statement about weather radar.",
+            claim_type="finding",
+            paper_id="P",
+            chunk_id="C",
+            page=1,
+            start_char=0,
+            end_char=10,
+            confidence=0.9,
+        ),
+    ]
+
+    metrics = gold_claim_metrics(predicted, gold, chunk_text)
+
+    assert metrics == {
+        "n_gold": 2,
+        "n_predicted": 2,
+        "gold_matched": 1,
+        "predicted_matched": 1,
+        "predicted_unlocatable": 1,
+        "type_agree": 1,
+    }
+
+
+def test_section_metrics_scores_headings_and_chunk_types() -> None:
+    page = "1 Introduction\nText.\n2 Network Architecture\nMore text.\n"
+    pages = [PageText(page_number=1, text=page)]
+    detected = detect_sections(pages)
+    gold = [
+        GoldHeading("p", 1, "1 Introduction", "introduction", locate_line(page, "1 Introduction") or 0),
+        GoldHeading("p", 1, "2 Network Architecture", "methods", locate_line(page, "2 Network Architecture") or 0),
+    ]
+    chunks = chunk_pages_with_sections(pages, detected, max_chars=200, overlap=10)
+
+    metrics = section_metrics(detected, gold, chunks)
+
+    assert metrics["headings_matched"] == 1
+    assert metrics["matched_type_correct"] == 1
+    assert metrics["missed_headings"] == ["p1 2 Network Architecture (methods)"]
+
+
+def test_ranking_metrics() -> None:
+    metrics = ranking_metrics([False, True, True, False, False, False, False, False, False, False], n_relevant=4)
+
+    assert metrics["p@5"] == 0.4
+    assert metrics["r@10"] == 0.5
+    assert metrics["mrr"] == 0.5
+    assert 0 < metrics["ndcg@10"] < 1
+    assert ranking_metrics([True], n_relevant=0)["p@5"] is None
+
+
+class FakeEmbeddingsClient:
+    def __init__(self) -> None:
+        self.inputs: list[str] = []
+        self.embeddings = self
+
+    def create(self, *, model: str, input: list[str]):
+        self.inputs.extend(input)
+        vectors = [[1.0, 0.0] if "steer" in text else [0.0, 1.0] for text in input]
+        return FakeEmbeddingsResponse([FakeEmbeddingItem(index=i, embedding=v) for i, v in enumerate(vectors)])
+
+
+@dataclass
+class FakeEmbeddingItem:
+    index: int
+    embedding: list[float]
+
+
+@dataclass
+class FakeEmbeddingsResponse:
+    data: list[FakeEmbeddingItem]
+
+
+def test_recording_embeddings_records_then_replays(tmp_path: Path) -> None:
+    fake = FakeEmbeddingsClient()
+    recorder = RecordingEmbeddings(mode="record", recordings_dir=tmp_path, client_factory=lambda: fake)
+    first = embed_texts(["steer left", "weather"], client=recorder)
+    second = embed_texts(["weather", "steer left"], client=recorder)
+
+    replayer = RecordingEmbeddings(mode="replay", recordings_dir=tmp_path, client_factory=lambda: 1 / 0)
+
+    assert fake.inputs == ["steer left", "weather"]
+    assert first == [[1.0, 0.0], [0.0, 1.0]]
+    assert second == [[0.0, 1.0], [1.0, 0.0]]
+    assert embed_texts(["steer left"], client=replayer) == [[1.0, 0.0]]
+    with pytest.raises(RecordingMissError):
+        embed_texts(["never seen"], client=replayer)
+
+
+def test_retrieval_stage_ranks_claims_from_relevant_chunks_first(tmp_path: Path) -> None:
+    snapshot = load_snapshot(make_snapshot(tmp_path))
+    intro, results = snapshot.papers[0].chunks
+    claims = [
+        Claim(id="c1", claim_text="Rain is common", chunk_id=results.id, paper_id=results.paper_id),
+        Claim(id="c2", claim_text="We steer from pixels", chunk_id=intro.id, paper_id=intro.paper_id),
+    ]
+    query = RetrievalQuery(id="q", query="how to steer", relevant_chunks=frozenset({intro.key}))
+
+    [case] = run_retrieval_stage(snapshot, claims, [query], FakeEmbeddingsClient())
+
+    assert case["n_relevant"] == 1
+    assert case["mrr"] == 1.0
+    assert case["top5_relevant"] == [True, False]

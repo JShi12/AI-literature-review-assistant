@@ -13,8 +13,10 @@ Modes:
 
 from __future__ import annotations
 
+import base64
 import hashlib
 import json
+import os
 import re
 import threading
 import time
@@ -23,7 +25,10 @@ from dataclasses import dataclass, replace
 from datetime import UTC, datetime
 from decimal import Decimal
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
+
+import numpy as np
+from openai import OpenAI
 
 from evals.pricing import estimate_cost
 from lit_review_assistant.llm.client import LLMResult, OpenAIStructuredLLM, ParsedModel, StructuredLLM
@@ -176,3 +181,85 @@ class RecordingLLM:
     def _with_cost(self, result: LLMResult[ParsedModel]) -> LLMResult[ParsedModel]:
         cost = estimate_cost(self.model, result.input_tokens, result.output_tokens)
         return result if cost is None else replace(result, cost=cost)
+
+
+# --- Embeddings -----------------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class _EmbeddingItem:
+    index: int
+    embedding: list[float]
+
+
+@dataclass(frozen=True)
+class _EmbeddingsResponse:
+    data: list[_EmbeddingItem]
+
+
+class RecordingEmbeddings:
+    """Duck-types `OpenAI().embeddings` for production's embed_texts, recording one file per input text.
+
+    Vectors are stored as base64 float16 (~4 KB each instead of ~30 KB of JSON floats). That rounding is
+    applied to live results too, so a live run and its replay rank identically.
+    """
+
+    def __init__(
+        self,
+        mode: Mode = "record",
+        recordings_dir: Path = DEFAULT_RECORDINGS_DIR,
+        client_factory: Callable[[], Any] | None = None,
+    ) -> None:
+        self.mode = mode
+        self.recordings_dir = recordings_dir
+        self._client_factory = client_factory or (lambda: OpenAI(api_key=os.getenv("OPENAI_API_KEY")))
+        self._client: Any = None
+        self.calls: list[CallRecord] = []
+
+    @property
+    def embeddings(self) -> RecordingEmbeddings:
+        return self
+
+    def create(self, *, model: str, input: list[str]) -> _EmbeddingsResponse:
+        directory = self.recordings_dir / re.sub(r"[^A-Za-z0-9._-]", "_", model)
+        paths = [directory / f"embedding-{_text_key(model, text)}.json" for text in input]
+        vectors: dict[int, list[float]] = {}
+        if self.mode != "refresh":
+            for index, path in enumerate(paths):
+                if path.exists():
+                    vectors[index] = _decode_vector(json.loads(path.read_text())["embedding_f16_b64"])
+
+        missing = [index for index in range(len(input)) if index not in vectors]
+        if missing and self.mode == "replay":
+            raise RecordingMissError(f"No recording for {len(missing)} embedding input(s) (model {model}).")
+        if missing:
+            if self._client is None:
+                self._client = self._client_factory()
+            started = time.perf_counter()
+            response = self._client.embeddings.create(model=model, input=[input[index] for index in missing])
+            latency_s = time.perf_counter() - started
+            directory.mkdir(parents=True, exist_ok=True)
+            for item in response.data:
+                index = missing[item.index]
+                encoded = _encode_vector(item.embedding)
+                paths[index].write_text(json.dumps({"model": model, "embedding_f16_b64": encoded}) + "\n")
+                vectors[index] = _decode_vector(encoded)
+            tokens = int(getattr(getattr(response, "usage", None), "total_tokens", 0) or 0)
+            self.calls.append(
+                CallRecord(model, "embeddings", tokens, 0, estimate_cost(model, tokens, 0), False, latency_s)
+            )
+        if len(missing) < len(input):
+            self.calls.append(CallRecord(model, "embeddings", 0, 0, estimate_cost(model, 0, 0), True, None))
+        return _EmbeddingsResponse(data=[_EmbeddingItem(index, vectors[index]) for index in range(len(input))])
+
+
+def _text_key(model: str, text: str) -> str:
+    return hashlib.sha256(f"{model}\n{text}".encode()).hexdigest()[:24]
+
+
+def _encode_vector(vector: list[float]) -> str:
+    return base64.b64encode(np.asarray(vector, dtype="<f2").tobytes()).decode()
+
+
+def _decode_vector(encoded: str) -> list[float]:
+    return np.frombuffer(base64.b64decode(encoded), dtype="<f2").astype(float).tolist()
