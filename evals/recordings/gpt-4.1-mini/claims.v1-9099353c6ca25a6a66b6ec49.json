@@ -1,0 +1,74 @@
+{
+ "key": "9099353c6ca25a6a66b6ec49a7a674046a5b888061465555f48f76d3142dfa3a",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v1",
+ "temperature": 0.1,
+ "input_tokens": 853,
+ "output_tokens": 796,
+ "latency_s": 8.671,
+ "recorded_at": "2026-10-08T09:19:01+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "We employ L1 loss for both the sub-pixel refinement and speed estimate outputs.",
+    "claim_type": "method",
+    "normalized_text": "Use L1 loss for sub-pixel refinement and speed estimate outputs.",
+    "paper_id": "541119ae-3cb7-5f0d-9943-f5ed44d48ebb",
+    "chunk_id": "27d6996a-df98-5929-8f9a-dc71d27c56a7",
+    "section_id": "b2946be0-11bf-556c-b021-5dcae3038ef0",
+    "page": 8,
+    "start_char": 1125,
+    "end_char": 1159,
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "During training, the model is provided the past motion history as one of the inputs.",
+    "claim_type": "method",
+    "normalized_text": "Model input during training includes past motion history.",
+    "paper_id": "541119ae-3cb7-5f0d-9943-f5ed44d48ebb",
+    "chunk_id": "27d6996a-df98-5929-8f9a-dc71d27c56a7",
+    "section_id": "b2946be0-11bf-556c-b021-5dcae3038ef0",
+    "page": 8,
+    "start_char": 1200,
+    "end_char": 1237,
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The net can learn to cheat by extrapolating from the past rather than finding the underlying causes of the behavior.",
+    "claim_type": "limitation",
+    "normalized_text": "Model may cheat by extrapolating past motion instead of learning behavior causes.",
+    "paper_id": "541119ae-3cb7-5f0d-9943-f5ed44d48ebb",
+    "chunk_id": "27d6996a-df98-5929-8f9a-dc71d27c56a7",
+    "section_id": "b2946be0-11bf-556c-b021-5dcae3038ef0",
+    "page": 8,
+    "start_char": 1238,
+    "end_char": 1306,
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "During closed-loop inference, the past history is from the net’s own past predictions, which can cause the model to fail to stop for a stop sign if it only learns to stop when seeing deceleration in past history.",
+    "claim_type": "limitation",
+    "normalized_text": "Closed-loop inference uses net's past predictions, causing failure to stop if model relies only on past deceleration.",
+    "paper_id": "541119ae-3cb7-5f0d-9943-f5ed44d48ebb",
+    "chunk_id": "27d6996a-df98-5929-8f9a-dc71d27c56a7",
+    "section_id": "b2946be0-11bf-556c-b021-5dcae3038ef0",
+    "page": 8,
+    "start_char": 1307,
+    "end_char": 1385,
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "We introduce a dropout on the past pose history, where for 50% of the examples, we keep only the current position of the agent in the past agent poses channel of the input data.",
+    "claim_type": "method",
+    "normalized_text": "Apply dropout on past pose history by keeping only current position in 50% of examples.",
+    "paper_id": "541119ae-3cb7-5f0d-9943-f5ed44d48ebb",
+    "chunk_id": "27d6996a-df98-5929-8f9a-dc71d27c56a7",
+    "section_id": "b2946be0-11bf-556c-b021-5dcae3038ef0",
+    "page": 8,
+    "start_char": 1386,
+    "end_char": 1466,
+    "confidence": 0.95
+   }
+  ]
+ }
+}

@@ -1,0 +1,68 @@
+{
+ "key": "54b0422034669d1444f90dca366cdb70960f447c3ddd6dbab7939f40f19dfaf2",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "synthesis.v1",
+ "temperature": 0.2,
+ "input_tokens": 5282,
+ "output_tokens": 2104,
+ "latency_s": 17.871,
+ "recorded_at": "2026-10-08T09:20:10+00:00",
+ "parsed": {
+  "syntheses": [
+   {
+    "synthesis_type": "method_comparison",
+    "title": "Comparison of End-to-End CNN and RNN Approaches for Autonomous Driving",
+    "body": "The end-to-end CNN approach (DAVE-2) learns the entire processing pipeline to steer a car using video input and steering commands, with CNN weights adjusted via backpropagation (claims e66d15a0-9347-5814-b053-1ff1dea8058d, 7a55c35c-41b2-5ae6-a170-4aefe1f7ae2c, 1f44da23-b078-5b48-9c3b-0f7f3315f522). This approach is vehicle-agnostic and can generate steering commands from single center camera images (claims f760d9d4-65ce-59e7-b492-c078a073c6c2, 82d5df42-8220-51e7-a608-9993016f4e1c). In contrast, ChauffeurNet uses an RNN architecture that takes mid-level input representations and outputs a driving trajectory for a controller to translate into steering and acceleration commands (claims cc49c2d4-b50d-5322-8525-304268249b24, a074e01e-adb6-51f9-a4d9-c118eae03923, 60616bde-77c3-5a31-9f30-0e858577c097). ChauffeurNet includes components such as FeatureNet and AgentRNN, with AgentRNN producing heatmaps for next pose prediction and refined sub-pixel pose, heading, and speed (claims 8797af3f-97dd-568d-9e23-23b9c02f9f1f, 28ac3012-c446-509b-bbe5-067fc5348a93, 895eafbb-3f11-5339-9345-8de95a48f4d0). The RNN approach leverages mid-level representations that facilitate training on real or simulated data and enable closed-loop simulation testing before real-world deployment (claims 5fc32090-a96e-5352-b867-05795d95ae56, ff265183-ca72-5222-91bf-17b21808b0f6). Both methods have demonstrated capabilities in autonomous driving, but pure imitation learning with mid-level inputs (as in ChauffeurNet) faces limitations such as error accumulation and distribution shift in closed-loop operation (claims 639f88c8-001d-587a-bae9-390fb3c89dcf, c9759883-dd81-58a9-ab2d-155a512245df).",
+    "supporting_claim_ids": [
+     "e66d15a0-9347-5814-b053-1ff1dea8058d",
+     "7a55c35c-41b2-5ae6-a170-4aefe1f7ae2c",
+     "1f44da23-b078-5b48-9c3b-0f7f3315f522",
+     "f760d9d4-65ce-59e7-b492-c078a073c6c2",
+     "82d5df42-8220-51e7-a608-9993016f4e1c",
+     "cc49c2d4-b50d-5322-8525-304268249b24",
+     "a074e01e-adb6-51f9-a4d9-c118eae03923",
+     "60616bde-77c3-5a31-9f30-0e858577c097",
+     "8797af3f-97dd-568d-9e23-23b9c02f9f1f",
+     "28ac3012-c446-509b-bbe5-067fc5348a93",
+     "895eafbb-3f11-5339-9345-8de95a48f4d0",
+     "5fc32090-a96e-5352-b867-05795d95ae56",
+     "ff265183-ca72-5222-91bf-17b21808b0f6",
+     "639f88c8-001d-587a-bae9-390fb3c89dcf",
+     "c9759883-dd81-58a9-ab2d-155a512245df"
+    ],
+    "supporting_papers": 2,
+    "supporting_claims": 15,
+    "confidence": 0.95
+   },
+   {
+    "synthesis_type": "method_comparison",
+    "title": "Comparison of Autonomous Driving Development and Evaluation Platforms: CARLA Simulator vs Real-World Data Collection",
+    "body": "CARLA is an open-source urban driving simulator designed to support development, training, and validation of autonomous driving systems with flexible sensor suite specification and environmental condition control (claims 6dde98eb-ff12-5785-926e-11fbb8cd299b, 2dedfe39-6dab-5024-be2e-997515e0211d, b26241aa-3d3d-560b-9a47-d8c65f50bfa3, 1d021b0a-2ce3-5e4a-badb-de76d4cd2b41). It provides free digital assets including urban layouts, vehicles, buildings, pedestrians, and traffic rule compliance measurements, enabling detailed benchmarking and controlled scenario evaluation (claims 0488bcfc-4a7e-5848-a1d4-1e81239f8f55, fe6967d3-e559-5d60-811b-65a206438009, a4766e4b-52af-520a-b0f2-2c0267bf443f, 5cb1f566-b5b8-59fc-bdf9-248b9b7cbf1a). CARLA supports studying multiple autonomous driving approaches including classic modular pipelines, end-to-end imitation learning, and reinforcement learning, with performance evaluation in controlled scenarios (claims 34863bb0-827c-5405-a15d-f7229ca8985c, 7e8db57a-25dd-55f8-9220-c289a62aea7f, 32a49fa0-8395-506b-9794-efc1f7fa2a8f, a4f1d6b1-8d70-5572-a296-1d5aeacfd7d0). In contrast, real-world data collection (e.g., DAVE project) involves gathering diverse driving data with multiple cameras and conditions, but lacks the controlled flexibility and detailed benchmarking features of CARLA (claims 1f44da23-b078-5b48-9c3b-0f7f3315f522, 5b04c50f-7b96-5ddd-a0be-8eb2d45b4a96, 70eb8202-ac82-55fb-a95a-efb095234403, d0614344-bb20-5a72-b117-6622c05a40a0). CARLA's simulation environment allows for closed-loop testing and validation before real car deployment, addressing limitations of real-world data such as safety and reproducibility (claims 5fc32090-a96e-5352-b867-05795d95ae56, ff265183-ca72-5222-91bf-17b21808b0f6, 7af96b1b-a00a-5515-b7c1-a73063874b05).",
+    "supporting_claim_ids": [
+     "6dde98eb-ff12-5785-926e-11fbb8cd299b",
+     "2dedfe39-6dab-5024-be2e-997515e0211d",
+     "b26241aa-3d3d-560b-9a47-d8c65f50bfa3",
+     "1d021b0a-2ce3-5e4a-badb-de76d4cd2b41",
+     "0488bcfc-4a7e-5848-a1d4-1e81239f8f55",
+     "fe6967d3-e559-5d60-811b-65a206438009",
+     "a4766e4b-52af-520a-b0f2-2c0267bf443f",
+     "5cb1f566-b5b8-59fc-bdf9-248b9b7cbf1a",
+     "34863bb0-827c-5405-a15d-f7229ca8985c",
+     "7e8db57a-25dd-55f8-9220-c289a62aea7f",
+     "32a49fa0-8395-506b-9794-efc1f7fa2a8f",
+     "a4f1d6b1-8d70-5572-a296-1d5aeacfd7d0",
+     "1f44da23-b078-5b48-9c3b-0f7f3315f522",
+     "5b04c50f-7b96-5ddd-a0be-8eb2d45b4a96",
+     "70eb8202-ac82-55fb-a95a-efb095234403",
+     "d0614344-bb20-5a72-b117-6622c05a40a0",
+     "5fc32090-a96e-5352-b867-05795d95ae56",
+     "ff265183-ca72-5222-91bf-17b21808b0f6",
+     "7af96b1b-a00a-5515-b7c1-a73063874b05"
+    ],
+    "supporting_papers": 2,
+    "supporting_claims": 19,
+    "confidence": 0.99
+   }
+  ]
+ }
+}

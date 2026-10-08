@@ -38,3 +38,8 @@ env/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Eval harness: snapshots hold the papers' full text (rebuild with python -m evals.snapshot);
+# reports are per-run output. evals/recordings/ IS committed so replay mode works anywhere.
+evals/snapshots/
+evals/reports/

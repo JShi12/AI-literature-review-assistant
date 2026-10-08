@@ -1,0 +1,54 @@
+{
+ "key": "112a26ffca480da2a1bccb7188f81a642468517e51f27a65a977696440d917fc",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "synthesis.v1",
+ "temperature": 0.2,
+ "input_tokens": 5280,
+ "output_tokens": 821,
+ "latency_s": 8.318,
+ "recorded_at": "2026-10-08T09:19:52+00:00",
+ "parsed": {
+  "syntheses": [
+   {
+    "synthesis_type": "gap",
+    "title": "Lack of Robust Solutions to Error Accumulation and Distribution Shift in Closed-Loop Autonomous Driving Systems",
+    "body": "While mid-level representations and closed-loop simulations facilitate training and validation of autonomous driving models (claims cc49c2d4-b50d-5322-8525-304268249b24, 5fc32090-a96e-5352-b867-05795d95ae56, ff265183-ca72-5222-91bf-17b21808b0f6), there remains a significant limitation due to error accumulation and distribution shift when running these systems in closed-loop (claim c9759883-dd81-58a9-ab2d-155a512245df). This gap highlights the need for methods that can effectively mitigate these issues to improve real-world deployment reliability.",
+    "supporting_claim_ids": [
+     "c9759883-dd81-58a9-ab2d-155a512245df",
+     "5fc32090-a96e-5352-b867-05795d95ae56",
+     "ff265183-ca72-5222-91bf-17b21808b0f6",
+     "cc49c2d4-b50d-5322-8525-304268249b24"
+    ],
+    "supporting_papers": 2,
+    "supporting_claims": 4,
+    "confidence": 0.95
+   },
+   {
+    "synthesis_type": "gap",
+    "title": "Insufficient Effectiveness of Pure Imitation Learning Despite Large Datasets and Mid-Level Representations",
+    "body": "Despite the use of large-scale datasets and mid-level input/output representations in autonomous driving models (claims 639f88c8-001d-587a-bae9-390fb3c89dcf, 5fc32090-a96e-5352-b867-05795d95ae56), pure imitation learning approaches remain insufficient for robust driving performance (claims 639f88c8-001d-587a-bae9-390fb3c89dcf, 09081b52-e1ad-5843-9bbc-8565cf5aea59). This gap indicates the necessity for alternative or complementary learning strategies to overcome the limitations of imitation learning.",
+    "supporting_claim_ids": [
+     "639f88c8-001d-587a-bae9-390fb3c89dcf",
+     "09081b52-e1ad-5843-9bbc-8565cf5aea59",
+     "5fc32090-a96e-5352-b867-05795d95ae56"
+    ],
+    "supporting_papers": 1,
+    "supporting_claims": 3,
+    "confidence": 0.965
+   },
+   {
+    "synthesis_type": "gap",
+    "title": "Need for More Reliable End-to-End Neural Network Systems to Replace Modular Approaches in Off-Road Driving",
+    "body": "Early end-to-end systems like DAVE were trained on human driving data and demonstrated some success (claims 1f44da23-b078-5b48-9c3b-0f7f3315f522, f78de3ab-0095-5d09-a3ae-9f15b81a03b6), but were not reliable enough to fully replace modular pipelines in off-road driving (claim 0b57eda2-4239-505d-a1df-0db0acbd35c8). This gap points to the need for improved end-to-end learning methods with higher reliability and robustness for practical deployment.",
+    "supporting_claim_ids": [
+     "0b57eda2-4239-505d-a1df-0db0acbd35c8",
+     "1f44da23-b078-5b48-9c3b-0f7f3315f522",
+     "f78de3ab-0095-5d09-a3ae-9f15b81a03b6"
+    ],
+    "supporting_papers": 1,
+    "supporting_claims": 3,
+    "confidence": 0.95
+   }
+  ]
+ }
+}

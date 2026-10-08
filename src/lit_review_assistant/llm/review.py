@@ -11,12 +11,13 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from lit_review_assistant.db.models import Claim, ReviewDraft, ReviewSentence, ReviewSentenceClaim, Synthesis
-from lit_review_assistant.llm.client import OpenAIStructuredLLM, StructuredLLM, create_llm_run
+from lit_review_assistant.llm.client import LLMResult, OpenAIStructuredLLM, StructuredLLM, create_llm_run
 from lit_review_assistant.pipeline.pdf import infer_paper_metadata_from_name
 from lit_review_assistant.pipeline.review_traceability import normalize_sentence_support
 from lit_review_assistant.schemas import ReviewDraftPayload, ReviewSentencePayload
 
 PROMPT_VERSION = "review.v1"
+DEFAULT_TEMPERATURE = 0.2
 UUID_PATTERN = re.compile(r"\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b")
 
 
@@ -25,27 +26,37 @@ def generate_review_draft(
     topic: str,
     synthesis_ids: list[str],
     llm: StructuredLLM | None = None,
-    temperature: float = 0.2,
+    temperature: float = DEFAULT_TEMPERATURE,
 ) -> ReviewDraft | None:
     """Generate, citation-clean, and persist a review draft from the given syntheses."""
     syntheses = session.scalars(select(Synthesis).where(Synthesis.id.in_(synthesis_ids))).all()
     if not syntheses:
         return None
 
-    llm = llm or OpenAIStructuredLLM()
-    result = llm.parse(
-        text_format=ReviewDraftPayload,
-        prompt_version=PROMPT_VERSION,
-        instructions=REVIEW_INSTRUCTIONS,
-        input_text=build_review_input(topic, syntheses),
-        temperature=temperature,
-    )
+    result = request_review_draft(topic, syntheses, llm=llm, temperature=temperature)
     extra_claims = find_claims_for_citation_cleanup(session, result.parsed, syntheses)
     parsed = apply_academic_citations(result.parsed, syntheses, extra_claims=extra_claims)
     run = create_llm_run(session, result)
     draft = persist_review_draft(session, parsed, run.id)
     session.flush()
     return draft
+
+
+def request_review_draft(
+    topic: str,
+    syntheses: Sequence[Synthesis],
+    llm: StructuredLLM | None = None,
+    temperature: float = DEFAULT_TEMPERATURE,
+) -> LLMResult[ReviewDraftPayload]:
+    """Ask the LLM for a raw review draft without citation cleanup or persistence (shared with the eval harness)."""
+    llm = llm or OpenAIStructuredLLM()
+    return llm.parse(
+        text_format=ReviewDraftPayload,
+        prompt_version=PROMPT_VERSION,
+        instructions=REVIEW_INSTRUCTIONS,
+        input_text=build_review_input(topic, syntheses),
+        temperature=temperature,
+    )
 
 
 def persist_review_draft(session: Session, payload: ReviewDraftPayload, run_id: str) -> ReviewDraft:

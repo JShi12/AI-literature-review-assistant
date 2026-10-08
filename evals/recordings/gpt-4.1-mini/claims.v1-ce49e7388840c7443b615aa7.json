@@ -1,0 +1,134 @@
+{
+ "key": "ce49e7388840c7443b615aa7a2fb1dd7fade889dadfcdd9c0ed47af2e8068409",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v1",
+ "temperature": 0.1,
+ "input_tokens": 835,
+ "output_tokens": 1438,
+ "latency_s": 11.672,
+ "recorded_at": "2026-10-08T09:19:21+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "CARLA provides three sensing modalities: normal vision camera, ground-truth depth, and ground-truth semantic segmentation.",
+    "claim_type": "dataset",
+    "normalized_text": "CARLA provides normal vision camera, ground-truth depth, and ground-truth semantic segmentation sensing modalities.",
+    "paper_id": "26b459da-efaa-503f-8ef1-fa6755479109",
+    "chunk_id": "d2f2e518-50c0-59bd-809e-8518-eaf46867",
+    "section_id": "b9314c31-b304-5920-aff8-8ac8b87aebb4",
+    "page": 4,
+    "start_char": 0,
+    "end_char": 230,
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Depth and semantic segmentation are pseudo-sensors that support experiments controlling for the role of perception.",
+    "claim_type": "method",
+    "normalized_text": "Depth and semantic segmentation pseudo-sensors support perception control experiments.",
+    "paper_id": "26b459da-efaa-503f-8ef1-fa6755479109",
+    "chunk_id": "d2f2e518-50c0-59bd-809e-8518-eaf46867",
+    "section_id": "b9314c31-b304-5920-aff8-8ac8b87aebb4",
+    "page": 4,
+    "start_char": 230,
+    "end_char": 350,
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "Additional sensor models can be plugged into CARLA via the API.",
+    "claim_type": "method",
+    "normalized_text": "CARLA API allows plugging in additional sensor models.",
+    "paper_id": "26b459da-efaa-503f-8ef1-fa6755479109",
+    "chunk_id": "d2f2e518-50c0-59bd-809e-8518-eaf46867",
+    "section_id": "b9314c31-b304-5920-aff8-8ac8b87aebb4",
+    "page": 4,
+    "start_char": 350,
+    "end_char": 420,
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The semantic segmentation pseudo-sensor provides 12 semantic classes: road, lane-marking, traffic sign, sidewalk, fence, pole, wall, building, vegetation, vehicle, pedestrian, and other.",
+    "claim_type": "dataset",
+    "normalized_text": "Semantic segmentation pseudo-sensor provides 12 semantic classes including road, vehicle, pedestrian, and others.",
+    "paper_id": "26b459da-efaa-503f-8ef1-fa6755479109",
+    "chunk_id": "d2f2e518-50c0-59bd-809e-8518-eaf46867",
+    "section_id": "b9314c31-b304-5920-aff8-8ac8b87aebb4",
+    "page": 4,
+    "start_char": 421,
+    "end_char": 520,
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "CARLA provides measurements associated with the agent's state including vehicle location and orientation, speed, acceleration vector, and accumulated impact from collisions.",
+    "claim_type": "dataset",
+    "normalized_text": "CARLA provides agent state measurements: location, orientation, speed, acceleration, collision impact.",
+    "paper_id": "26b459da-efaa-503f-8ef1-fa6755479109",
+    "chunk_id": "d2f2e518-50c0-59bd-809e-8518-eaf46867",
+    "section_id": "b9314c31-b304-5920-aff8-8ac8b87aebb4",
+    "page": 4,
+    "start_char": 521,
+    "end_char": 650,
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "CARLA provides measurements concerning traffic rules including the percentage of the vehicle’s footprint on wrong-way lanes or sidewalks, traffic light states, and speed limits at the vehicle's location.",
+    "claim_type": "dataset",
+    "normalized_text": "CARLA provides traffic rule compliance measurements: wrong-way lane footprint, traffic light states, speed limits.",
+    "paper_id": "26b459da-efaa-503f-8ef1-fa6755479109",
+    "chunk_id": "d2f2e518-50c0-59bd-809e-8518-eaf46867",
+    "section_id": "b9314c31-b304-5920-aff8-8ac8b87aebb4",
+    "page": 4,
+    "start_char": 651,
+    "end_char": 780,
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "CARLA provides access to exact locations and bounding boxes of all dynamic objects in the environment.",
+    "claim_type": "dataset",
+    "normalized_text": "CARLA provides exact locations and bounding boxes of dynamic objects.",
+    "paper_id": "26b459da-efaa-503f-8ef1-fa6755479109",
+    "chunk_id": "d2f2e518-50c0-59bd-809e-8518-eaf46867",
+    "section_id": "b9314c31-b304-5920-aff8-8ac8b87aebb4",
+    "page": 4,
+    "start_char": 781,
+    "end_char": 860,
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "These signals play an important role in training and evaluating driving policies.",
+    "claim_type": "finding",
+    "normalized_text": "Signals from CARLA sensors and measurements are important for training and evaluating driving policies.",
+    "paper_id": "26b459da-efaa-503f-8ef1-fa6755479109",
+    "chunk_id": "d2f2e518-50c0-59bd-809e-8518-eaf46867",
+    "section_id": "b9314c31-b304-5920-aff8-8ac8b87aebb4",
+    "page": 4,
+    "start_char": 861,
+    "end_char": 920,
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "CARLA supports development, training, and detailed performance analysis of autonomous driving systems.",
+    "claim_type": "method",
+    "normalized_text": "CARLA supports autonomous driving system development, training, and performance analysis.",
+    "paper_id": "26b459da-efaa-503f-8ef1-fa6755479109",
+    "chunk_id": "d2f2e518-50c0-59bd-809e-8518-eaf46867",
+    "section_id": "b9314c31-b304-5920-aff8-8ac8b87aebb4",
+    "page": 4,
+    "start_char": 921,
+    "end_char": 990,
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The authors have used CARLA to evaluate three approaches to autonomous driving.",
+    "claim_type": "finding",
+    "normalized_text": "CARLA was used to evaluate three autonomous driving approaches.",
+    "paper_id": "26b459da-efaa-503f-8ef1-fa6755479109",
+    "chunk_id": "d2f2e518-50c0-59bd-809e-8518-eaf46867",
+    "section_id": "b9314c31-b304-5920-aff8-8ac8b87aebb4",
+    "page": 4,
+    "start_char": 991,
+    "end_char": 1040,
+    "confidence": 0.9
+   }
+  ]
+ }
+}

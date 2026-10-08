@@ -1,0 +1,50 @@
+{
+ "key": "a28c9e1761e8b4adb9244d08599445080a3f77049e39f1355b31ac011d77b7e5",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v1",
+ "temperature": 0.1,
+ "input_tokens": 834,
+ "output_tokens": 495,
+ "latency_s": 5.656,
+ "recorded_at": "2026-10-08T09:19:13+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "Commercial games that simulate urban environments at high fidelity, such as Grand Theft Auto V, do not support detailed benchmarking of driving policies due to limited customization, control, scripting, sensor specification, and feedback on traffic rule violations.",
+    "claim_type": "background",
+    "normalized_text": "Commercial urban driving games like Grand Theft Auto V lack features for detailed benchmarking of driving policies.",
+    "paper_id": "26b459da-efaa-503f-8ef1-fa6755479109",
+    "chunk_id": "8461ba1e-7992-5f79-b3a2-c76c54dec5ec",
+    "section_id": "b9314c31-b304-5920-aff8-8ac8b87aebb4",
+    "page": 2,
+    "start_char": 204,
+    "end_char": 493,
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "CARLA (Car Learning to Act) is an open simulator for urban driving developed to support training, prototyping, and validation of autonomous driving models including perception and control.",
+    "claim_type": "method",
+    "normalized_text": "CARLA is an open urban driving simulator for training and validating autonomous driving models.",
+    "paper_id": "26b459da-efaa-503f-8ef1-fa6755479109",
+    "chunk_id": "8461ba1e-7992-5f79-b3a2-c76c54dec5ec",
+    "section_id": "b9314c31-b304-5920-aff8-8ac8b87aebb4",
+    "page": 2,
+    "start_char": 494,
+    "end_char": 644,
+    "confidence": 0.98
+   },
+   {
+    "claim_text": "CARLA is an open platform with free urban environment content created from scratch by a dedicated team of digital artists, including urban layouts, vehicle models, buildings, pedestrians, and street signs.",
+    "claim_type": "method",
+    "normalized_text": "CARLA provides free, artist-created urban environment content including layouts, vehicles, buildings, pedestrians, and signs.",
+    "paper_id": "26b459da-efaa-503f-8ef1-fa6755479109",
+    "chunk_id": "8461ba1e-7992-5f79-b3a2-c76c54dec5ec",
+    "section_id": "b9314c31-b304-5920-aff8-8ac8b87aebb4",
+    "page": 2,
+    "start_char": 645,
+    "end_char": 748,
+    "confidence": 0.97
+   }
+  ]
+ }
+}

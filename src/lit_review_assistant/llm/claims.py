@@ -8,11 +8,12 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from lit_review_assistant.db.models import Chunk, Claim
-from lit_review_assistant.llm.client import OpenAIStructuredLLM, StructuredLLM, create_llm_run
+from lit_review_assistant.llm.client import LLMResult, OpenAIStructuredLLM, StructuredLLM, create_llm_run
 from lit_review_assistant.llm.embeddings import embed_and_persist_claims
 from lit_review_assistant.schemas import ExtractedClaim
 
 PROMPT_VERSION = "claims.v1"
+DEFAULT_TEMPERATURE = 0.1
 
 
 class ExtractedClaimsBatch(BaseModel):
@@ -23,22 +24,31 @@ def extract_claims_for_chunk(
     session: Session,
     chunk: Chunk,
     llm: StructuredLLM | None = None,
-    temperature: float = 0.1,
+    temperature: float = DEFAULT_TEMPERATURE,
 ) -> list[Claim]:
     """Extract and persist source-grounded claims from a single chunk's text."""
+    result = request_claims(chunk, llm=llm, temperature=temperature)
+    run = create_llm_run(session, result)
+    claims = persist_extracted_claims(session, result.parsed.claims, run.id, chunk=chunk)
+    embed_and_persist_claims(session, claims)
+    session.flush()
+    return claims
+
+
+def request_claims(
+    chunk: Chunk,
+    llm: StructuredLLM | None = None,
+    temperature: float = DEFAULT_TEMPERATURE,
+) -> LLMResult[ExtractedClaimsBatch]:
+    """Ask the LLM for a chunk's claims without persisting anything (shared with the eval harness)."""
     llm = llm or OpenAIStructuredLLM()
-    result = llm.parse(
+    return llm.parse(
         text_format=ExtractedClaimsBatch,
         prompt_version=PROMPT_VERSION,
         instructions=CLAIM_EXTRACTION_INSTRUCTIONS,
         input_text=build_claim_extraction_input(chunk),
         temperature=temperature,
     )
-    run = create_llm_run(session, result)
-    claims = persist_extracted_claims(session, result.parsed.claims, run.id, chunk=chunk)
-    embed_and_persist_claims(session, claims)
-    session.flush()
-    return claims
 
 
 def persist_extracted_claims(
@@ -53,7 +63,7 @@ def persist_extracted_claims(
         chunk_id = extracted.chunk_id
         section_id = extracted.section_id
         if chunk is not None:
-            _validate_claim_location_against_chunk(extracted, chunk)
+            validate_claim_location_against_chunk(extracted, chunk)
             paper_id = chunk.paper_id
             chunk_id = chunk.id
             section_id = chunk.section_id
@@ -94,7 +104,7 @@ def build_claim_extraction_input(chunk: Chunk) -> str:
     )
 
 
-def _validate_claim_location_against_chunk(extracted: ExtractedClaim, chunk: Chunk) -> None:
+def validate_claim_location_against_chunk(extracted: ExtractedClaim, chunk: Chunk) -> None:
     if extracted.start_char < chunk.start_char or extracted.end_char > chunk.end_char:
         raise ValueError("Extracted claim offsets must fall within the source chunk offsets.")
     if not (chunk.page_start <= extracted.page <= chunk.page_end):

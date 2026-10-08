@@ -11,12 +11,13 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from lit_review_assistant.db.models import Claim, Synthesis, SynthesisClaim
-from lit_review_assistant.llm.client import OpenAIStructuredLLM, StructuredLLM, create_llm_run
+from lit_review_assistant.llm.client import LLMResult, OpenAIStructuredLLM, StructuredLLM, create_llm_run
 from lit_review_assistant.llm.embeddings import embed_and_persist_syntheses
 from lit_review_assistant.pipeline.support import ClaimSupport, calculate_support_counts
 from lit_review_assistant.schemas import GeneratedSynthesis
 
 PROMPT_VERSION = "synthesis.v1"
+DEFAULT_TEMPERATURE = 0.2
 SynthesisType = Literal["theme", "contradiction", "gap", "method_comparison", "insight"]
 
 
@@ -29,26 +30,36 @@ def generate_syntheses(
     claim_ids: list[str],
     synthesis_type: SynthesisType,
     llm: StructuredLLM | None = None,
-    temperature: float = 0.2,
+    temperature: float = DEFAULT_TEMPERATURE,
 ) -> list[Synthesis]:
     """Generate and persist syntheses of a single type from the given claims."""
     claims = session.scalars(select(Claim).where(Claim.id.in_(claim_ids))).all()
     if not claims:
         return []
 
+    result = request_syntheses(claims, synthesis_type, llm=llm, temperature=temperature)
+    run = create_llm_run(session, result)
+    syntheses = persist_generated_syntheses(session, result.parsed.syntheses, run.id)
+    embed_and_persist_syntheses(session, syntheses)
+    session.flush()
+    return syntheses
+
+
+def request_syntheses(
+    claims: Sequence[Claim],
+    synthesis_type: SynthesisType,
+    llm: StructuredLLM | None = None,
+    temperature: float = DEFAULT_TEMPERATURE,
+) -> LLMResult[GeneratedSynthesesBatch]:
+    """Ask the LLM for syntheses without persisting anything (shared with the eval harness)."""
     llm = llm or OpenAIStructuredLLM()
-    result = llm.parse(
+    return llm.parse(
         text_format=GeneratedSynthesesBatch,
         prompt_version=PROMPT_VERSION,
         instructions=SYNTHESIS_INSTRUCTIONS,
         input_text=build_synthesis_input(claims, synthesis_type),
         temperature=temperature,
     )
-    run = create_llm_run(session, result)
-    syntheses = persist_generated_syntheses(session, result.parsed.syntheses, run.id)
-    embed_and_persist_syntheses(session, syntheses)
-    session.flush()
-    return syntheses
 
 
 def persist_generated_syntheses(

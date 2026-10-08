@@ -1,0 +1,62 @@
+{
+ "key": "5056bc2658f69a7d81c9d3ad1c03da67345d9e80ef08f5eb0ec2e428665cd93e",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v1",
+ "temperature": 0.1,
+ "input_tokens": 909,
+ "output_tokens": 686,
+ "latency_s": 5.802,
+ "recorded_at": "2026-10-08T09:19:07+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "We have evaluated model M4 on our self-driving car by replacing the existing planner module with the learned model M4 and replicated the driving behaviors observed in simulation.",
+    "claim_type": "method",
+    "normalized_text": "Model M4 was evaluated on a self-driving car by replacing the existing planner module, replicating simulation driving behaviors.",
+    "paper_id": "541119ae-3cb7-5f0d-9943-f5ed44d48ebb",
+    "chunk_id": "255bbb25-4c3c-5e49-b241-3acc08bab27b",
+    "section_id": "168be8f7-7cc3-5628-bf61-3535de581d5a",
+    "page": 16,
+    "start_char": 258,
+    "end_char": 382,
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The videos of several runs illustrate the smoothness of the network’s driving ability, its ability to deal with stop-signs and turns, and to drive for long durations in full closed-loop control without deviating from the trajectory.",
+    "claim_type": "finding",
+    "normalized_text": "The network drives smoothly, handles stop-signs and turns, and maintains trajectory in long closed-loop control runs.",
+    "paper_id": "541119ae-3cb7-5f0d-9943-f5ed44d48ebb",
+    "chunk_id": "255bbb25-4c3c-5e49-b241-3acc08bab27b",
+    "section_id": "168be8f7-7cc3-5628-bf61-3535de581d5a",
+    "page": 16,
+    "start_char": 383,
+    "end_char": 516,
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "In an open-loop evaluation, test examples of expert driving data are used to compute the L2 distance error between predicted and ground-truth waypoints, without using predictions to drive the agent forward.",
+    "claim_type": "method",
+    "normalized_text": "Open-loop evaluation computes L2 distance error between predicted and ground-truth waypoints without closed-loop feedback.",
+    "paper_id": "541119ae-3cb7-5f0d-9943-f5ed44d48ebb",
+    "chunk_id": "255bbb25-4c3c-5e49-b241-3acc08bab27b",
+    "section_id": "168be8f7-7cc3-5628-bf61-3535de581d5a",
+    "page": 16,
+    "start_char": 517,
+    "end_char": 628,
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Figure 8a shows the L2 distance metric in the open-loop evaluation setting for models M0 and M4 on a test set of 10,000 examples.",
+    "claim_type": "finding",
+    "normalized_text": "Figure 8a presents L2 distance errors for models M0 and M4 on 10,000 test examples in open-loop evaluation.",
+    "paper_id": "541119ae-3cb7-5f0d-9943-f5ed44d48ebb",
+    "chunk_id": "255bbb25-4c3c-5e49-b241-3acc08bab27b",
+    "section_id": "168be8f7-7cc3-5628-bf61-3535de581d5a",
+    "page": 16,
+    "start_char": 629,
+    "end_char": 699,
+    "confidence": 0.9
+   }
+  ]
+ }
+}

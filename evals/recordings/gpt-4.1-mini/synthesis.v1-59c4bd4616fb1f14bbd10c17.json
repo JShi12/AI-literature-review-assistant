@@ -1,0 +1,78 @@
+{
+ "key": "59c4bd4616fb1f14bbd10c177d3e64f2f90e556579c93bd551ef98a45032519e",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "synthesis.v1",
+ "temperature": 0.2,
+ "input_tokens": 3625,
+ "output_tokens": 1917,
+ "latency_s": 17.96,
+ "recorded_at": "2026-10-08T09:21:01+00:00",
+ "parsed": {
+  "syntheses": [
+   {
+    "synthesis_type": "theme",
+    "title": "End-to-End Neural Network Methods for Autonomous Driving",
+    "body": "Several studies focus on end-to-end neural network approaches for autonomous driving, where convolutional neural networks (CNNs) or recurrent neural networks (RNNs) learn to map sensory inputs directly to driving commands. For example, a CNN learns the entire processing pipeline to steer an automobile (claim e66d15a0-9347-5814-b053-1ff1dea8058d; confidence 0.95). The ALVINN system demonstrated that an end-to-end trained neural network can steer a car on public roads (claim f78de3ab-0095-5d09-a3ae-9f15b81a03b6; confidence 0.95). Improvements include using CNNs more powerful than fully-connected networks (claim dd51b232-3e92-5d5e-b0e7-b982c3ee1e65; confidence 0.9) and training CNN weights with backpropagation (claim 7a55c35c-41b2-5ae6-a170-4aefe1f7ae2c; confidence 0.95). ChauffeurNet uses an RNN architecture taking mid-level input and outputting driving trajectories (claim cc49c2d4-b50d-5322-8525-304268249b24; confidence 0.95). These methods demonstrate the trend of leveraging deep learning architectures for direct control in autonomous driving.",
+    "supporting_claim_ids": [
+     "e66d15a0-9347-5814-b053-1ff1dea8058d",
+     "f78de3ab-0095-5d09-a3ae-9f15b81a03b6",
+     "dd51b232-3e92-5d5e-b0e7-b982c3ee1e65",
+     "7a55c35c-41b2-5ae6-a170-4aefe1f7ae2c",
+     "cc49c2d4-b50d-5322-8525-304268249b24"
+    ],
+    "supporting_papers": 3,
+    "supporting_claims": 5,
+    "confidence": 0.94
+   },
+   {
+    "synthesis_type": "theme",
+    "title": "Use of CARLA Simulator for Autonomous Driving Research",
+    "body": "CARLA is an open-source urban driving simulator widely used for development, training, and validation of autonomous driving systems. It provides free digital assets including urban layouts, buildings, vehicles, pedestrians, and signs (claims 0488bcfc-4a7e-5848-a1d4-1e81239f8f55, fe6967d3-e559-5d60-811b-65a206438009; confidence 0.99 and 0.97). CARLA supports flexible sensor suite specification and environmental conditions (claim b26241aa-3d3d-560b-9a47-d8c65f50bfa3; confidence 0.99) and offers multiple sensing modalities such as normal vision camera, ground-truth depth, and semantic segmentation (claim 11db4da2-416e-5320-bf67-dd823e2ddaa8; confidence 0.95). It enables studying various autonomous driving approaches including classic modular pipelines, end-to-end imitation learning, and reinforcement learning (claim 34863bb0-827c-5405-a15d-f7229ca8985c; confidence 0.99). CARLA facilitates controlled scenario evaluation with metrics, supporting closed-loop simulation testing before real car deployment (claims 7e8db57a-25dd-55f8-9220-c289a62aea7f, ff265183-ca72-5222-91bf-17b21808b0f6; confidence 0.95 each).",
+    "supporting_claim_ids": [
+     "0488bcfc-4a7e-5848-a1d4-1e81239f8f55",
+     "fe6967d3-e559-5d60-811b-65a206438009",
+     "b26241aa-3d3d-560b-9a47-d8c65f50bfa3",
+     "11db4da2-416e-5320-bf67-dd823e2ddaa8",
+     "34863bb0-827c-5405-a15d-f7229ca8985c",
+     "7e8db57a-25dd-55f8-9220-c289a62aea7f",
+     "ff265183-ca72-5222-91bf-17b21808b0f6"
+    ],
+    "supporting_papers": 1,
+    "supporting_claims": 7,
+    "confidence": 0.97
+   },
+   {
+    "synthesis_type": "theme",
+    "title": "Importance of Mid-Level Representations in Autonomous Driving Models",
+    "body": "Mid-level representations play a critical role in autonomous driving models by enabling training on both real and simulated data and facilitating testing and validation in closed-loop simulations before deployment. ChauffeurNet, an RNN-based model, uses mid-level input and outputs driving trajectories for controllers (claim cc49c2d4-b50d-5322-8525-304268249b24; confidence 0.95). Mid-level representations help overcome some limitations of pure imitation learning, although pure imitation learning remains insufficient even with large datasets (claims 5fc32090-a96e-5352-b867-05795d95ae56, 639f88c8-001d-587a-bae9-390fb3c89dcf, 09081b52-e1ad-5843-9bbc-8565cf5aea59; confidence 0.95-0.98). Input representations sample dynamic objects and agent poses over time using box representations, facilitating data generation from simulation or real sensors (claims 2eb1abf8-84f5-5074-a80b-6452e5ee9f11, 25327f7e-cc25-555b-9ae5-d49aa9168f3a; confidence 0.95).",
+    "supporting_claim_ids": [
+     "cc49c2d4-b50d-5322-8525-304268249b24",
+     "5fc32090-a96e-5352-b867-05795d95ae56",
+     "639f88c8-001d-587a-bae9-390fb3c89dcf",
+     "09081b52-e1ad-5843-9bbc-8565cf5aea59",
+     "2eb1abf8-84f5-5074-a80b-6452e5ee9f11",
+     "25327f7e-cc25-555b-9ae5-d49aa9168f3a"
+    ],
+    "supporting_papers": 1,
+    "supporting_claims": 6,
+    "confidence": 0.95
+   },
+   {
+    "synthesis_type": "theme",
+    "title": "Historical Foundations and Data Collection for Autonomous Driving Models",
+    "body": "Autonomous driving research builds upon historical projects and extensive data collection efforts. The DARPA Autonomous Vehicle (DAVE) project laid groundwork over 10 years ago with a sub-scale RC car (claim 921c6021-1bc9-5882-bed7-218fbe19322d; confidence 0.95). DAVE was trained on hours of human driving with video from two cameras and steering commands (claim 1f44da23-b078-5b48-9c3b-0f7f3315f522; confidence 0.95). DAVE-2 was inspired by Pomerleau's 1989 ALVINN system (claim 443f6210-6468-59f8-8167-b719d39fc8fd; confidence 0.95). Training data includes diverse roads, lighting, and weather conditions (claim 70eb8202-ac82-55fb-a95a-efb095234403; confidence 0.95) and covers various road types and geographic regions (claims 5b04c50f-7b96-5ddd-a0be-8eb2d45b4a96, 5cf30f7c-28a7-5e91-ae76-4640f218b34d; confidence 0.95 each).",
+    "supporting_claim_ids": [
+     "921c6021-1bc9-5882-bed7-218fbe19322d",
+     "1f44da23-b078-5b48-9c3b-0f7f3315f522",
+     "443f6210-6468-59f8-8167-b719d39fc8fd",
+     "70eb8202-ac82-55fb-a95a-efb095234403",
+     "5b04c50f-7b96-5ddd-a0be-8eb2d45b4a96",
+     "5cf30f7c-28a7-5e91-ae76-4640f218b34d"
+    ],
+    "supporting_papers": 1,
+    "supporting_claims": 6,
+    "confidence": 0.95
+   }
+  ]
+ }
+}

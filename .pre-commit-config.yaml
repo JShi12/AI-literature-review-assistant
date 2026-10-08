@@ -23,4 +23,4 @@ repos:
       - id: mypy
         additional_dependencies: [pydantic>=2.8.2, sqlalchemy>=2.0.32]
         args: ["--config-file=pyproject.toml"]
-        files: ^src/
+        files: ^(src|evals)/

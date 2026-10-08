@@ -1,0 +1,110 @@
+{
+ "key": "2244976b62bfcaa76d20466bd06231bc650f92132347085c1ba477d7bae93e96",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v1",
+ "temperature": 0.1,
+ "input_tokens": 862,
+ "output_tokens": 1302,
+ "latency_s": 13.993,
+ "recorded_at": "2026-10-08T09:18:42+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "We describe a CNN that learns the entire processing pipeline needed to steer an automobile.",
+    "claim_type": "method",
+    "normalized_text": "A CNN learns the entire processing pipeline to steer an automobile.",
+    "paper_id": "3fa4de88-a55d-50b9-933e-68cb1fcb4165",
+    "chunk_id": "af29ce7f-5961-5186-bb56-4dc00d160cf4",
+    "section_id": "d35bc442-acb0-5493-8a00-1d3438b0af0d",
+    "page": 2,
+    "start_char": 1115,
+    "end_char": 1173,
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The groundwork for this project was done over 10 years ago in a DARPA seedling project known as DARPA Autonomous Vehicle (DAVE) in which a sub-scale radio control car drove through a junk-filled alley way.",
+    "claim_type": "background",
+    "normalized_text": "The project groundwork was done over 10 years ago in DARPA Autonomous Vehicle (DAVE) project with a sub-scale RC car driving through a junk-filled alley.",
+    "paper_id": "3fa4de88-a55d-50b9-933e-68cb1fcb4165",
+    "chunk_id": "af29ce7f-5961-5186-bb56-4dc00d160cf4",
+    "section_id": "d35bc442-acb0-5493-8a00-1d3438b0af0d",
+    "page": 2,
+    "start_char": 1175,
+    "end_char": 1276,
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "DAVE was trained on hours of human driving in similar, but not identical environments using video from two cameras coupled with left and right steering commands from a human operator.",
+    "claim_type": "method",
+    "normalized_text": "DAVE was trained on hours of human driving with video from two cameras and steering commands.",
+    "paper_id": "3fa4de88-a55d-50b9-933e-68cb1fcb4165",
+    "chunk_id": "af29ce7f-5961-5186-bb56-4dc00d160cf4",
+    "section_id": "d35bc442-acb0-5493-8a00-1d3438b0af0d",
+    "page": 2,
+    "start_char": 1277,
+    "end_char": 1379,
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "DAVE-2 was inspired by the pioneering work of Pomerleau who in 1989 built the Autonomous Land Vehicle in a Neural Network (ALVINN) system.",
+    "claim_type": "background",
+    "normalized_text": "DAVE-2 was inspired by Pomerleau's 1989 ALVINN system.",
+    "paper_id": "3fa4de88-a55d-50b9-933e-68cb1fcb4165",
+    "chunk_id": "af29ce7f-5961-5186-bb56-4dc00d160cf4",
+    "section_id": "d35bc442-acb0-5493-8a00-1d3438b0af0d",
+    "page": 2,
+    "start_char": 1381,
+    "end_char": 1465,
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "ALVINN demonstrated that an end-to-end trained neural network can steer a car on public roads.",
+    "claim_type": "finding",
+    "normalized_text": "An end-to-end trained neural network can steer a car on public roads as demonstrated by ALVINN.",
+    "paper_id": "3fa4de88-a55d-50b9-933e-68cb1fcb4165",
+    "chunk_id": "af29ce7f-5961-5186-bb56-4dc00d160cf4",
+    "section_id": "d35bc442-acb0-5493-8a00-1d3438b0af0d",
+    "page": 2,
+    "start_char": 1466,
+    "end_char": 1526,
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Our work differs in that 25 years of advances let us apply far more data and computational power to the task.",
+    "claim_type": "method",
+    "normalized_text": "Our work applies far more data and computational power due to 25 years of advances.",
+    "paper_id": "3fa4de88-a55d-50b9-933e-68cb1fcb4165",
+    "chunk_id": "af29ce7f-5961-5186-bb56-4dc00d160cf4",
+    "section_id": "d35bc442-acb0-5493-8a00-1d3438b0af0d",
+    "page": 2,
+    "start_char": 1527,
+    "end_char": 1587,
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "Our experience with CNNs lets us make use of this powerful technology, unlike ALVINN which used a fully-connected network that is tiny by today’s standard.",
+    "claim_type": "method",
+    "normalized_text": "We use CNNs which are more powerful than the fully-connected network used by ALVINN.",
+    "paper_id": "3fa4de88-a55d-50b9-933e-68cb1fcb4165",
+    "chunk_id": "af29ce7f-5961-5186-bb56-4dc00d160cf4",
+    "section_id": "d35bc442-acb0-5493-8a00-1d3438b0af0d",
+    "page": 2,
+    "start_char": 1588,
+    "end_char": 1677,
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "DAVE’s performance was not sufficiently reliable to provide a full alternative to more modular approaches to off-road driving.",
+    "claim_type": "limitation",
+    "normalized_text": "DAVE was not reliable enough to fully replace modular approaches to off-road driving.",
+    "paper_id": "3fa4de88-a55d-50b9-933e-68cb1fcb4165",
+    "chunk_id": "af29ce7f-5961-5186-bb56-4dc00d160cf4",
+    "section_id": "d35bc442-acb0-5493-8a00-1d3438b0af0d",
+    "page": 2,
+    "start_char": 1725,
+    "end_char": 1799,
+    "confidence": 0.95
+   }
+  ]
+ }
+}

@@ -1,0 +1,50 @@
+{
+ "key": "03ee7e2061b24185e1c54651fa670db182d77a61ef27987521461b3af073bfea",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v1",
+ "temperature": 0.1,
+ "input_tokens": 986,
+ "output_tokens": 469,
+ "latency_s": 5.183,
+ "recorded_at": "2026-10-08T09:18:59+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "The imitation losses cause the model to imitate the expert’s demonstrations, while the environment losses discourage undesirable behavior such as collisions.",
+    "claim_type": "method",
+    "normalized_text": "Imitation losses cause model to imitate expert demonstrations; environment losses discourage undesirable behavior like collisions.",
+    "paper_id": "541119ae-3cb7-5f0d-9943-f5ed44d48ebb",
+    "chunk_id": "bc9e67e7-c5b7-5d69-8ff7-f9f26c2e6f21",
+    "section_id": "168be8f7-7cc3-5628-bf61-3535de581d5a",
+    "page": 12,
+    "start_char": 627,
+    "end_char": 737,
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "We experimented with randomly dropping out the imitation losses for a random subset of training examples, referred to as \"imitation dropout\".",
+    "claim_type": "method",
+    "normalized_text": "Imitation dropout is randomly dropping out imitation losses for a subset of training examples.",
+    "paper_id": "541119ae-3cb7-5f0d-9943-f5ed44d48ebb",
+    "chunk_id": "bc9e67e7-c5b7-5d69-8ff7-f9f26c2e6f21",
+    "section_id": "168be8f7-7cc3-5628-bf61-3535de581d5a",
+    "page": 12,
+    "start_char": 738,
+    "end_char": 847,
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Imitation dropout yields a better driving model than simply under-weighting the imitation losses.",
+    "claim_type": "finding",
+    "normalized_text": "Imitation dropout yields better driving model than under-weighting imitation losses.",
+    "paper_id": "541119ae-3cb7-5f0d-9943-f5ed44d48ebb",
+    "chunk_id": "bc9e67e7-c5b7-5d69-8ff7-f9f26c2e6f21",
+    "section_id": "168be8f7-7cc3-5628-bf61-3535de581d5a",
+    "page": 12,
+    "start_char": 848,
+    "end_char": 913,
+    "confidence": 0.95
+   }
+  ]
+ }
+}

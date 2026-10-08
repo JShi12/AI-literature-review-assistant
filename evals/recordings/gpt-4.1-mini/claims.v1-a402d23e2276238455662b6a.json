@@ -1,0 +1,38 @@
+{
+ "key": "a402d23e2276238455662b6a8928c6fd9869806393cdc8f1f69f8f93c127e6e3",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v1",
+ "temperature": 0.1,
+ "input_tokens": 684,
+ "output_tokens": 303,
+ "latency_s": 4.983,
+ "recorded_at": "2026-10-08T09:18:33+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "The weight adjustment of the CNN is accomplished using back propagation as implemented in the Torch 7 machine learning package.",
+    "claim_type": "method",
+    "normalized_text": "CNN weights are adjusted using back propagation implemented in Torch 7.",
+    "paper_id": "3fa4de88-a55d-50b9-933e-68cb1fcb4165",
+    "chunk_id": "0a409e6c-f9a2-503d-a330-48067e5cdeb1",
+    "section_id": "d35bc442-acb0-5493-8a00-1d3438b0af0d",
+    "page": 3,
+    "start_char": 1210,
+    "end_char": 1303,
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Once trained, the network can generate steering from the video images of a single center camera.",
+    "claim_type": "finding",
+    "normalized_text": "The trained network can generate steering commands from single center camera video images.",
+    "paper_id": "3fa4de88-a55d-50b9-933e-68cb1fcb4165",
+    "chunk_id": "0a409e6c-f9a2-503d-a330-48067e5cdeb1",
+    "section_id": "d35bc442-acb0-5493-8a00-1d3438b0af0d",
+    "page": 3,
+    "start_char": 1850,
+    "end_char": 1876,
+    "confidence": 0.95
+   }
+  ]
+ }
+}

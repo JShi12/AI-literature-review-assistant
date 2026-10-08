@@ -215,6 +215,23 @@ generation/retrieval, and database URL handling. All tests are self-contained un
 `monkeypatch`, no live database or `OPENAI_API_KEY` required). `pytest --cov` (configured by default)
 reports coverage.
 
+## Evaluation
+
+`evals/` is an offline harness that scores the LLM stages (claims, syntheses, review drafts) on a
+frozen snapshot of the demo papers. It uses deterministic metrics such as whether claim offsets
+point at the claim text, how many cited claim IDs are invented, and how many review sentences cite
+a real claim. It records LLM responses so runs can be replayed for free, and can compare models side
+by side:
+
+```bash
+python -m evals.snapshot                 # once: build the input snapshot
+python -m evals.run                      # score all stages, recording LLM responses
+python -m evals.run --mode replay        # re-score from recordings, no API key needed
+python -m evals.run --model gpt-4.1-mini --model gpt-4.1
+```
+
+See [evals/README.md](evals/README.md) for the metrics and options.
+
 ## Code Quality / CI
 
 Ruff (lint + format), Mypy, and the full test suite run in GitHub Actions on every push and pull request. Locally, `pre-commit install` wires the same checks into `git commit`.

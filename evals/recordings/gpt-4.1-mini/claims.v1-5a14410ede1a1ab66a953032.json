@@ -1,0 +1,98 @@
+{
+ "key": "5a14410ede1a1ab66a9530321eecaf3e81daa0d4cb801f9315cd205681396ed3",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v1",
+ "temperature": 0.1,
+ "input_tokens": 832,
+ "output_tokens": 1113,
+ "latency_s": 9.034,
+ "recorded_at": "2026-10-08T09:18:45+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "When the off-center distance exceeds one meter, a virtual human intervention is triggered, and the virtual vehicle position and orientation is reset to match the ground truth of the corresponding frame of the original test video.",
+    "claim_type": "method",
+    "normalized_text": "Virtual human intervention is triggered when off-center distance exceeds one meter, resetting vehicle position and orientation to ground truth.",
+    "paper_id": "3fa4de88-a55d-50b9-933e-68cb1fcb4165",
+    "chunk_id": "cacdb86d-dd4e-579b-b3db-9ce07b5e01fc",
+    "section_id": "d35bc442-acb0-5493-8a00-1d3438b0af0d",
+    "page": 6,
+    "start_char": 1275,
+    "end_char": 1388,
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Evaluating our networks is done in two steps, first in simulation, and then in on-road tests.",
+    "claim_type": "method",
+    "normalized_text": "Network evaluation is performed first in simulation, then in on-road tests.",
+    "paper_id": "3fa4de88-a55d-50b9-933e-68cb1fcb4165",
+    "chunk_id": "cacdb86d-dd4e-579b-b3db-9ce07b5e01fc",
+    "section_id": "d35bc442-acb0-5493-8a00-1d3438b0af0d",
+    "page": 6,
+    "start_char": 1423,
+    "end_char": 1469,
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "In simulation we have the networks provide steering commands in our simulator to an ensemble of prerecorded test routes that correspond to about a total of three hours and 100 miles of driving in Monmouth County, NJ.",
+    "claim_type": "method",
+    "normalized_text": "Networks provide steering commands in simulation on prerecorded test routes totaling about three hours and 100 miles in Monmouth County, NJ.",
+    "paper_id": "3fa4de88-a55d-50b9-933e-68cb1fcb4165",
+    "chunk_id": "cacdb86d-dd4e-579b-b3db-9ce07b5e01fc",
+    "section_id": "d35bc442-acb0-5493-8a00-1d3438b0af0d",
+    "page": 6,
+    "start_char": 1470,
+    "end_char": 1567,
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The test data was taken in diverse lighting and weather conditions and includes highways, local roads, and residential streets.",
+    "claim_type": "dataset",
+    "normalized_text": "Test data includes diverse lighting and weather conditions and various road types: highways, local roads, and residential streets.",
+    "paper_id": "3fa4de88-a55d-50b9-933e-68cb1fcb4165",
+    "chunk_id": "cacdb86d-dd4e-579b-b3db-9ce07b5e01fc",
+    "section_id": "d35bc442-acb0-5493-8a00-1d3438b0af0d",
+    "page": 6,
+    "start_char": 1568,
+    "end_char": 1634,
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "We estimate what percentage of the time the network could drive the car (autonomy).",
+    "claim_type": "method",
+    "normalized_text": "Autonomy is estimated as the percentage of time the network can drive the car without intervention.",
+    "paper_id": "3fa4de88-a55d-50b9-933e-68cb1fcb4165",
+    "chunk_id": "cacdb86d-dd4e-579b-b3db-9ce07b5e01fc",
+    "section_id": "d35bc442-acb0-5493-8a00-1d3438b0af0d",
+    "page": 6,
+    "start_char": 1635,
+    "end_char": 1678,
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "The metric is determined by counting simulated human interventions (see Section 6).",
+    "claim_type": "method",
+    "normalized_text": "Autonomy metric is determined by counting simulated human interventions.",
+    "paper_id": "3fa4de88-a55d-50b9-933e-68cb1fcb4165",
+    "chunk_id": "cacdb86d-dd4e-579b-b3db-9ce07b5e01fc",
+    "section_id": "d35bc442-acb0-5493-8a00-1d3438b0af0d",
+    "page": 6,
+    "start_char": 1679,
+    "end_char": 1719,
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "These interventions occur when the simulated vehicle departs from the center line by more than one meter.",
+    "claim_type": "method",
+    "normalized_text": "Simulated human interventions occur when the vehicle departs from the center line by more than one meter.",
+    "paper_id": "3fa4de88-a55d-50b9-933e-68cb1fcb4165",
+    "chunk_id": "cacdb86d-dd4e-579b-b3db-9ce07b5e01fc",
+    "section_id": "d35bc442-acb0-5493-8a00-1d3438b0af0d",
+    "page": 6,
+    "start_char": 1720,
+    "end_char": 1767,
+    "confidence": 0.95
+   }
+  ]
+ }
+}

@@ -1,0 +1,92 @@
+{
+ "key": "c963b476dd300e63dd633c9a55576dcb2d0ca99a159813dc33c47702cf7b28d4",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "synthesis.v1",
+ "temperature": 0.2,
+ "input_tokens": 5280,
+ "output_tokens": 1241,
+ "latency_s": 9.8,
+ "recorded_at": "2026-10-08T09:20:20+00:00",
+ "parsed": {
+  "syntheses": [
+   {
+    "synthesis_type": "insight",
+    "title": "Mid-Level Representations Enhance Training and Validation of Autonomous Driving Models",
+    "body": "Mid-level input and output representations, as used in ChauffeurNet, enable training on both real and simulated data and facilitate closed-loop simulation testing and validation before deployment on real cars. This approach helps overcome some limitations of pure imitation learning by allowing more flexible and robust model evaluation in simulation environments like CARLA.",
+    "supporting_claim_ids": [
+     "cc49c2d4-b50d-5322-8525-304268249b24",
+     "5fc32090-a96e-5352-b867-05795d95ae56",
+     "ff265183-ca72-5222-91bf-17b21808b0f6"
+    ],
+    "supporting_papers": 1,
+    "supporting_claims": 3,
+    "confidence": 0.95
+   },
+   {
+    "synthesis_type": "insight",
+    "title": "CARLA Simulator Provides Comprehensive Support for Autonomous Driving Research",
+    "body": "CARLA is an open-source urban driving simulator that supports development, training, validation, and performance analysis of autonomous driving systems. It offers flexible sensor suite specifications, environmental conditions, and provides detailed digital assets including urban layouts, vehicles, pedestrians, and traffic rule compliance measurements, enabling thorough benchmarking and evaluation of driving policies.",
+    "supporting_claim_ids": [
+     "6dde98eb-ff12-5785-926e-11fbb8cd299b",
+     "2dedfe39-6dab-5024-be2e-997515e0211d",
+     "0488bcfc-4a7e-5848-a1d4-1e81239f8f55",
+     "b26241aa-3d3d-560b-9a47-d8c65f50bfa3",
+     "95c1e45a-f076-5974-87ce-1ddf31a356f5",
+     "fe6967d3-e559-5d60-811b-65a206438009",
+     "d21e79c5-0622-5eec-ae4a-f1e89288f639",
+     "a4766e4b-52af-520a-b0f2-2c0267bf443f",
+     "5b04c50f-7b96-5ddd-a0be-8eb2d45b4a96",
+     "2ef71665-a8a3-556d-864e-59cd9b75ce1c",
+     "5cb1f566-b5b8-59fc-bdf9-248b9b7cbf1a",
+     "1d021b0a-2ce3-5e4a-badb-de76d4cd2b41"
+    ],
+    "supporting_papers": 1,
+    "supporting_claims": 12,
+    "confidence": 0.99
+   },
+   {
+    "synthesis_type": "insight",
+    "title": "Pure Imitation Learning Faces Limitations Despite Large Datasets and Mid-Level Representations",
+    "body": "Even with large datasets (e.g., 30 million examples) and mid-level input/output representations, pure imitation learning approaches exhibit limitations such as error accumulation and distribution shift in closed-loop operation, leading to issues like getting stuck or collisions in complex driving scenarios. This suggests the need for complementary methods or enhancements beyond pure imitation learning for robust autonomous driving.",
+    "supporting_claim_ids": [
+     "639f88c8-001d-587a-bae9-390fb3c89dcf",
+     "c9759883-dd81-58a9-ab2d-155a512245df",
+     "cf5a09ec-bfde-5049-ac07-ec7d2e843d78",
+     "09081b52-e1ad-5843-9bbc-8565cf5aea59"
+    ],
+    "supporting_papers": 1,
+    "supporting_claims": 4,
+    "confidence": 0.95
+   },
+   {
+    "synthesis_type": "insight",
+    "title": "End-to-End Neural Networks Can Effectively Steer Vehicles Using Camera Input",
+    "body": "End-to-end trained neural networks, such as CNNs inspired by ALVINN and improved with modern architectures and training techniques, can generate steering commands directly from single center camera images and have demonstrated capability to steer cars on public roads. Advances in data volume and computational power over 25 years have enhanced performance beyond earlier systems.",
+    "supporting_claim_ids": [
+     "e66d15a0-9347-5814-b053-1ff1dea8058d",
+     "f78de3ab-0095-5d09-a3ae-9f15b81a03b6",
+     "dd51b232-3e92-5d5e-b0e7-b982c3ee1e65",
+     "82d5df42-8220-51e7-a608-9993016f4e1c",
+     "64fadfcd-be98-5c13-b01c-6d0c033e603e"
+    ],
+    "supporting_papers": 1,
+    "supporting_claims": 5,
+    "confidence": 0.95
+   },
+   {
+    "synthesis_type": "insight",
+    "title": "Simulation Platforms Like CARLA Enable Comparative Evaluation of Autonomous Driving Approaches",
+    "body": "CARLA has been used to evaluate multiple autonomous driving approaches including classic modular pipelines, end-to-end imitation learning, and reinforcement learning under controlled scenarios of increasing difficulty. Performance differences between modular pipelines and imitation learning are generally under 10%, demonstrating CARLA's utility for benchmarking and comparative analysis.",
+    "supporting_claim_ids": [
+     "34863bb0-827c-5405-a15d-f7229ca8985c",
+     "7e8db57a-25dd-55f8-9220-c289a62aea7f",
+     "32a49fa0-8395-506b-9794-efc1f7fa2a8f",
+     "a4f1d6b1-8d70-5572-a296-1d5aeacfd7d0"
+    ],
+    "supporting_papers": 1,
+    "supporting_claims": 4,
+    "confidence": 0.95
+   }
+  ]
+ }
+}

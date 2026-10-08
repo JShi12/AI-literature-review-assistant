@@ -1,0 +1,26 @@
+{
+ "key": "f10c00001922fb7c2ba7f1758ee756227a891e47935f1f40998ec9ab5e5fdb60",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "synthesis.v1",
+ "temperature": 0.2,
+ "input_tokens": 5280,
+ "output_tokens": 263,
+ "latency_s": 3.124,
+ "recorded_at": "2026-10-08T09:19:44+00:00",
+ "parsed": {
+  "syntheses": [
+   {
+    "synthesis_type": "contradiction",
+    "title": "Contradiction Between End-to-End CNN Steering and Mid-Level RNN Trajectory Prediction Methods",
+    "body": "There is a contradiction in the autonomous driving methods regarding the level of processing and output. One method (claim e66d15a0-9347-5814-b053-1ff1dea8058d) uses a CNN that learns the entire processing pipeline to directly steer an automobile, producing steering commands from raw video input. In contrast, another method (claim cc49c2d4-b50d-5322-8525-304268249b24) employs ChauffeurNet, an RNN that takes mid-level input representations and outputs a driving trajectory, which is then translated into steering and acceleration commands by a controller. This represents a fundamental disagreement on whether end-to-end learning should produce direct control commands or intermediate trajectory outputs requiring further processing.",
+    "supporting_claim_ids": [
+     "e66d15a0-9347-5814-b053-1ff1dea8058d",
+     "cc49c2d4-b50d-5322-8525-304268249b24"
+    ],
+    "supporting_papers": 2,
+    "supporting_claims": 2,
+    "confidence": 0.95
+   }
+  ]
+ }
+}
