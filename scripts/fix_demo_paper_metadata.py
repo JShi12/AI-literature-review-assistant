@@ -1,17 +1,20 @@
 """Fix-up script for a database already seeded by seed_demo_data.py before it applied
-KNOWN_METADATA -- corrects the three demo papers' title/authors/year, deletes the existing
-(garbled-references) review draft, and regenerates a fresh one from the same syntheses.
+KNOWN_METADATA -- corrects the three demo papers' title/authors/year, deletes every review draft in
+the database, and generates one fresh draft from all syntheses in the database.
 
-Cheaper than re-running seed_demo_data.py from scratch: this does NOT re-extract claims or
-regenerate syntheses (the expensive, billed steps) -- only the paper metadata and the review
-draft (whose References section is what actually reads paper.title/paper.authors) are redone.
+Cheaper than rebuilding with `seed_demo_data.py --reset`: this does NOT re-extract claims or
+regenerate syntheses (the expensive, billed steps) -- only the paper metadata and the review draft
+(whose References section is what actually reads paper.title/paper.authors) are redone. (A plain
+re-run of seed_demo_data.py without --reset would not fix this: it keeps the existing papers and
+claims.) Meant for a database that holds only the demo; on a shared database it would also delete
+other users' review drafts.
 
 Usage:
 
     DATABASE_URL=<target database> OPENAI_API_KEY=<key> python scripts/fix_demo_paper_metadata.py
 
-Safe to run more than once: metadata correction is idempotent, and each run deletes the prior
-review draft before generating a new one rather than accumulating duplicates.
+Safe to run more than once: metadata correction is idempotent, and each run deletes all existing
+review drafts before generating a new one, so drafts don't accumulate.
 """
 
 from __future__ import annotations

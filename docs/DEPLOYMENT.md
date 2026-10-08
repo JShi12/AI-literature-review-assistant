@@ -35,7 +35,7 @@ not on Render's own managed Postgres -- see "Why an external database" below.
 
 `scripts/seed_demo_data.py` downloads three real, open-access papers on autonomous driving from
 arXiv, ingests them, and runs the full pipeline (claims -> syntheses -> a review draft) so a
-`READ_ONLY_DEMO` deployment has real content to show. Run it once, locally, with `DATABASE_URL`
+`READ_ONLY_DEMO` deployment has real content to show. Run it locally, with `DATABASE_URL`
 pointed at your production database (not local Postgres):
 
 ```bash
@@ -43,14 +43,31 @@ DATABASE_URL=<your Neon/Supabase connection string> OPENAI_API_KEY=<your key> \
   python scripts/seed_demo_data.py
 ```
 
-It's not designed to be re-run repeatedly against the same database -- paper ingestion is
-deduplicated by file hash, but claim/synthesis/review-draft generation is not.
+Re-running it without `--reset` does not regenerate the demo. The existing papers, chunks and claims
+are kept, because papers are deduplicated by file hash and only chunks without claims are processed.
+Syntheses and a review draft are then built from just the few new claims, next to the old ones. To
+rebuild the demo with the current pipeline, for example after a prompt or section-detection change,
+use `--reset`:
+
+```bash
+DATABASE_URL=<your Neon/Supabase connection string> OPENAI_API_KEY=<your key> \
+  python scripts/seed_demo_data.py --reset
+```
+
+`--reset` deletes **all** data in the target database before seeding: papers, claims, syntheses, review
+drafts, embeddings and LLM run logs. The schema is kept. It prints the database (password hidden) and
+row counts, then asks you to type `reset`; `--yes` skips the prompt. The deletion runs in one
+transaction, so a failure part-way leaves the data untouched. For a no-risk alternative, point
+`DATABASE_URL` at a fresh database (e.g. a new Neon branch), run `alembic upgrade head`, seed it, and
+then switch the Render service to it.
 
 If you already ran an older version of this script and the References section of the generated
 draft looks garbled (author names mixed into titles, "Anonymous, Submission" as an author, etc.),
 that's a known extraction quirk for these three papers' specific byline format, fixed as of this
-version. Rather than re-run the whole (billed) pipeline, `scripts/fix_demo_paper_metadata.py`
-corrects the three papers' stored title/author/year and regenerates only the review draft:
+version. Rather than rebuild everything with `--reset` (the whole billed pipeline),
+`scripts/fix_demo_paper_metadata.py` corrects the three papers' stored title/author/year and
+regenerates only the review draft. It deletes every review draft in the database, so use it only on a
+database that holds just the demo:
 
 ```bash
 DATABASE_URL=<your Neon/Supabase connection string> OPENAI_API_KEY=<your key> \

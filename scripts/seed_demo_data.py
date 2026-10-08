@@ -1,5 +1,6 @@
-"""One-time script to seed a database with example autonomous-driving papers and a generated
-review draft, for a read-only public demo (see READ_ONLY_DEMO in .env.example / README).
+"""Seed a database with example autonomous-driving papers and a generated review draft, for a
+read-only public demo (see READ_ONLY_DEMO in .env.example / README). Run it once to seed, or with
+--reset to rebuild the demo from scratch with the current pipeline.
 
 Downloads three real, open-access papers from arXiv, ingests them, extracts claims from every
 chunk, generates syntheses across every synthesis type, then generates one review draft.
@@ -8,24 +9,46 @@ Usage (run against whichever database the deployed app actually uses -- e.g. poi
 at your Neon/Supabase connection string, not local Postgres, if you want the *deployed* demo to
 show this data):
 
-    DATABASE_URL=<target database> OPENAI_API_KEY=<key> python scripts/seed_demo_data.py
+    DATABASE_URL=<target database> OPENAI_API_KEY=<key> python scripts/seed_demo_data.py [--reset]
 
-Requires the project installed (`pip install -e .`), same as running the app itself. Not designed
-to be re-run repeatedly against the same database -- paper ingestion is deduplicated by file hash,
-but claim/synthesis/review-draft generation is not, so running it twice would create duplicates.
+Requires the project installed (`pip install -e .`), same as running the app itself.
+
+Re-running without --reset does NOT regenerate the demo. Papers are deduplicated by file hash, so the
+existing papers -- with their old pages, chunks, and section types -- are kept; claims are extracted
+only for chunks that have none yet; and syntheses and a review draft are then generated from just those
+few new claims, next to the existing ones. To rebuild the demo with the current pipeline (e.g. after a
+prompt or section-detection change), pass --reset: it deletes ALL data in the target database first
+(after showing what will be deleted and asking for confirmation; --yes skips the prompt).
 """
 
 from __future__ import annotations
 
+import argparse
 import tempfile
 import time
 import urllib.error
 import urllib.request
 from pathlib import Path
 
+from sqlalchemy import delete, func, select
+from sqlalchemy.orm import Session
+
 from lit_review_assistant import services
-from lit_review_assistant.db.models import Chunk
-from lit_review_assistant.db.session import session_scope
+from lit_review_assistant.db.models import (
+    Chunk,
+    Claim,
+    Embedding,
+    LLMRun,
+    Page,
+    Paper,
+    ReviewDraft,
+    ReviewSentence,
+    ReviewSentenceClaim,
+    Section,
+    Synthesis,
+    SynthesisClaim,
+)
+from lit_review_assistant.db.session import engine, session_scope
 from lit_review_assistant.llm.claims import extract_claims_for_chunk
 from lit_review_assistant.llm.review import generate_review_draft
 from lit_review_assistant.llm.synthesis import generate_syntheses
@@ -157,7 +180,62 @@ def generate_all_syntheses(claim_ids: list[str]) -> list[str]:
     return synthesis_ids
 
 
+# Children before parents: syntheses, review drafts, and claims reference llm_runs with ON DELETE RESTRICT,
+# and syntheses/drafts aren't removed by deleting papers, so a plain cascade from papers isn't enough.
+RESET_ORDER = [
+    ReviewSentenceClaim,
+    ReviewSentence,
+    ReviewDraft,
+    SynthesisClaim,
+    Synthesis,
+    Embedding,
+    Claim,
+    Chunk,
+    Section,
+    Page,
+    Paper,
+    LLMRun,
+]
+
+
+def count_rows(session: Session) -> dict[str, int]:
+    return {model.__tablename__: session.scalar(select(func.count()).select_from(model)) or 0 for model in RESET_ORDER}
+
+
+def reset_database(session: Session) -> None:
+    """Delete every row the app stores (schema and alembic_version are kept), children first."""
+    for model in RESET_ORDER:
+        session.execute(delete(model))
+
+
+def confirm_reset(assume_yes: bool) -> bool:
+    with session_scope() as session:
+        counts = count_rows(session)
+    print(f"--reset will delete ALL data in {engine.url.render_as_string(hide_password=True)}:")
+    for table, count in counts.items():
+        print(f"  {table}: {count} row(s)")
+    if assume_yes:
+        return True
+    return input("Type 'reset' to continue: ").strip() == "reset"
+
+
 def main() -> None:
+    parser = argparse.ArgumentParser(description="Seed the demo papers, claims, syntheses, and a review draft.")
+    parser.add_argument(
+        "--reset", action="store_true", help="Delete ALL existing data first, so the demo is rebuilt from scratch."
+    )
+    parser.add_argument("--yes", action="store_true", help="With --reset, skip the confirmation prompt.")
+    args = parser.parse_args()
+
+    if args.reset:
+        if not confirm_reset(args.yes):
+            print("Aborted; nothing was deleted.")
+            return
+        # One transaction: either everything is deleted or, on any error, nothing is.
+        with session_scope() as session:
+            reset_database(session)
+        print("Existing data deleted.\n")
+
     print("Ingesting papers...")
     paper_ids = ingest_papers()
 
