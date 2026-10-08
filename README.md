@@ -35,6 +35,10 @@ Example output — a review draft generated end to end from three real papers on
 - **Agentic orchestration**: a PydanticAI agent (the **Ask the Assistant** tab) can chain the retrieval,
   synthesis, and review-drafting steps above from a single natural-language request, calling the same
   underlying functions as their respective tabs and showing exactly which tools it called.
+- **Measured, not eyeballed**: an offline [evaluation harness](#evaluation) scores every stage (section
+  detection, claims, retrieval, syntheses, review drafts, and the agent's tool use) with deterministic
+  metrics, gold labels, and calibrated LLM judges. CI replays it on every pull request and blocks
+  regressions. The harness found and drove fixes for several real problems (see the table below).
 
 ## Architecture
 
@@ -86,7 +90,8 @@ same underlying functions run and the same data is persisted.
 - PydanticAI (the **Ask the Assistant** tab's agent and tool calls)
 - OpenAI Python SDK 
   
-  In the demo I used `gpt-4.1-mini` for claim/synthesis/review-draft generation, and `text-embedding-3-small` for embeddings, both configurable via `OPENAI_CHAT_MODEL` / `OPENAI_EMBEDDING_MODEL`. Different LLM models were not evaluated in this repo. 
+  In the demo I used `gpt-4.1-mini` for claim/synthesis/review-draft generation, and `text-embedding-3-small` for embeddings, both configurable via `OPENAI_CHAT_MODEL` / `OPENAI_EMBEDDING_MODEL`. Other models haven't been compared yet; the evaluation harness supports a side-by-side run
+  (`python -m evals.run --model gpt-4.1-mini --model gpt-4.1`).
 - Pytest, Ruff, Mypy, pre-commit, GitHub Actions
 - Deployed on Render (Docker) with a managed Postgres from Neon/Supabase
 
@@ -103,7 +108,13 @@ same underlying functions run and the same data is persisted.
 |   +-- schemas.py                Structured-output schemas
 |   +-- services.py               Application services
 |   +-- logging_config.py         Logging setup
++-- evals/                        Offline evaluation harness (see evals/README.md)
+|   +-- datasets/                 Gold labels, review scenarios, agent cases, judge calibration set
+|   +-- recordings/               Recorded LLM responses and embeddings, for free offline replay
+|   +-- baselines/                Committed metric baseline the CI gate compares against
++-- scripts/                      Demo data seeding and metadata fixes
 +-- tests/                        Test suite
++-- .github/workflows/ci.yml      Lint, types, tests, and the eval replay + regression gate
 +-- docker-compose.yml            App + PostgreSQL/pgvector services
 +-- Dockerfile
 +-- pyproject.toml
@@ -211,34 +222,66 @@ pytest
 
 The tests cover PDF extraction, section detection, chunking offsets, metadata extraction, structured LLM
 prompt construction, schema validation, support counting, review traceability helpers, embedding
-generation/retrieval, and database URL handling. All tests are self-contained unit tests (fakes and
-`monkeypatch`, no live database or `OPENAI_API_KEY` required). `pytest --cov` (configured by default)
+generation/retrieval, quote-based claim location, database URL handling, and the evaluation harness
+itself (metrics, record/replay, judges, the regression gate, agent trajectory checks). All tests are
+self-contained unit tests (fakes and `monkeypatch`, no live database required). `OPENAI_API_KEY` is
+blanked for every test, so no test can reach the live API. `pytest --cov` (configured by default)
 reports coverage.
 
 ## Evaluation
 
-`evals/` is an offline harness that scores the pipeline (section detection, claims, retrieval,
-syntheses, review drafts, and the assistant agent's tool use) on a frozen snapshot of the demo papers. It uses deterministic metrics,
-including recall against gold claims, retrieval precision@k against labelled relevant chunks,
-whether claim offsets point at the claim text, and how many review sentences cite a real claim. It also
-runs calibrated LLM-judge checks of claim grounding, synthesis faithfulness and citation support. It records LLM responses so runs can be replayed for free, and can compare models side
-by side:
+`evals/` is an offline harness that scores the whole pipeline on a frozen snapshot of the three demo papers:
+
+- **Section detection, claims, retrieval, syntheses, and review drafts.** These are scored with deterministic
+  metrics: whether claim locations point at the claim text, recall and precision against gold claims,
+  retrieval precision@k against labelled relevant chunks, invented citation IDs, and citation coverage.
+- **LLM judges.** `gpt-4.1` judges claim grounding, synthesis faithfulness, and whether each review
+  sentence is supported by its own citations. The judges are calibrated against a labelled set that
+  includes deliberately broken items.
+- **The Ask the Assistant agent.** Checks cover which tools it calls and in what order, and whether it
+  passes made-up IDs to tools.
+
+Every LLM response is recorded, so runs replay offline for free. In CI, the eval replays on every push and
+pull request and fails if any metric drops below the committed baseline.
 
 ```bash
-python -m evals.snapshot                 # once: build the input snapshot
-python -m evals.run                      # score all stages, recording LLM responses
-python -m evals.run --mode replay        # re-score from recordings, no API key needed
-python -m evals.run --model gpt-4.1-mini --model gpt-4.1
+python -m evals.snapshot                 # once: build the input snapshot (downloads the demo papers)
+python -m evals.run                      # score all stages, recording new LLM responses
+python -m evals.run --mode replay        # re-score from recordings: free, no API key
+python -m evals.gate                     # compare with the committed baseline
 python -m evals.calibrate                # how far the LLM judges can be trusted
 ```
 
-CI replays the eval from committed recordings (no API key) and fails if any metric drops below the
-committed baseline. See [evals/README.md](evals/README.md) for the metrics, options, and how to change
-a prompt.
+Problems the harness found, and the effect of the fixes (gpt-4.1-mini):
+
+| Problem | Before | After |
+|---|---|---|
+| Claim locations pointing at the claim text (the model now quotes; offsets are computed in code) | 0.8% | 81% |
+| Section headings detected (precision 100%) | 18% | 99% |
+| Chunks given the correct section type | 27% | 86% |
+| Review sentences fully supported by their citations (LLM judge) | 42% | 77–82% |
+| Syntheses drawing on evidence from 2+ papers | 32% | 77–91% |
+| Agent review requests saved as traceable drafts | 2/8 | 7/8 |
+
+Also fixed:
+- **Rolled-back extraction runs:** one bad claim offset rolled back an entire claim-extraction run.
+- **Synthesis IDs cited as claim IDs** in review drafts.
+- **Phantom support:** sentences were stored as supported with no claims behind them.
+
+Synthesis faithfulness is the one thing the harness can't yet judge reliably: with 11–19 syntheses per
+run, it moves by about 25 points between runs. See [evals/README.md](evals/README.md) for every metric,
+the calibration results, and how to change a prompt.
 
 ## Code Quality / CI
 
-Ruff (lint + format), Mypy, and the full test suite run in GitHub Actions on every push and pull request. Locally, `pre-commit install` wires the same checks into `git commit`.
+Ruff (lint + format), Mypy, and the full test suite run in GitHub Actions on every push and pull request.
+A second job, `eval-replay`, does the following:
+- builds the eval snapshot;
+- replays the evaluation and the judge calibration from committed recordings (no API key, no cost);
+- fails if any metric is worse than `evals/baselines/baseline.json`, or if a prompt changed without
+  re-recording.
+
+Locally, `pre-commit install` wires the lint, format, and type checks into `git commit`.
 
 ## What's not done yet
 
@@ -247,6 +290,8 @@ Ruff (lint + format), Mypy, and the full test suite run in GitHub Actions on eve
 - Authentication is a single shared password (`APP_PASSWORD`), not per-user accounts — the app has no
   user/tenant concept, so everyone with the password sees the same shared workspace and data. See
   [Deployment](#deployment) for how it's configured.
+- The evaluation's gold labels and judge-calibration labels were drafted by Claude and haven't been
+  reviewed by a person yet, so treat the eval numbers as indicative.
 
 ## License
 
