@@ -1,0 +1,28 @@
+{
+ "key": "d9e64c6723eb010c1d66bb2eed2be4dc44522743c8ab78ddeae6573d7b154005",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "synthesis.v2",
+ "temperature": 0.2,
+ "input_tokens": 4116,
+ "output_tokens": 329,
+ "latency_s": 3.669,
+ "recorded_at": "2026-10-08T10:41:33+00:00",
+ "parsed": {
+  "syntheses": [
+   {
+    "synthesis_type": "contradiction",
+    "title": "Contradiction in Input and Output Representations Between End-to-End CNN and ChauffeurNet RNN Methods",
+    "body": "Paper A describes a method where a CNN learns the entire processing pipeline to steer an automobile, generating steering commands directly from single front-facing center camera images (claims e66d15a0-9347-5814-b053-1ff1dea8058d, 70eb8202-ac82-55fb-a95a-efb095234403). In contrast, Paper B presents ChauffeurNet, an RNN that takes mid-level input representations and outputs driving trajectories for control rather than direct steering commands (claims cc49c2d4-b50d-5322-8525-304268249b24, 639f88c8-001d-587a-bae9-390fb3c89dcf). This reveals a contradiction in the fundamental approach to input and output representations for autonomous driving control between the two methods.",
+    "supporting_claim_ids": [
+     "e66d15a0-9347-5814-b053-1ff1dea8058d",
+     "70eb8202-ac82-55fb-a95a-efb095234403",
+     "cc49c2d4-b50d-5322-8525-304268249b24",
+     "639f88c8-001d-587a-bae9-390fb3c89dcf"
+    ],
+    "supporting_papers": 2,
+    "supporting_claims": 4,
+    "confidence": 0.95
+   }
+  ]
+ }
+}

@@ -59,7 +59,14 @@ PAGE_TWO = "2 Results\nThe model drives autonomously 98% of the time in simulati
 
 def make_snapshot(tmp_path: Path) -> Path:
     papers = []
-    for key, pages in {"paper_a": [PAGE_ONE, PAGE_TWO], "paper_b": [PAGE_TWO, PAGE_ONE]}.items():
+    # Each paper's text must be distinct: identical chunks make identical requests, which race when recorded
+    # concurrently and make call counts nondeterministic.
+    suffix = "This page is from the second paper.\n"
+    pages_by_paper = {
+        "paper_a": [PAGE_ONE, PAGE_TWO],
+        "paper_b": [PAGE_TWO + suffix, PAGE_ONE + suffix],
+    }
+    for key, pages in pages_by_paper.items():
         papers.append(
             {
                 "key": key,
@@ -72,8 +79,8 @@ def make_snapshot(tmp_path: Path) -> Path:
                 "chunks": [
                     {
                         "key": f"{key}:p{number}:0-{len(text)}",
-                        "section_title": "Introduction" if text is PAGE_ONE else "Results",
-                        "section_type": "introduction" if text is PAGE_ONE else "results",
+                        "section_title": "Introduction" if text.startswith(PAGE_ONE) else "Results",
+                        "section_type": "introduction" if text.startswith(PAGE_ONE) else "results",
                         "page_start": number,
                         "page_end": number,
                         "start_char": 0,
@@ -154,7 +161,7 @@ class FakePipelineLLM:
                 ]
             )
         else:
-            claim_id = re.findall(r"([0-9a-f-]{36}) -> \[1\]", input_text)[0]
+            claim_id = re.findall(r"claim_id=([0-9a-f-]{36}) \[1\]", input_text)[0]
             sentence = "End-to-end networks learn to steer a car directly from raw camera pixels [1]."
             parsed = ReviewDraftPayload(
                 title="Review",

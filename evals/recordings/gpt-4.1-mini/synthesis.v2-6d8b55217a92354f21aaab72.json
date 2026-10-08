@@ -1,0 +1,26 @@
+{
+ "key": "6d8b55217a92354f21aaab729303ec3869f96c1b3a1bc3d0526ab37ce4a046a4",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "synthesis.v2",
+ "temperature": 0.2,
+ "input_tokens": 2917,
+ "output_tokens": 249,
+ "latency_s": 2.62,
+ "recorded_at": "2026-10-08T10:42:52+00:00",
+ "parsed": {
+  "syntheses": [
+   {
+    "synthesis_type": "gap",
+    "title": "Lack of Direct Comparative Evaluation of End-to-End CNN and RNN Mid-Level Approaches in Autonomous Driving",
+    "body": "The claims describe two different autonomous driving methods: an end-to-end CNN approach that learns the entire processing pipeline to steer a car (claim e66d15a0-9347-5814-b053-1ff1dea8058d from paper A) and an RNN-based ChauffeurNet that uses mid-level input and outputs driving trajectories (claim cc49c2d4-b50d-5322-8525-304268249b24 from paper B). While both methods are detailed, there is no claim providing a direct comparative evaluation of these two approaches under the same conditions or metrics. This gap limits understanding of their relative strengths and weaknesses in autonomous driving tasks.",
+    "supporting_claim_ids": [
+     "e66d15a0-9347-5814-b053-1ff1dea8058d",
+     "cc49c2d4-b50d-5322-8525-304268249b24"
+    ],
+    "supporting_papers": 2,
+    "supporting_claims": 2,
+    "confidence": 0.9
+   }
+  ]
+ }
+}

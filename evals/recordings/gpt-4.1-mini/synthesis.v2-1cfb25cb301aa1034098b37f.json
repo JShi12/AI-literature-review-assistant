@@ -1,0 +1,48 @@
+{
+ "key": "1cfb25cb301aa1034098b37f13efa76b35eb5aa79e121d5ed52cbd6621304456",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "synthesis.v2",
+ "temperature": 0.2,
+ "input_tokens": 4118,
+ "output_tokens": 952,
+ "latency_s": 7.883,
+ "recorded_at": "2026-10-08T10:41:56+00:00",
+ "parsed": {
+  "syntheses": [
+   {
+    "synthesis_type": "method_comparison",
+    "title": "Comparison of End-to-End CNN and RNN Approaches for Autonomous Driving Control",
+    "body": "Paper A presents a method where a convolutional neural network (CNN) learns the entire processing pipeline to steer an automobile, generating steering commands from a single front-facing center camera (claims e66d15a0-9347-5814-b053-1ff1dea8058d, 70eb8202-ac82-55fb-a95a-efb095234403). In contrast, Paper B introduces ChauffeurNet, a recurrent neural network (RNN) that takes mid-level input and outputs driving trajectories for control, incorporating components such as FeatureNet and AgentRNN, and using a memory model with recurrent feedback between iterations (claims cc49c2d4-b50d-5322-8525-304268249b24, a074e01e-adb6-51f9-a4d9-c118eae03923, 2eb1abf8-84f5-5074-a80b-6452e5ee9f11, 28ac3012-c446-509b-bbe5-067fc5348a93). Both methods rely on different input representations and network architectures to produce control outputs for autonomous driving.",
+    "supporting_claim_ids": [
+     "e66d15a0-9347-5814-b053-1ff1dea8058d",
+     "70eb8202-ac82-55fb-a95a-efb095234403",
+     "cc49c2d4-b50d-5322-8525-304268249b24",
+     "a074e01e-adb6-51f9-a4d9-c118eae03923",
+     "2eb1abf8-84f5-5074-a80b-6452e5ee9f11",
+     "28ac3012-c446-509b-bbe5-067fc5348a93"
+    ],
+    "supporting_papers": 2,
+    "supporting_claims": 6,
+    "confidence": 0.95
+   },
+   {
+    "synthesis_type": "method_comparison",
+    "title": "Comparison of CARLA Simulator Features for Autonomous Driving Research",
+    "body": "Paper C describes CARLA as an open-source urban driving simulator that supports development, training, and validation of autonomous driving systems, including flexible specification of sensor suites and environmental conditions, and providing free urban environment content such as urban layouts, vehicles, buildings, and pedestrians (claims 6dde98eb-ff12-5785-926e-11fbb8cd299b, 2dedfe39-6dab-5024-be2e-997515e0211d, b26241aa-3d3d-560b-9a47-d8c65f50bfa3, 256972c1-eeae-5177-bc21-a23cc08d9a19, eaa96757-17f0-557c-9c27-40cae0a06932). It also supports training, prototyping, and validation of autonomous driving models including perception and control, and provides measurements of agent state and traffic rule compliance (claims 95c1e45a-f076-5974-87ce-1ddf31a356f5, 2ef71665-a8a3-556d-864e-59cd9b75ce1c, a4766e4b-52af-520a-b0f2-2c0267bf443f).",
+    "supporting_claim_ids": [
+     "6dde98eb-ff12-5785-926e-11fbb8cd299b",
+     "2dedfe39-6dab-5024-be2e-997515e0211d",
+     "b26241aa-3d3d-560b-9a47-d8c65f50bfa3",
+     "256972c1-eeae-5177-bc21-a23cc08d9a19",
+     "eaa96757-17f0-557c-9c27-40cae0a06932",
+     "95c1e45a-f076-5974-87ce-1ddf31a356f5",
+     "2ef71665-a8a3-556d-864e-59cd9b75ce1c",
+     "a4766e4b-52af-520a-b0f2-2c0267bf443f"
+    ],
+    "supporting_papers": 1,
+    "supporting_claims": 8,
+    "confidence": 0.98
+   }
+  ]
+ }
+}

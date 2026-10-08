@@ -1,0 +1,240 @@
+{
+ "key": "29d51dfa737adc79283a9fa4138715bfb0ab0c039d394d589090052b65772beb",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.review_citations.v2",
+ "temperature": 0.0,
+ "input_tokens": 2470,
+ "output_tokens": 1233,
+ "latency_s": 5.694,
+ "recorded_at": "2026-10-08T10:42:38+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "sentence_number": 1,
+    "assertions": [
+     {
+      "statement": "ChauffeurNet, an RNN model, uses mid-level input representations to output driving trajectories.",
+      "supporting_claims": [
+       1
+      ],
+      "supported": true
+     },
+     {
+      "statement": "ChauffeurNet enables training on both real and simulated data.",
+      "supporting_claims": [
+       2
+      ],
+      "supported": true
+     },
+     {
+      "statement": "ChauffeurNet facilitates closed-loop simulation testing prior to real vehicle deployment.",
+      "supporting_claims": [
+       2,
+       3
+      ],
+      "supported": true
+     }
+    ]
+   },
+   {
+    "sentence_number": 2,
+    "assertions": [
+     {
+      "statement": "The CARLA simulator is an open-source platform designed for autonomous driving research.",
+      "supporting_claims": [
+       1
+      ],
+      "supported": true
+     },
+     {
+      "statement": "CARLA supports development, training, and validation of urban driving systems.",
+      "supporting_claims": [
+       2
+      ],
+      "supported": true
+     },
+     {
+      "statement": "CARLA supports flexible sensor suite and environmental condition specifications.",
+      "supporting_claims": [
+       3
+      ],
+      "supported": true
+     }
+    ]
+   },
+   {
+    "sentence_number": 3,
+    "assertions": [
+     {
+      "statement": "CARLA provides free urban environment content such as layouts, vehicles, buildings, and pedestrians.",
+      "supporting_claims": [
+       1,
+       2
+      ],
+      "supported": true
+     },
+     {
+      "statement": "CARLA offers measurements of agent state and traffic rule compliance.",
+      "supporting_claims": [
+       3,
+       4
+      ],
+      "supported": true
+     }
+    ]
+   },
+   {
+    "sentence_number": 4,
+    "assertions": [
+     {
+      "statement": "End-to-end learning approaches include convolutional neural networks (CNNs) that learn the entire processing pipeline to steer an automobile directly from single front-facing center camera images.",
+      "supporting_claims": [
+       1,
+       2
+      ],
+      "supported": true
+     },
+     {
+      "statement": "CNNs generate steering commands.",
+      "supporting_claims": [
+       2
+      ],
+      "supported": true
+     }
+    ]
+   },
+   {
+    "sentence_number": 5,
+    "assertions": [
+     {
+      "statement": "CARLA has been used to study end-to-end imitation learning alongside other autonomous driving approaches.",
+      "supporting_claims": [
+       1
+      ],
+      "supported": true
+     },
+     {
+      "statement": "CARLA supports training and validation of perception and control models.",
+      "supporting_claims": [
+       2
+      ],
+      "supported": true
+     }
+    ]
+   },
+   {
+    "sentence_number": 6,
+    "assertions": [
+     {
+      "statement": "The CNN-based end-to-end method and the RNN-based mid-level representation method differ fundamentally in their input and output representations.",
+      "supporting_claims": [],
+      "supported": false
+     }
+    ]
+   },
+   {
+    "sentence_number": 7,
+    "assertions": [
+     {
+      "statement": "The CNN generates steering commands directly from raw images.",
+      "supporting_claims": [
+       2,
+       3
+      ],
+      "supported": true
+     },
+     {
+      "statement": "ChauffeurNet outputs driving trajectories based on mid-level inputs.",
+      "supporting_claims": [
+       1
+      ],
+      "supported": true
+     }
+    ]
+   },
+   {
+    "sentence_number": 8,
+    "assertions": [
+     {
+      "statement": "ChauffeurNet incorporates components such as FeatureNet and AgentRNN.",
+      "supporting_claims": [
+       1
+      ],
+      "supported": true
+     },
+     {
+      "statement": "ChauffeurNet has recurrent feedback mechanisms to improve predictions.",
+      "supporting_claims": [
+       2
+      ],
+      "supported": true
+     }
+    ]
+   },
+   {
+    "sentence_number": 9,
+    "assertions": [
+     {
+      "statement": "Simulation platforms like CARLA align well with mid-level representation approaches by enabling controlled scenario evaluation.",
+      "supporting_claims": [
+       5
+      ],
+      "supported": true
+     },
+     {
+      "statement": "Simulation platforms like CARLA enable closed-loop testing before real-world deployment.",
+      "supporting_claims": [
+       1,
+       2
+      ],
+      "supported": true
+     }
+    ]
+   },
+   {
+    "sentence_number": 10,
+    "assertions": [
+     {
+      "statement": "There is a lack of direct empirical comparison between end-to-end CNN and mid-level RNN approaches under consistent conditions or datasets.",
+      "supporting_claims": [],
+      "supported": false
+     }
+    ]
+   },
+   {
+    "sentence_number": 11,
+    "assertions": [
+     {
+      "statement": "Pure imitation learning has been found insufficient even with large datasets and mid-level representations.",
+      "supporting_claims": [
+       1
+      ],
+      "supported": true
+     },
+     {
+      "statement": "This insufficiency is due to error accumulation and distribution shift during closed-loop operation.",
+      "supporting_claims": [
+       2
+      ],
+      "supported": true
+     }
+    ]
+   },
+   {
+    "sentence_number": 12,
+    "assertions": [
+     {
+      "statement": "It remains unclear whether end-to-end approaches overcome the limitations of pure imitation learning.",
+      "supporting_claims": [],
+      "supported": false
+     },
+     {
+      "statement": "There is a gap in understanding the comparative effectiveness of different imitation learning strategies.",
+      "supporting_claims": [],
+      "supported": false
+     }
+    ]
+   }
+  ]
+ }
+}

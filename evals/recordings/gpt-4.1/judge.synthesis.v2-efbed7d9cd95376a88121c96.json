@@ -1,0 +1,49 @@
+{
+ "key": "efbed7d9cd95376a88121c96a6c525231d8ff22e735704205e5833ebc20f5a92",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.synthesis.v2",
+ "temperature": 0.0,
+ "input_tokens": 919,
+ "output_tokens": 250,
+ "latency_s": 2.195,
+ "recorded_at": "2026-10-08T10:41:29+00:00",
+ "parsed": {
+  "statements": [
+   {
+    "statement": "Papers A and C both discuss end-to-end learning approaches for autonomous driving.",
+    "supporting_claims": [
+     1,
+     4
+    ],
+    "supported": true
+   },
+   {
+    "statement": "Paper A describes a CNN that learns the entire processing pipeline to steer an automobile, generating steering commands from single center camera images.",
+    "supporting_claims": [
+     1,
+     2,
+     3
+    ],
+    "supported": true
+   },
+   {
+    "statement": "Paper C uses CARLA to study end-to-end imitation learning among other approaches, supporting training, prototyping, and validation of autonomous driving models including perception and control.",
+    "supporting_claims": [
+     4,
+     5
+    ],
+    "supported": true
+   },
+   {
+    "statement": "This theme reflects a shared focus on end-to-end learning methods for autonomous vehicle control.",
+    "supporting_claims": [
+     1,
+     4
+    ],
+    "supported": true
+   }
+  ],
+  "type_evidence": "[1, 4] (both papers discuss end-to-end learning approaches for autonomous driving)",
+  "type_appropriate": true
+ }
+}

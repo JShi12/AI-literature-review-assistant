@@ -1,0 +1,44 @@
+{
+ "key": "8ac8c12a2e558589445ebe0137d001e1b50239cac8f89764e34e4cc0f79916ca",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.synthesis.v2",
+ "temperature": 0.0,
+ "input_tokens": 1041,
+ "output_tokens": 259,
+ "latency_s": 1.911,
+ "recorded_at": "2026-10-08T10:42:08+00:00",
+ "parsed": {
+  "statements": [
+   {
+    "statement": "ChauffeurNet (paper B) uses mid-level input representations that facilitate training on real or simulated data and enable closed-loop simulation testing prior to deployment on real vehicles.",
+    "supporting_claims": [
+     1,
+     2
+    ],
+    "supported": true
+   },
+   {
+    "statement": "This approach contrasts with the end-to-end CNN method in paper A, which learns the entire processing pipeline from raw images.",
+    "supporting_claims": [
+     3
+    ],
+    "supported": true
+   },
+   {
+    "statement": "The availability of CARLA (paper C), an open-source urban driving simulator supporting training, prototyping, and validation of autonomous driving models, provides a platform that aligns well with the mid-level representation approach for closed-loop testing.",
+    "supporting_claims": [
+     4,
+     5
+    ],
+    "supported": false
+   },
+   {
+    "statement": "Thus, mid-level representations combined with simulation platforms like CARLA enable safer and more flexible development workflows before real-world deployment.",
+    "supporting_claims": [],
+    "supported": false
+   }
+  ],
+  "type_evidence": "none",
+  "type_appropriate": false
+ }
+}

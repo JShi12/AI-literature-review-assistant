@@ -1,0 +1,40 @@
+{
+ "key": "42c66c315edc34bd211430698c0dd5829cd51cebdd0081df3b21b4a36527968b",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "synthesis.v2",
+ "temperature": 0.2,
+ "input_tokens": 4116,
+ "output_tokens": 598,
+ "latency_s": 6.805,
+ "recorded_at": "2026-10-08T10:41:41+00:00",
+ "parsed": {
+  "syntheses": [
+   {
+    "synthesis_type": "gap",
+    "title": "Lack of Direct Comparison of End-to-End CNN and Mid-Level RNN Approaches in Autonomous Driving",
+    "body": "The claims describe two distinct autonomous driving methods: an end-to-end CNN approach that learns the entire processing pipeline to steer a car (claim e66d15a0-9347-5814-b053-1ff1dea8058d from paper A) and a mid-level input/output RNN approach that outputs driving trajectories (claim cc49c2d4-b50d-5322-8525-304268249b24 from paper B). However, there is no claim providing a direct empirical comparison or evaluation of these two methods under the same conditions or datasets. This indicates a gap in the literature regarding how these fundamentally different architectures perform relative to each other in autonomous driving tasks.",
+    "supporting_claim_ids": [
+     "e66d15a0-9347-5814-b053-1ff1dea8058d",
+     "cc49c2d4-b50d-5322-8525-304268249b24"
+    ],
+    "supporting_papers": 2,
+    "supporting_claims": 2,
+    "confidence": 0.95
+   },
+   {
+    "synthesis_type": "gap",
+    "title": "Insufficient Evidence on Effectiveness of Pure Imitation Learning Despite Large Datasets and Mid-Level Representations",
+    "body": "Claims from paper B indicate that pure imitation learning is insufficient even with 30 million examples and mid-level input/output representations (claim 639f88c8-001d-587a-bae9-390fb3c89dcf), and that closed-loop operation causes error accumulation and distribution shift (claim c9759883-dd81-58a9-ab2d-155a512245df). While paper A uses large datasets and end-to-end CNN training (claims 1f44da23-b078-5b48-9c3b-0f7f3315f522, 5b04c50f-7b96-5ddd-a0be-8eb2d45b4a96), there is no claim addressing whether end-to-end approaches overcome the limitations of pure imitation learning identified in paper B. This points to a gap in understanding the comparative effectiveness of imitation learning approaches and how to mitigate their limitations.",
+    "supporting_claim_ids": [
+     "639f88c8-001d-587a-bae9-390fb3c89dcf",
+     "c9759883-dd81-58a9-ab2d-155a512245df",
+     "1f44da23-b078-5b48-9c3b-0f7f3315f522",
+     "5b04c50f-7b96-5ddd-a0be-8eb2d45b4a96"
+    ],
+    "supporting_papers": 2,
+    "supporting_claims": 4,
+    "confidence": 0.9
+   }
+  ]
+ }
+}

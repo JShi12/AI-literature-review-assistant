@@ -1,0 +1,64 @@
+{
+ "key": "db599249a7592cf0d153f21531d859b827bae5018d31b577b0ce8b874045d86a",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.synthesis.v2",
+ "temperature": 0.0,
+ "input_tokens": 1162,
+ "output_tokens": 347,
+ "latency_s": 2.719,
+ "recorded_at": "2026-10-08T10:41:27+00:00",
+ "parsed": {
+  "statements": [
+   {
+    "statement": "Both papers B and C emphasize the use of mid-level representations and simulation environments to facilitate autonomous driving training and testing.",
+    "supporting_claims": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8
+    ],
+    "supported": false
+   },
+   {
+    "statement": "Paper B describes ChauffeurNet as an RNN that takes mid-level input and outputs driving trajectories, enabling training on real or simulated data and closed-loop simulation testing before real deployment.",
+    "supporting_claims": [
+     1,
+     2,
+     3
+    ],
+    "supported": true
+   },
+   {
+    "statement": "Paper C presents CARLA as an open-source simulator supporting development, training, and validation of autonomous urban driving systems, providing flexible sensor suite specification and environmental conditions, and enabling controlled scenario evaluation.",
+    "supporting_claims": [
+     4,
+     5,
+     6,
+     7,
+     8
+    ],
+    "supported": true
+   },
+   {
+    "statement": "This theme highlights the shared focus on mid-level input representations and simulation platforms to advance autonomous driving research and deployment.",
+    "supporting_claims": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8
+    ],
+    "supported": false
+   }
+  ],
+  "type_evidence": "Claims 1, 2, 3 (mid-level representations and simulation in Paper B) and claims 4, 5, 6, 7, 8 (simulation platform in Paper C)",
+  "type_appropriate": false
+ }
+}

@@ -6,6 +6,7 @@ import httpx2
 import pytest
 from openai import APIStatusError
 
+from lit_review_assistant.db.models import ReviewSentence, ReviewSentenceClaim
 from lit_review_assistant.llm.claims import build_claim_extraction_input, locate_claims, persist_extracted_claims
 from lit_review_assistant.llm.client import LLMResult, describe_openai_error
 from lit_review_assistant.llm.embeddings import (
@@ -17,6 +18,7 @@ from lit_review_assistant.llm.review import (
     apply_academic_citations,
     build_review_input,
     normalize_references_for_markdown,
+    persist_review_draft,
 )
 from lit_review_assistant.pipeline.quotes import find_quote_span
 from lit_review_assistant.pipeline.review_traceability import (
@@ -50,6 +52,8 @@ class FakeClaim:
     id: str
     paper_id: str = "PAPER001"
     paper: FakePaper | None = None
+    claim_text: str = "Retrieval grounds summaries."
+    normalized_text: str | None = None
 
 
 @dataclass
@@ -283,16 +287,17 @@ def test_find_similar_claims_short_circuits_on_blank_topic() -> None:
     assert result == []
 
 
-def test_review_input_includes_syntheses_and_claim_ids() -> None:
+def test_review_input_lists_syntheses_with_their_claim_texts() -> None:
     prompt = build_review_input("AI literature review", [FakeSynthesis()])  # type: ignore[list-item]
 
     assert "Topic: AI literature review" in prompt
     assert "Paper references:" in prompt
     assert "[1] Ada Lovelace, Grace Hopper. (2024). Retrieval-Augmented Literature Reviews." in prompt
-    assert "synthesis_id=SYN001" in prompt
-    assert "CL001" in prompt
-    assert "CL002" in prompt
-    assert "CL001 -> [1]" in prompt
+    assert "S1 (theme) Retrieval improves grounding:" in prompt
+    assert "claim_id=CL001 [1]: Retrieval grounds summaries." in prompt
+    assert "claim_id=CL002 [1]" in prompt
+    # Synthesis ids look like claim ids to the model, so they must not appear in the prompt.
+    assert "SYN001" not in prompt
 
 
 def test_review_markdown_claim_ids_are_replaced_with_numbered_references() -> None:
@@ -538,3 +543,52 @@ def test_describe_openai_error_expands_permission_denied() -> None:
     assert "Project does not have access to this model." in message
     assert "OPENAI_API_KEY" in message
     assert "OPENAI_CHAT_MODEL" in message
+
+
+def test_persist_review_draft_derives_support_from_claims_that_exist() -> None:
+    class FakeSession:
+        def __init__(self) -> None:
+            self.added: list = []
+
+        def add(self, model) -> None:
+            self.added.append(model)
+
+        def flush(self) -> None:
+            for model in self.added:
+                if getattr(model, "id", "") is None:
+                    model.id = f"ID{len(self.added)}"
+
+        def get(self, _model, claim_id: str):
+            return object() if claim_id == "CL001" else None
+
+    payload = ReviewDraftPayload(
+        title="Draft",
+        outline=["Intro"],
+        markdown="# Draft",
+        sentences=[
+            ReviewSentencePayload(
+                section_title="Intro",
+                sentence_index=0,
+                sentence_text="Backed.",
+                supporting_claim_ids=["CL001", "INVENTED"],
+                is_supported=True,
+            ),
+            # Cites only an id that isn't a claim (e.g. a synthesis id): must not be stored as supported.
+            ReviewSentencePayload(
+                section_title="Intro",
+                sentence_index=1,
+                sentence_text="Phantom.",
+                supporting_claim_ids=["SYNTHESIS-ID"],
+                is_supported=True,
+            ),
+        ],
+        confidence=0.5,
+    )
+    session = FakeSession()
+
+    persist_review_draft(session, payload, "RUN001")  # type: ignore[arg-type]
+
+    sentences = [model for model in session.added if isinstance(model, ReviewSentence)]
+    links = [model for model in session.added if isinstance(model, ReviewSentenceClaim)]
+    assert [sentence.is_supported for sentence in sentences] == [True, False]
+    assert [link.claim_id for link in links] == ["CL001"]
