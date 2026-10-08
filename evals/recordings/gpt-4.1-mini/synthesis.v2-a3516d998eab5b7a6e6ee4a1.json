@@ -1,0 +1,27 @@
+{
+ "key": "a3516d998eab5b7a6e6ee4a16e59ccd4d8046c3e6f7ae71417a504ba2f2457cc",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "synthesis.v2",
+ "temperature": 0.2,
+ "input_tokens": 817,
+ "output_tokens": 268,
+ "latency_s": 3.955,
+ "recorded_at": "2026-10-08T13:42:45+00:00",
+ "parsed": {
+  "syntheses": [
+   {
+    "synthesis_type": "gap",
+    "title": "Lack of evaluation of imitation learning methods under diverse environmental conditions",
+    "body": "Paper A identifies limitations of pure imitation learning in driving (claim 09081b52-e1ad-5843-9bbc-8565cf5aea59), while Paper B provides datasets with diverse roads, lighting, and weather conditions (claims 5b04c50f-7b96-5ddd-a0be-8eb2d45b4a96 and a233e152-9b2f-5df6-a121-2115da13cae8). However, there is no evidence that Paper A's imitation learning methods have been evaluated on such diverse datasets, indicating a gap in assessing the robustness of imitation learning approaches across varied driving environments.",
+    "supporting_claim_ids": [
+     "09081b52-e1ad-5843-9bbc-8565cf5aea59",
+     "5b04c50f-7b96-5ddd-a0be-8eb2d45b4a96",
+     "a233e152-9b2f-5df6-a121-2115da13cae8"
+    ],
+    "supporting_papers": 2,
+    "supporting_claims": 3,
+    "confidence": 0.85
+   }
+  ]
+ }
+}

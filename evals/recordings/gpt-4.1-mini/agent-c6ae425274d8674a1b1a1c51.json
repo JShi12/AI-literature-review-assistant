@@ -1,0 +1,43 @@
+{
+ "model": "gpt-4.1-mini",
+ "response": {
+  "parts": [
+   {
+    "content": "The capital of France is Paris. If you need detailed information or scholarly claims about Paris or France, let me know!",
+    "id": "msg_038147d04d72284b006ac79e238e3887d2aff019d51a9d5b94",
+    "provider_name": "openai",
+    "provider_details": null,
+    "part_kind": "text"
+   }
+  ],
+  "usage": {
+   "input_tokens": 444,
+   "cache_write_tokens": 0,
+   "cache_read_tokens": 0,
+   "output_tokens": 26,
+   "input_audio_tokens": 0,
+   "cache_audio_read_tokens": 0,
+   "output_audio_tokens": 0,
+   "details": {
+    "reasoning_tokens": 0
+   },
+   "cost": null,
+   "output_reasoning_tokens": 0
+  },
+  "model_name": "gpt-4.1-mini-2025-04-14",
+  "timestamp": "2026-10-08T13:44:05.080580Z",
+  "kind": "response",
+  "provider_name": "openai",
+  "provider_url": "https://api.openai.com/v1/",
+  "provider_details": {
+   "finish_reason": "completed",
+   "timestamp": "2026-10-08T13:44:03Z"
+  },
+  "provider_response_id": "resp_038147d04d72284b006ac79e2333f887d294c44a527ab23d53",
+  "finish_reason": "stop",
+  "run_id": null,
+  "conversation_id": null,
+  "metadata": null,
+  "state": "complete"
+ }
+}

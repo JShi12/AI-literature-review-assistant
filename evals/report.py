@@ -74,6 +74,12 @@ HEADLINE_METRICS: list[tuple[str, str, str, str, str]] = [
     ("review", "Judge: cited claims support the sentence", "judge_supported_rate", "pct", "up"),
     ("review", "Judge: partially supported", "judge_partially_supported_rate", "pct", "down"),
     ("review", "Judge: unsupported", "judge_unsupported_rate", "pct", "down"),
+    ("agent", "Agent cases", "cases", "int", ""),
+    ("agent", "Agent: cases passing every check", "pass_rate", "pct", "up"),
+    ("agent", "Agent: individual checks passed", "check_pass_rate", "pct", "up"),
+    ("agent", "Agent: cases that passed tools made-up ids", "invented_id_case_rate", "pct", "down"),
+    ("agent", "Agent: answers report concrete results", "answer_reports_results_rate", "pct", "up"),
+    ("agent", "Agent: mean tool calls per case", "mean_tool_calls", "float", ""),
     ("usage", "LLM calls (recorded / live)", "calls", "calls", ""),
     ("usage", "Input / output tokens", "tokens", "tokens", ""),
     ("usage", "Cost to run live (USD)", "cost_usd", "usd", "down"),
@@ -224,6 +230,25 @@ def summarize_reviews(cases: Sequence[Case]) -> dict[str, Any]:
     return summary
 
 
+def summarize_agent(cases: Sequence[Case]) -> dict[str, Any]:
+    scored = _ok(cases)
+    checks = [passed for case in scored for passed in case["checks"].values()]
+    return {
+        "cases": len(cases),
+        "errors": len(cases) - len(scored),
+        "pass_rate": _rate(sum(case["passed"] for case in scored), len(scored)),
+        "check_pass_rate": _rate(sum(checks), len(checks)),
+        "invented_id_case_rate": _rate(sum(bool(case["invented_ids"]) for case in scored), len(scored)),
+        "answer_reports_results_rate": _rate(sum(case["answer_reports_results"] for case in scored), len(scored)),
+        "mean_tool_calls": _mean(case["n_tool_calls"] for case in scored),
+        "failed_checks": {
+            case["case_id"]: [name for name, passed in case["checks"].items() if not passed]
+            for case in scored
+            if not case["passed"]
+        },
+    }
+
+
 def summarize_usage(calls: Sequence[CallRecord]) -> dict[str, Any]:
     costs = [call.cost for call in calls if call.cost is not None]
     live_latencies = [call.latency_s for call in calls if call.latency_s is not None]
@@ -253,6 +278,8 @@ def build_model_run(
         summaries["synthesis"] = summarize_syntheses(stages["synthesis"])
     if "review" in stages:
         summaries["review"] = summarize_reviews(stages["review"])
+    if "agent" in stages:
+        summaries["agent"] = summarize_agent(stages["agent"])
     summaries["usage"] = summarize_usage(calls)
     if judge_calls:
         summaries["judge_usage"] = summarize_usage(judge_calls)
@@ -333,6 +360,10 @@ def render_markdown(report: dict[str, Any]) -> str:
         if worst:
             lines.extend(["", f"## Lowest claim span matches — `{run['model']}`", ""])
             lines.extend(worst)
+        failed = run["summary"].get("agent", {}).get("failed_checks", {})
+        if failed:
+            lines.extend(["", f"## Agent cases with failed checks — `{run['model']}`", ""])
+            lines.extend(f"- `{case_id}`: {', '.join(names)}" for case_id, names in failed.items())
         errors = [
             f"- `{_case_label(case)}` ({case['error_kind']}): {case['error']}"
             for cases in run["cases"].values()
@@ -349,6 +380,8 @@ def _case_label(case: Case) -> str:
         return str(case["chunk_key"])
     if "query_id" in case:
         return str(case["query_id"])
+    if "case_id" in case:
+        return str(case["case_id"])
     return ":".join(str(case[key]) for key in ("scenario", "synthesis_type") if key in case)
 
 

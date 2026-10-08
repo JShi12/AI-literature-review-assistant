@@ -1,0 +1,4 @@
+# PDF text extraction must match the version the committed recordings were made with: different
+# PyMuPDF versions can extract slightly different text, which changes every prompt and misses every
+# recording. Bump this together with a snapshot rebuild and a re-recorded eval run.
+pymupdf==1.28.2

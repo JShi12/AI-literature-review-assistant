@@ -2,7 +2,7 @@
 
 Measures the quality of the pipeline on a fixed set of papers, so prompt, model, or heuristic changes
 can be compared with numbers instead of by eyeballing output. Stages, in order: section detection
-(no LLM) → claim extraction → retrieval → syntheses → review draft.
+(no LLM) → claim extraction → retrieval → syntheses → review draft → agent trajectories.
 
 It needs no database: each stage calls the same `request_*` function the app uses (same prompt,
 instructions, temperature), then mimics persistence (id overriding, location validation, dropping
@@ -25,13 +25,35 @@ Useful flags:
 |---|---|
 | `--model A --model B` | Evaluate several models side by side |
 | `--limit N` / `--seed S` | Number of chunks (0 = all 115), spread evenly across papers |
-| `--stop-after claims\|retrieval\|synthesis\|review` | Run only the first stages |
+| `--stop-after claims\|retrieval\|synthesis\|review\|agent` | Run only the first stages |
 | `--mode record\|replay\|refresh` | Reuse recordings and record misses / recordings only / always call the API |
 | `--workers N` | Concurrent claim-extraction calls (default 4) |
 | `--judge-model M` / `--no-judge` | Model for the LLM-as-judge checks (default `gpt-4.1`), or skip them |
 | `--prune` | Afterwards, delete recordings the run didn't use, e.g. after a prompt change. Use the same `--limit`/`--seed`/models you replay with |
 
 The exit code is 1 if any case couldn't be evaluated (missing recording, API/auth/network error).
+
+## In CI, and changing a prompt
+
+The `eval-replay` CI job builds the snapshot (downloading the demo PDFs, cached), replays the whole eval
+and the judge calibration from committed recordings, and runs `python -m evals.gate`. The gate fails if
+any directional metric is worse than `evals/baselines/baseline.json`, or if the run settings differ from
+the baseline's. The replay itself fails if any request has no recording. All of this is free: no API key.
+
+So a change that affects what the LLM is asked (a prompt, a post-processing step, chunking, or section
+types) needs fresh recordings and an explicit baseline update:
+
+```bash
+python -m evals.snapshot            # only if ingestion (pages, chunks, section types) changed
+python -m evals.run --prune         # live: record the new responses, drop the stale ones
+python -m evals.gate                # see exactly which metrics moved
+python -m evals.gate --update       # accept them; commit recordings + baseline with the change
+```
+
+Live runs are noisy (repeat runs moved synthesis faithfulness by ~25 points), so judge a change by
+several runs before accepting it; the gate only guarantees nothing changed *unintentionally*.
+PDF extraction is pinned in `evals/requirements-snapshot.txt` (PyMuPDF), because a different version
+can extract slightly different text and miss every recording.
 
 ## Inputs
 
@@ -108,6 +130,35 @@ under [LLM judges](#llm-judges).
 **Usage**: calls, recorded vs live, tokens, cost (from `evals/pricing.py`, since production
 doesn't compute cost), and live latency.
 
+## Agent trajectories
+
+The `agent` stage runs production's "Ask the Assistant" agent (`build_agent`: same instructions and tools)
+on the prompts in `evals/datasets/agent_cases.json` and checks its trajectory. Each case can require tools,
+forbid tools, require an order (e.g. `find_syntheses` before `generate_draft`), require a synthesis type, and
+cap the number of tool calls. Every case is also checked for:
+
+- *Invented ids*: claim or synthesis ids passed to a tool that no earlier tool returned.
+- *Answer reports results*: the final answer gives a returned id or title, or the substance of a returned
+  claim, as the agent's instructions ask.
+
+Only what sits *under* the tools is replaced: an in-memory store built from this run's claims and syntheses
+answers the four tool functions, using recorded embeddings and the recorded synthesis/review model. So
+this stage measures the agent's decisions, while the tools' own quality is measured by the other stages.
+The agent's model calls are recorded too (`RecordingModel`), so it replays offline.
+
+The first run found one real failure. Asked to draft a review from existing syntheses, the agent wrote the
+review in its chat reply instead of calling `generate_draft`, so nothing was saved or citation-traced. Over
+4 runs each, review requests saved through `generate_draft` went from 2/8 to 7/8 after an instruction fix.
+
+The agent's own model calls are not deterministic, so judge agent changes over several runs. Remaining
+weakness: gpt-4.1-mini sometimes miscopies one of many UUIDs it passes to a tool (seen in 1–4 of 32 case
+runs); short claim handles instead of UUIDs would remove that failure mode.
+
+Recording keys use an allow-list of message content (prompts, tool calls and results, text), and
+similarity ranking is rounded before sorting, so replays match across pydantic-ai versions and CPU
+architectures. The first CI run (Linux, pydantic-ai 2.54) missed every agent recording made on macOS
+with 2.48 until both were fixed.
+
 ## LLM judges
 
 `evals/judges.py` checks what string matching can't: whether content is actually *supported*. Each judge
@@ -159,5 +210,6 @@ them.
 
 - A held-out calibration set, and human review of the judge reference labels.
 - Human review of the gold labels.
-- Agent tool-trajectory evals.
-- A replay-mode CI gate against committed baseline numbers.
+- Repeated runs (`--repeats N`) or more scenarios: with 11-19 syntheses per run, synthesis faithfulness
+  moves ~25 points between runs, too much to judge a prompt change by.
+- Synthesis retrieval (`find_similar_syntheses`), and a side-by-side model comparison actually run.

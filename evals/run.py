@@ -1,6 +1,6 @@
 """Run the eval harness over a frozen snapshot, for one or more models.
 
-Stages: sections (no LLM) -> claims (+ gold claims) -> retrieval -> syntheses -> review drafts.
+Stages: sections (no LLM) -> claims (+ gold claims) -> retrieval -> syntheses -> review drafts -> agent.
 
     python -m evals.run                               # default model, record mode, 30 chunks
     python -m evals.run --mode replay                 # recordings only, no API key needed
@@ -25,6 +25,7 @@ from typing import Any, TypeVar
 
 from dotenv import load_dotenv
 
+from evals.agent_eval import DEFAULT_AGENT_CASES_PATH, RecordingModel, load_agent_cases, run_agent_stage
 from evals.gold import (
     GOLD_CLAIMS_PATH,
     GOLD_SECTIONS_PATH,
@@ -55,7 +56,7 @@ from lit_review_assistant.llm import claims, review, synthesis
 
 DEFAULT_SCENARIOS_PATH = Path("evals/datasets/review_scenarios.json")
 DEFAULT_REPORTS_DIR = Path("evals/reports")
-STAGES = ["claims", "retrieval", "synthesis", "review"]
+STAGES = ["claims", "retrieval", "synthesis", "review", "agent"]
 T = TypeVar("T")
 
 
@@ -85,7 +86,7 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--model", action="append", help="Chat model(s) to evaluate (repeatable).")
     parser.add_argument("--mode", choices=["record", "replay", "refresh"], default="record")
-    parser.add_argument("--stop-after", choices=STAGES, default="review")
+    parser.add_argument("--stop-after", choices=STAGES, default="agent")
     parser.add_argument("--judge-model", default=DEFAULT_JUDGE_MODEL, help="Model for the LLM-as-judge checks.")
     parser.add_argument("--no-judge", action="store_true", help="Skip the LLM-as-judge checks.")
 
@@ -94,6 +95,7 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--workers", type=int, default=4, help="Concurrent claim-extraction calls.")
     parser.add_argument("--snapshot", type=Path, default=DEFAULT_SNAPSHOT_PATH)
     parser.add_argument("--scenarios", type=Path, default=DEFAULT_SCENARIOS_PATH)
+    parser.add_argument("--agent-cases", type=Path, default=DEFAULT_AGENT_CASES_PATH)
     parser.add_argument("--recordings", type=Path, default=DEFAULT_RECORDINGS_DIR)
     parser.add_argument("--out", type=Path, default=DEFAULT_REPORTS_DIR)
     parser.add_argument(
@@ -112,6 +114,7 @@ def main(argv: list[str] | None = None) -> int:
     snapshot = load_snapshot(args.snapshot)
     chunks = sample_chunks(snapshot, args.limit, args.seed)
     scenarios = load_scenarios(args.scenarios)
+    agent_cases = load_agent_cases(args.agent_cases)
     gold_sections = load_gold(load_gold_sections, snapshot, GOLD_SECTIONS_PATH)
     gold_claims = load_gold(load_gold_claims, snapshot, GOLD_CLAIMS_PATH)
     queries = load_gold(load_retrieval_queries, snapshot, RETRIEVAL_QUERIES_PATH)
@@ -142,24 +145,35 @@ def main(argv: list[str] | None = None) -> int:
             )
             stages["retrieval"] = run_retrieval_stage(snapshot, claims_result.accepted_claims, queries, embeddings)
 
+        all_syntheses = []
         if "synthesis" in run_through:
             stages["synthesis"] = []
-            if args.stop_after == "review":
+            if "review" in run_through:
                 stages["review"] = []
             for scenario in scenarios:
                 pool = select_claim_pool(claims_result.accepted_claims, scenario.max_claims)
                 print(f"[{model}] synthesis: {scenario.id} ({len(pool)} claim(s))...", file=sys.stderr)
                 cases, syntheses = run_synthesis_stage(scenario, pool, llm, judge=judge)
                 stages["synthesis"].extend(cases)
-                if args.stop_after == "review":
+                all_syntheses.extend(syntheses)
+                if "review" in run_through:
                     print(f"[{model}] review: {scenario.id} ({len(syntheses)} synthesis/es)...", file=sys.stderr)
                     stages["review"].append(
                         run_review_stage(scenario, syntheses, claims_result.accepted_claims, llm, judge=judge)
                     )
 
+        agent_model = None
+        if "agent" in run_through:
+            print(f"[{model}] agent: {len(agent_cases)} case(s)...", file=sys.stderr)
+            agent_model = RecordingModel(model, mode=args.mode, recordings_dir=args.recordings)
+            stages["agent"] = run_agent_stage(
+                agent_cases, claims_result.accepted_claims, all_syntheses, agent_model, llm, embeddings
+            )
+
         judge_calls = judge.calls[judge_calls_before:] if judge else []
         runs.append(build_model_run(model, stages, [*llm.calls, *embeddings.calls], judge_calls))
         used_recordings |= llm.used_paths | embeddings.used_paths | (judge.used_paths if judge else set())
+        used_recordings |= agent_model.used_paths if agent_model else set()
 
     git_sha, git_dirty = git_state()
     report: dict[str, Any] = {
@@ -182,6 +196,7 @@ def main(argv: list[str] | None = None) -> int:
             "limit": args.limit,
             "seed": args.seed,
             "scenarios": [scenario.id for scenario in scenarios],
+            "agent_cases": [case.id for case in agent_cases] if "agent" in run_through else [],
             "prompt_versions": [claims.PROMPT_VERSION, synthesis.PROMPT_VERSION, review.PROMPT_VERSION],
             "temperatures": {
                 claims.PROMPT_VERSION: claims.DEFAULT_TEMPERATURE,

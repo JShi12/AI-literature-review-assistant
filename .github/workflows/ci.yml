@@ -31,3 +31,43 @@ jobs:
 
       - name: Pytest
         run: pytest
+
+  eval-replay:
+    # Replays the evaluation harness from committed LLM recordings (no API key, no cost) and fails if any
+    # gated metric is worse than evals/baselines/baseline.json, or if a prompt changed without re-recording.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install project with dev dependencies and the pinned PDF extractor
+        run: pip install -e ".[dev]" -r evals/requirements-snapshot.txt
+
+      - name: Cache the demo paper PDFs
+        uses: actions/cache@v4
+        with:
+          path: .cache/eval-pdfs
+          key: eval-pdfs-${{ hashFiles('scripts/seed_demo_data.py') }}
+
+      # Rebuilt from the current ingestion code on every run, so the eval sees what the code produces now.
+      - name: Build the eval snapshot
+        run: python -m evals.snapshot --pdf-cache .cache/eval-pdfs
+
+      - name: Replay the eval from recordings
+        run: python -m evals.run --mode replay
+
+      - name: Regression gate
+        run: python -m evals.gate
+
+      - name: Replay judge calibration
+        run: python -m evals.calibrate --mode replay
+
+      - name: Publish the eval summary
+        if: always()
+        run: |
+          latest="$(ls -d evals/reports/2*/ 2>/dev/null | tail -1)"
+          if [ -n "$latest" ]; then cat "${latest}summary.md" >> "$GITHUB_STEP_SUMMARY"; fi

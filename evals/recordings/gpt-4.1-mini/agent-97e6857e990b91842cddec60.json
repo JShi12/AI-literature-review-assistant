@@ -1,0 +1,46 @@
+{
+ "model": "gpt-4.1-mini",
+ "response": {
+  "parts": [
+   {
+    "tool_name": "generate_draft",
+    "args": "{\"topic\":\"simulation for training and evaluating driving policies\",\"synthesis_ids\":[\"3f129bca-07c9-5298-b172-3f5778edd0c9\",\"2f0359ba-adb1-535a-aa96-839f3e9932d2\",\"fd4a75d1-185b-5799-a7f8-8760518029b6\",\"ce7b1830-0eb7-5593-a9ac-93e8e7c4d4a0\",\"a8f51cdd-aa56-57c2-9104-aa1ce1db15d6\",\"fb724a87-5e78-5eb1-8f3d-e25b13d008ee\",\"64b32c2a-bb5b-52a2-a778-829d9c303fa7\",\"4d5f18f5-d4a6-57dc-885a-fb6dc0331300\",\"cd99f152-7dcf-5e66-b117-d58014ff7622\",\"17a05dce-087e-5fc5-b168-f9978f85b590\"]}",
+    "tool_call_id": "call_cnlr2Nm51aq4IQQbIeFH9Nyw",
+    "tool_kind": null,
+    "id": "fc_0ed789a0fd021ef5006ac79e07297487d292f68d2c2483ec78",
+    "provider_name": "openai",
+    "provider_details": null,
+    "part_kind": "tool-call"
+   }
+  ],
+  "usage": {
+   "input_tokens": 3145,
+   "cache_write_tokens": 0,
+   "cache_read_tokens": 0,
+   "output_tokens": 268,
+   "input_audio_tokens": 0,
+   "cache_audio_read_tokens": 0,
+   "output_audio_tokens": 0,
+   "details": {
+    "reasoning_tokens": 0
+   },
+   "cost": null,
+   "output_reasoning_tokens": 0
+  },
+  "model_name": "gpt-4.1-mini-2025-04-14",
+  "timestamp": "2026-10-08T13:43:37.950192Z",
+  "kind": "response",
+  "provider_name": "openai",
+  "provider_url": "https://api.openai.com/v1/",
+  "provider_details": {
+   "finish_reason": "completed",
+   "timestamp": "2026-10-08T13:43:34Z"
+  },
+  "provider_response_id": "resp_0ed789a0fd021ef5006ac79e066a4c87d29f1757cca7dae8d1",
+  "finish_reason": "stop",
+  "run_id": null,
+  "conversation_id": null,
+  "metadata": null,
+  "state": "complete"
+ }
+}

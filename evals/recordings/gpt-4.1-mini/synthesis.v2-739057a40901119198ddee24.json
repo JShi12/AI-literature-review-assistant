@@ -1,0 +1,27 @@
+{
+ "key": "739057a40901119198ddee248f414d12de41c0e5e8febf8c446191f1570e348f",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "synthesis.v2",
+ "temperature": 0.2,
+ "input_tokens": 766,
+ "output_tokens": 273,
+ "latency_s": 3.142,
+ "recorded_at": "2026-10-08T13:13:43+00:00",
+ "parsed": {
+  "syntheses": [
+   {
+    "synthesis_type": "contradiction",
+    "title": "Contradiction Between Limitations of Pure Imitation Learning and Successful End-to-End Neural Network Driving",
+    "body": "Paper A presents findings that pure imitation learning has limitations in driving performance, even with large datasets and mid-level input/output representations (claims 09081b52-e1ad-5843-9bbc-8565cf5aea59, 639f88c8-001d-587a-bae9-390fb3c89dcf). In contrast, Paper B reports that an end-to-end trained neural network (ALVINN) successfully steered a car on public roads (claim 443f6210-6468-59f8-8167-b719d39fc8fd). This represents a contradiction in the effectiveness of pure imitation learning approaches for driving tasks.",
+    "supporting_claim_ids": [
+     "09081b52-e1ad-5843-9bbc-8565cf5aea59",
+     "639f88c8-001d-587a-bae9-390fb3c89dcf",
+     "443f6210-6468-59f8-8167-b719d39fc8fd"
+    ],
+    "supporting_papers": 2,
+    "supporting_claims": 3,
+    "confidence": 0.9
+   }
+  ]
+ }
+}

@@ -1,0 +1,46 @@
+{
+ "model": "gpt-4.1-mini",
+ "response": {
+  "parts": [
+   {
+    "tool_name": "generate_draft",
+    "args": "{\"topic\":\"end-to-end learning for autonomous driving\",\"synthesis_ids\":[\"fb724a87-5e78-5eb1-8f3d-e25b13d008ee\",\"cd99f152-7dcf-5e66-b117-d58014ff7622\",\"3f129bca-07c9-5298-b172-3f5778edd0c9\",\"4d5f18f5-d4a6-57dc-885a-fb6dc0331300\"]}",
+    "tool_call_id": "call_wPPfqNSqq1mRER40oL78NFHL",
+    "tool_kind": null,
+    "id": "fc_08fddf11a25bd66c006ac79df31c1087d292229272b52cbf52",
+    "provider_name": "openai",
+    "provider_details": null,
+    "part_kind": "tool-call"
+   }
+  ],
+  "usage": {
+   "input_tokens": 3130,
+   "cache_write_tokens": 0,
+   "cache_read_tokens": 0,
+   "output_tokens": 122,
+   "input_audio_tokens": 0,
+   "cache_audio_read_tokens": 0,
+   "output_audio_tokens": 0,
+   "details": {
+    "reasoning_tokens": 0
+   },
+   "cost": null,
+   "output_reasoning_tokens": 0
+  },
+  "model_name": "gpt-4.1-mini-2025-04-14",
+  "timestamp": "2026-10-08T13:43:16.440124Z",
+  "kind": "response",
+  "provider_name": "openai",
+  "provider_url": "https://api.openai.com/v1/",
+  "provider_details": {
+   "finish_reason": "completed",
+   "timestamp": "2026-10-08T13:43:14Z"
+  },
+  "provider_response_id": "resp_08fddf11a25bd66c006ac79df29d5887d2b11ab472fa7ba73b",
+  "finish_reason": "stop",
+  "run_id": null,
+  "conversation_id": null,
+  "metadata": null,
+  "state": "complete"
+ }
+}

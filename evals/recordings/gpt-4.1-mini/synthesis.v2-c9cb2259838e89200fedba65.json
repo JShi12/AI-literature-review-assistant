@@ -1,0 +1,29 @@
+{
+ "key": "c9cb2259838e89200fedba651f88cdcf7a0feee91a61d236dc7f4df2ad863874",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "synthesis.v2",
+ "temperature": 0.2,
+ "input_tokens": 1314,
+ "output_tokens": 405,
+ "latency_s": 4.053,
+ "recorded_at": "2026-10-08T13:42:56+00:00",
+ "parsed": {
+  "syntheses": [
+   {
+    "synthesis_type": "method_comparison",
+    "title": "Comparison of Modular Pipeline and Imitation Learning Performance in Autonomous Driving",
+    "body": "Paper A reports that the performance difference between the modular pipeline and imitation learning methods is less than 10% (claim 32a49fa0-8395-506b-9794-efc1f7fa2a8f). Additionally, Paper A notes that the modular pipeline's performance is bimodal depending on perception stack success (claim 878110a6-7623-50b9-ab7c-962de08a0fea). Paper B finds that pure imitation learning is insufficient even with large datasets and mid-level input/output representations (claim 639f88c8-001d-587a-bae9-390fb3c89dcf), and that imitation dropout improves driving model performance compared to under-weighting imitation losses (claims fab08fe9-9a3f-574a-80b1-ef95478330f6 and f1f0ef71-20f9-593d-a66f-3cf2bb27c155). Thus, the two papers provide complementary insights comparing modular pipeline and imitation learning methods in autonomous driving contexts.",
+    "supporting_claim_ids": [
+     "32a49fa0-8395-506b-9794-efc1f7fa2a8f",
+     "878110a6-7623-50b9-ab7c-962de08a0fea",
+     "639f88c8-001d-587a-bae9-390fb3c89dcf",
+     "fab08fe9-9a3f-574a-80b1-ef95478330f6",
+     "f1f0ef71-20f9-593d-a66f-3cf2bb27c155"
+    ],
+    "supporting_papers": 2,
+    "supporting_claims": 5,
+    "confidence": 0.93
+   }
+  ]
+ }
+}

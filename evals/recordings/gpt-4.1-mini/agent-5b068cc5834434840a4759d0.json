@@ -1,0 +1,46 @@
+{
+ "model": "gpt-4.1-mini",
+ "response": {
+  "parts": [
+   {
+    "tool_name": "find_claims",
+    "args": "{\"topic\":\"data augmentation synthesized perturbations imitation learning\",\"limit\":10}",
+    "tool_call_id": "call_rp7pFi45zYogUHh1QkXdDf09",
+    "tool_kind": null,
+    "id": "fc_0443977a2330834d006ac79dc6362087d2886580b5e41edcbe",
+    "provider_name": "openai",
+    "provider_details": null,
+    "part_kind": "tool-call"
+   }
+  ],
+  "usage": {
+   "input_tokens": 460,
+   "cache_write_tokens": 0,
+   "cache_read_tokens": 0,
+   "output_tokens": 26,
+   "input_audio_tokens": 0,
+   "cache_audio_read_tokens": 0,
+   "output_audio_tokens": 0,
+   "details": {
+    "reasoning_tokens": 0
+   },
+   "cost": null,
+   "output_reasoning_tokens": 0
+  },
+  "model_name": "gpt-4.1-mini-2025-04-14",
+  "timestamp": "2026-10-08T13:42:30.652705Z",
+  "kind": "response",
+  "provider_name": "openai",
+  "provider_url": "https://api.openai.com/v1/",
+  "provider_details": {
+   "finish_reason": "completed",
+   "timestamp": "2026-10-08T13:42:29Z"
+  },
+  "provider_response_id": "resp_0443977a2330834d006ac79dc5cfcc87d29312d9307ccef927",
+  "finish_reason": "stop",
+  "run_id": null,
+  "conversation_id": null,
+  "metadata": null,
+  "state": "complete"
+ }
+}

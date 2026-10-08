@@ -6,11 +6,31 @@ from dataclasses import dataclass
 from decimal import Decimal
 from pathlib import Path
 
+import numpy as np
 import pytest
 from pydantic import BaseModel
+from pydantic_ai.messages import (
+    ModelRequest,
+    ModelResponse,
+    TextPart,
+    ToolCallPart,
+    ToolReturnPart,
+    UserPromptPart,
+)
+from pydantic_ai.models.test import TestModel
 
 from evals import run as eval_run
+from evals.agent_eval import (
+    AgentCase,
+    RecordingModel,
+    canonical_messages,
+    check_trajectory,
+    reports_results,
+    run_agent_stage,
+    tool_results,
+)
 from evals.calibrate import agreement, cohen_kappa
+from evals.gate import compare, config_mismatches, gated_metrics, write_baseline
 from evals.gold import GoldHeading, RetrievalQuery, locate_line
 from evals.judges import (
     CitedClaim,
@@ -36,7 +56,7 @@ from evals.metrics import (
 )
 from evals.pricing import estimate_cost
 from evals.snapshot import load_snapshot, sample_chunks, write_snapshot
-from evals.tasks import run_retrieval_stage, to_orm_chunk
+from evals.tasks import run_retrieval_stage, stable_ranking, to_orm_chunk
 from lit_review_assistant.db.models import Claim
 from lit_review_assistant.llm.claims import ExtractedClaimsBatch
 from lit_review_assistant.llm.client import LLMResult
@@ -362,6 +382,9 @@ def test_eval_run_end_to_end_records_then_replays(tmp_path: Path, monkeypatch: p
         str(tmp_path / "reports"),
         "--limit",
         "0",
+        # The agent stage has its own offline test; here it would need a fake agent model too.
+        "--stop-after",
+        "review",
     ]
 
     assert eval_run.main(common) == 0
@@ -573,3 +596,148 @@ def test_statement_level_checks_derive_the_overall_verdict() -> None:
         SynthesisJudgment(statements=checks(True, False), type_evidence="", type_appropriate=True).faithfulness
         == "unfaithful"
     )
+
+
+def _gate_report(gold_f1: float, unsupported: float, heading_recall: float = 0.9) -> dict:
+    return {
+        "meta": {
+            "snapshot_fingerprint": "fp",
+            "models": ["m"],
+            "judge_model": "j",
+            "n_chunks": 30,
+            "seed": 0,
+            "scenarios": ["s"],
+            "prompt_versions": ["claims.v2"],
+        },
+        "sections": {"summary": {"heading_recall": heading_recall}},
+        "runs": [
+            {
+                "model": "m",
+                "summary": {
+                    "claims": {"gold_f1": gold_f1, "claims_per_chunk": 4.0, "judge_unsupported_rate": unsupported},
+                    "usage": {"latency_mean_s": 3.0},
+                },
+            }
+        ],
+    }
+
+
+def test_gate_flags_regressions_in_either_direction_and_ignores_informational_metrics(tmp_path: Path) -> None:
+    baseline_path = tmp_path / "baseline.json"
+    write_baseline(_gate_report(gold_f1=0.8, unsupported=0.1), baseline_path)
+    baseline = json.loads(baseline_path.read_text())
+
+    assert "m/claims/claims_per_chunk" not in baseline["metrics"]  # no direction: informational only
+    assert "m/usage/latency_mean_s" not in baseline["metrics"]  # live-only noise
+
+    rows = compare(gated_metrics(_gate_report(gold_f1=0.7, unsupported=0.2, heading_recall=0.95)), baseline, 0.0)
+    statuses = {row["metric"]: row["status"] for row in rows}
+
+    assert statuses["m/claims/gold_f1"] == "regressed"  # higher is better, went down
+    assert statuses["m/claims/judge_unsupported_rate"] == "regressed"  # lower is better, went up
+    assert statuses["sections/heading_recall"] == "improved"
+    assert compare(gated_metrics(_gate_report(0.79, 0.1)), baseline, 0.02)[0]["status"] != "regressed"
+
+
+def test_gate_refuses_to_compare_runs_with_different_settings(tmp_path: Path) -> None:
+    baseline_path = tmp_path / "baseline.json"
+    write_baseline(_gate_report(0.8, 0.1), baseline_path)
+    report = _gate_report(0.8, 0.1)
+    report["meta"]["prompt_versions"] = ["claims.v3"]
+
+    assert config_mismatches(report, json.loads(baseline_path.read_text())) == [
+        "prompt_versions: baseline ['claims.v2'], report ['claims.v3']"
+    ]
+
+
+CLAIM_A = "11111111-1111-4111-8111-111111111111"
+INVENTED = "99999999-9999-4999-8999-999999999999"
+
+
+def _conversation(generate_args: dict, output: str = "Done.") -> list:
+    return [
+        ModelRequest(parts=[UserPromptPart("Find gaps")]),
+        ModelResponse(parts=[ToolCallPart("find_claims", {"topic": "gaps"}, tool_call_id="1")]),
+        ModelRequest(
+            parts=[
+                ToolReturnPart(
+                    "find_claims",
+                    [{"claim_id": CLAIM_A, "paper_id": "p", "text": "The network learns to steer from camera pixels"}],
+                    tool_call_id="1",
+                )
+            ]
+        ),
+        ModelResponse(parts=[ToolCallPart("generate_new_syntheses", generate_args, tool_call_id="2")]),
+        ModelRequest(parts=[ToolReturnPart("generate_new_syntheses", [], tool_call_id="2")]),
+        ModelResponse(parts=[TextPart(output)]),
+    ]
+
+
+def test_check_trajectory_scores_tools_order_type_and_invented_ids() -> None:
+    case = AgentCase(
+        id="c",
+        prompt="p",
+        must_call=["find_claims", "generate_new_syntheses"],
+        must_not_call=["generate_draft"],
+        order=[["find_claims", "generate_new_syntheses"]],
+        synthesis_type="gap",
+    )
+
+    good = check_trajectory(case, _conversation({"claim_ids": [CLAIM_A], "synthesis_type": "gap"}), "Saved.")
+    bad = check_trajectory(case, _conversation({"claim_ids": [CLAIM_A, INVENTED], "synthesis_type": "theme"}), "")
+
+    assert good["passed"] and good["n_tool_calls"] == 2
+    assert not bad["passed"]
+    assert bad["invented_ids"] == [INVENTED]
+    assert bad["checks"]["synthesis_type gap"] is False
+    assert bad["checks"]["find_claims before generate_new_syntheses"] is True
+
+
+def test_reports_results_needs_an_id_title_or_the_substance_of_a_result() -> None:
+    results = tool_results(_conversation({"claim_ids": [CLAIM_A], "synthesis_type": "gap"}))
+
+    assert reports_results(f"See claim {CLAIM_A}.", results)
+    assert reports_results("We found that the network learns to steer from camera pixels.", results)
+    assert not reports_results("I looked into it and found some relevant material.", results)
+
+
+class _FailingModel(TestModel):
+    async def request(self, *args, **kwargs):  # type: ignore[override]
+        raise AssertionError("replay must not call the wrapped model")
+
+
+def test_agent_stage_records_then_replays_without_calling_the_model(tmp_path: Path) -> None:
+    claims = [Claim(id=CLAIM_A, claim_text="We steer from pixels", chunk_id="c", paper_id="p")]
+    cases = [AgentCase(id="lookup", prompt="What do we know about steering?", must_call=["find_claims"])]
+    embeddings = FakeEmbeddingsClient()
+
+    def run(mode: str, wrapped: TestModel) -> list[dict]:
+        model = RecordingModel("test-model", mode=mode, recordings_dir=tmp_path, wrapped=wrapped)  # type: ignore[arg-type]
+        return run_agent_stage(cases, claims, [], model, FakePipelineLLM(), embeddings)
+
+    recorded = run("record", TestModel(call_tools=["find_claims"]))
+    replayed = run("replay", _FailingModel())
+
+    assert recorded[0]["checks"]["calls find_claims"] is True
+    assert [call["tool"] for call in replayed[0]["tool_calls"]] == ["find_claims"]
+    assert replayed[0]["output"] == recorded[0]["output"]
+
+
+def test_agent_recording_key_ignores_volatile_and_version_specific_fields() -> None:
+    first = _conversation({"claim_ids": [CLAIM_A], "synthesis_type": "gap"})
+    second = _conversation({"claim_ids": [CLAIM_A], "synthesis_type": "gap"})
+    # Same conversation, but different timestamps/run ids and extra provider metadata.
+    second[1] = ModelResponse(
+        parts=second[1].parts, provider_name="openai", provider_response_id="resp_123", run_id="other-run"
+    )
+
+    assert canonical_messages(first) == canonical_messages(second)
+    assert canonical_messages(first) != canonical_messages(_conversation({"claim_ids": [], "synthesis_type": "gap"}))
+
+
+def test_stable_ranking_breaks_near_ties_by_position() -> None:
+    # Scores equal up to float noise of the kind different BLAS builds produce.
+    scores = np.array([0.5, 0.7 + 1e-15, 0.7, 0.1])
+
+    assert stable_ranking(scores) == [1, 2, 0, 3]
+    assert stable_ranking(np.array([0.5, 0.7, 0.7 + 1e-15, 0.1])) == [1, 2, 0, 3]

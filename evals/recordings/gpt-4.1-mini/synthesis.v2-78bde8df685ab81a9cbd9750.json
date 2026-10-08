@@ -1,0 +1,28 @@
+{
+ "key": "78bde8df685ab81a9cbd97509b67dde52c01ac961c12ccd9e0a701c80007c650",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "synthesis.v2",
+ "temperature": 0.2,
+ "input_tokens": 896,
+ "output_tokens": 339,
+ "latency_s": 4.471,
+ "recorded_at": "2026-10-08T13:43:03+00:00",
+ "parsed": {
+  "syntheses": [
+   {
+    "synthesis_type": "method_comparison",
+    "title": "Comparison of Autonomous Driving Methods in CARLA Simulator and ChauffeurNet Studies",
+    "body": "Paper A compares three autonomous driving approaches using the CARLA simulator: classic modular pipeline, end-to-end imitation learning, and end-to-end reinforcement learning, noting that modular pipeline and imitation learning performance differ by less than 10% (claims 34863bb0-827c-5405-a15d-f7229ca8985c, 32a49fa0-8395-506b-9794-efc1f7fa2a8f). Paper B reports findings on pure imitation learning, highlighting its limitations in driving tasks despite high-capacity models and large datasets (claims 09081b52-e1ad-5843-9bbc-8565cf5aea59, 639f88c8-001d-587a-bae9-390fb3c89dcf). Thus, the studies collectively compare imitation learning with modular pipeline and note challenges in pure imitation learning approaches.",
+    "supporting_claim_ids": [
+     "34863bb0-827c-5405-a15d-f7229ca8985c",
+     "32a49fa0-8395-506b-9794-efc1f7fa2a8f",
+     "09081b52-e1ad-5843-9bbc-8565cf5aea59",
+     "639f88c8-001d-587a-bae9-390fb3c89dcf"
+    ],
+    "supporting_papers": 2,
+    "supporting_claims": 4,
+    "confidence": 0.93
+   }
+  ]
+ }
+}
