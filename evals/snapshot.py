@@ -28,6 +28,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from importlib.metadata import version
 from pathlib import Path
+from typing import Any
 
 from lit_review_assistant.pipeline.chunking import chunk_pages_with_sections
 from lit_review_assistant.pipeline.pdf import extract_pages, extract_pdf_metadata, infer_paper_metadata_from_name
@@ -137,8 +138,21 @@ def load_snapshot(path: str | Path = DEFAULT_SNAPSHOT_PATH) -> Snapshot:
     )
 
 
-def fingerprint(papers_json: list[dict[str, object]]) -> str:
-    canonical = json.dumps(papers_json, sort_keys=True, ensure_ascii=False).encode()
+def fingerprint(papers_json: list[dict[str, Any]]) -> str:
+    """Hash what labels and recordings refer to: page text plus chunk keys and text.
+
+    Derived metadata (section types, titles, authors) is left out, so rebuilding the snapshot after
+    improving section detection doesn't invalidate gold labels that only point at pages and chunks.
+    """
+    material = [
+        {
+            "key": paper["key"],
+            "pages": paper["pages"],
+            "chunks": [[chunk["key"], chunk["text"]] for chunk in paper["chunks"]],
+        }
+        for paper in papers_json
+    ]
+    canonical = json.dumps(material, sort_keys=True, ensure_ascii=False).encode()
     return hashlib.sha256(canonical).hexdigest()[:16]
 
 

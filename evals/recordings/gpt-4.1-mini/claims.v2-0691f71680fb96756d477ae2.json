@@ -1,0 +1,70 @@
+{
+ "key": "0691f71680fb96756d477ae24019eb290e2fa836db823740aa7eadb4554297f1",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 724,
+ "output_tokens": 841,
+ "latency_s": 8.318,
+ "recorded_at": "2026-10-08T10:10:12+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "The memory Mk is an additive memory consisting of a single channel image.",
+    "claim_type": "method",
+    "normalized_text": "The memory Mk is an additive memory consisting of a single channel image.",
+    "source_quote": "The memory Mk is an additive memory consisting of a single channel image.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "At iteration k of the AgentRNN, the memory is incremented by 1 at the location pk predicted by the AgentRNN, and this memory is then fed to the next iteration.",
+    "claim_type": "method",
+    "normalized_text": "At iteration k, memory is incremented by 1 at location pk predicted by AgentRNN and fed to next iteration.",
+    "source_quote": "At iteration k of the AgentRNN, the memory is incremented by 1 at the location pk predicted by the AgentRNN, and this memory is then fed to the next iteration.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The AgentRNN outputs a heatmap image over the next pose of the agent, and we use the arg-max operation to obtain the coarse pose prediction pk from this heatmap.",
+    "claim_type": "method",
+    "normalized_text": "AgentRNN outputs a heatmap over next pose; arg-max yields coarse pose prediction pk.",
+    "source_quote": "The AgentRNN outputs a heatmap image over the next pose of the agent, and we use the arg-max operation to obtain the coarse pose prediction pk from this heatmap.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The AgentRNN employs a shallow convolutional meta-prediction network with a fully-connected layer that predicts a sub-pixel refinement of the pose δpk and also estimates the heading θk and the speed sk.",
+    "claim_type": "method",
+    "normalized_text": "AgentRNN uses shallow convolutional meta-prediction network with fully-connected layer to predict sub-pixel pose refinement δpk, heading θk, and speed sk.",
+    "source_quote": "The AgentRNN then employs a shallow convolutional meta-prediction network with a fully-connected layer that predicts a sub-pixel reﬁnement of the pose δpk and also estimates the heading θk and the speed sk.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The AgentRNN is unrolled at training time for a fixed number of iterations, and the losses described below are summed together over the unrolled iterations.",
+    "claim_type": "method",
+    "normalized_text": "AgentRNN is unrolled during training for fixed iterations; losses summed over iterations.",
+    "source_quote": "Note that the AgentRNN is unrolled at training time for a ﬁxed number of iterations, and the losses described below are summed together over the unrolled iterations.",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "This is possible because of the non-traditional RNN design where we employ an explicitly crafted memory model instead of a learned memory.",
+    "claim_type": "method",
+    "normalized_text": "Non-traditional RNN design uses explicitly crafted memory model instead of learned memory.",
+    "source_quote": "This is possible because of the non-traditional RNN design where we employ an explicitly crafted memory model instead of a learned memory.",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "At each time, the updated state of our agent and the environment is obtained via a perception system that processes sensory output from the real-world or from a simulation environment as the case may be.",
+    "claim_type": "method",
+    "normalized_text": "Agent and environment state updated via perception system processing sensory output from real or simulated environment.",
+    "source_quote": "At each time, the updated state of our agent and the environment is obtained via a perception system that processes sensory output from the real-world or from a simulation environment as the case may be.",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "The intended route is obtained from the router, and is updated dynamically conditioned on whether our agent was able to execute past intents or not.",
+    "claim_type": "method",
+    "normalized_text": "Intended route is obtained from router and updated dynamically based on agent's execution of past intents.",
+    "source_quote": "The intended route is obtained from the router, and is updated dynamically conditioned on whether our agent was able to execute past intents or not.",
+    "confidence": 0.9
+   }
+  ]
+ }
+}

@@ -1,0 +1,21 @@
+{
+ "key": "5d5ed8a52d88732d005f140bf32df7f898a7738cc27c37e811e966d7e3dd80cc",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 500,
+ "output_tokens": 128,
+ "latency_s": 2.159,
+ "recorded_at": "2026-10-08T10:09:57+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "The simulator takes pre-recorded videos from a forward-facing on-board camera on a human-driven data-collection vehicle and generates images that approximate what would appear if the CNN were, instead, steering the vehicle.",
+    "claim_type": "method",
+    "normalized_text": "The simulator uses pre-recorded videos from a human-driven vehicle to generate images simulating CNN steering.",
+    "source_quote": "The simulator takes pre-recorded videos from a forward-facing on-board camera on a human-driven data-collection vehicle and generates images that approximate what would appear if the CNN were, instead, steering the vehicle.",
+    "confidence": 0.95
+   }
+  ]
+ }
+}

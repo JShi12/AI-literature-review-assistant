@@ -1,0 +1,56 @@
+{
+ "key": "20c2bdfbc76e3335c25a2a26d3603bbe4c8d4467a601231ce8148066b0fd609f",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 692,
+ "output_tokens": 427,
+ "latency_s": 5.389,
+ "recorded_at": "2026-10-08T10:10:19+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "In this paper, we introduce CARLA (Car Learning to Act) – an open simulator for urban driving.",
+    "claim_type": "method",
+    "normalized_text": "CARLA is an open simulator for urban driving.",
+    "source_quote": "In this paper, we introduce CARLA (Car Learning to Act) – an open simulator for urban driving.",
+    "confidence": 0.99
+   },
+   {
+    "claim_text": "CARLA has been developed from the ground up to support training, prototyping, and validation of autonomous driving models, including both perception and control.",
+    "claim_type": "method",
+    "normalized_text": "CARLA supports training, prototyping, and validation of autonomous driving models including perception and control.",
+    "source_quote": "CARLA has been developed from the ground up to support training, prototyping, and validation of autonomous driving models, including both perception and control.",
+    "confidence": 0.98
+   },
+   {
+    "claim_text": "CARLA is an open platform.",
+    "claim_type": "method",
+    "normalized_text": "CARLA is an open platform.",
+    "source_quote": "CARLA is an open platform.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The content of urban environments provided with CARLA is also free.",
+    "claim_type": "method",
+    "normalized_text": "CARLA provides free urban environment content.",
+    "source_quote": "Uniquely, the content of urban environments provided with CARLA is also free.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The content was created from scratch by a dedicated team of digital artists employed for this purpose.",
+    "claim_type": "method",
+    "normalized_text": "CARLA's urban environment content was created from scratch by a dedicated team of digital artists.",
+    "source_quote": "The content was created from scratch by a dedicated team of digital artists employed for this purpose.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "It includes urban layouts, a multitude of vehicle models, buildings, pedestrians, street signs, etc.",
+    "claim_type": "method",
+    "normalized_text": "CARLA includes urban layouts, vehicle models, buildings, pedestrians, and street signs.",
+    "source_quote": "It includes urban layouts, a multitude of vehicle models, buildings, pedestrians, street signs, etc.",
+    "confidence": 0.95
+   }
+  ]
+ }
+}

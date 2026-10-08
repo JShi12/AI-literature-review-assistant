@@ -3,9 +3,10 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 import httpx2
+import pytest
 from openai import APIStatusError
 
-from lit_review_assistant.llm.claims import build_claim_extraction_input, persist_extracted_claims
+from lit_review_assistant.llm.claims import build_claim_extraction_input, locate_claims, persist_extracted_claims
 from lit_review_assistant.llm.client import LLMResult, describe_openai_error
 from lit_review_assistant.llm.embeddings import (
     embed_and_persist_claims,
@@ -17,12 +18,13 @@ from lit_review_assistant.llm.review import (
     build_review_input,
     normalize_references_for_markdown,
 )
+from lit_review_assistant.pipeline.quotes import find_quote_span
 from lit_review_assistant.pipeline.review_traceability import (
     claim_support_map,
     normalize_sentence_support,
     unsupported_sentence_indexes,
 )
-from lit_review_assistant.schemas import ExtractedClaim, ReviewDraftPayload, ReviewSentencePayload
+from lit_review_assistant.schemas import ClaimCandidate, ExtractedClaim, ReviewDraftPayload, ReviewSentencePayload
 
 
 @dataclass
@@ -73,13 +75,62 @@ class FakeSynthesis:
     )
 
 
-def test_claim_extraction_input_includes_provenance() -> None:
+def test_claim_extraction_input_includes_section_and_text() -> None:
     prompt = build_claim_extraction_input(FakeChunk())  # type: ignore[arg-type]
 
-    assert "paper_id: P001" in prompt
-    assert "chunk_id: CH001" in prompt
-    assert "chunk_start_char: 100" in prompt
+    assert "section_type: methods" in prompt
     assert "The proposed method improves accuracy" in prompt
+    # Location is computed from source_quote, so the model is no longer given ids or offsets to echo.
+    assert "chunk_start_char" not in prompt
+
+
+def test_locate_claims_computes_page_offsets_from_the_quote_and_drops_unfound_quotes() -> None:
+    chunk = FakeChunk()
+    found = ClaimCandidate(
+        claim_text="The method improves accuracy.",
+        claim_type="finding",
+        source_quote="improves accuracy on the benchmark",
+        confidence=0.8,
+    )
+    missing = ClaimCandidate(
+        claim_text="It is fast.", claim_type="finding", source_quote="runs in real time", confidence=0.8
+    )
+
+    located, unlocated = locate_claims([found, missing], chunk)  # type: ignore[arg-type]
+
+    assert unlocated == [missing]
+    [claim] = located
+    offset = chunk.text.index("improves accuracy on the benchmark")
+    assert (claim.page, claim.start_char) == (3, 100 + offset)
+    assert claim.end_char == claim.start_char + len("improves accuracy on the benchmark")
+    assert (claim.paper_id, claim.chunk_id, claim.section_id) == ("P001", "CH001", "SEC001")
+
+
+@pytest.mark.parametrize(
+    ("text", "quote", "expected"),
+    [
+        ("Alpha beta gamma.", "beta gamma", "beta gamma"),
+        # Line breaks in the PDF text vs spaces in the quote.
+        ("We train a\nconvolutional network.", "We train a convolutional network", "We train a\nconvolutional network"),
+        # Ligatures and a word hyphenated across a line break.
+        ("an eﬃcient end-\nto-end model", "an efficient end-to-end model", "an eﬃcient end-\nto-end model"),
+        # Curly vs straight quotes, different case.
+        ("the “driver’s” view", 'The "driver\'s" view', "the “driver’s” view"),
+        # A small copy error still aligns; an unrelated quote does not.
+        (
+            "The network learns to drive on highways and local roads.",
+            "The network learn to drive on highways and local roads",
+            "The network learns to drive on highways and local roads",
+        ),
+        ("Alpha beta gamma.", "completely different words here", None),
+        # Control characters from PDF math fonts are ignored.
+        ("predict δ\x12pk and\rthe speed", "predict δ pk and the speed", "predict δ\x12pk and\rthe speed"),
+    ],
+)
+def test_find_quote_span(text: str, quote: str, expected: str | None) -> None:
+    span = find_quote_span(text, quote)
+
+    assert (text[span[0] : span[1]] if span else None) == expected
 
 
 def test_persist_extracted_claims_uses_authoritative_chunk_ids() -> None:

@@ -1,0 +1,35 @@
+{
+ "key": "fcb147ed201f9f9119d1a035b4337de9b14636f6d7f09af5bded3ea6d29c5fd0",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 699,
+ "output_tokens": 279,
+ "latency_s": 2.913,
+ "recorded_at": "2026-10-08T10:10:07+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "We employ L1 loss for both of these outputs:",
+    "claim_type": "method",
+    "normalized_text": "Use L1 loss for sub-pixel refinement and speed estimate outputs.",
+    "source_quote": "We employ L1 loss for both of these outputs:",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "During training, the model is provided the past motion history as one of the inputs (Fig. 1(g)).",
+    "claim_type": "method",
+    "normalized_text": "Model input includes past motion history during training.",
+    "source_quote": "During training, the model is provided the past motion history as one of the inputs (Fig. 1(g)).",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "To address this, we introduce a dropout on the past pose history, where for 50% of the examples, we keep only the current position (u0, v0) of the agent in the past agent poses channel of the input data.",
+    "claim_type": "method",
+    "normalized_text": "Introduce dropout on past pose history by keeping only current position for 50% of examples.",
+    "source_quote": "To address this, we introduce a dropout on the past pose history, where for 50% of the examples, we keep only the current position (u0, v0) of the agent in the past agent poses channel of the input data.",
+    "confidence": 0.95
+   }
+  ]
+ }
+}

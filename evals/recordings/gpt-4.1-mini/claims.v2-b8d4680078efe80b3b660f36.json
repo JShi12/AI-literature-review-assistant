@@ -1,0 +1,42 @@
+{
+ "key": "b8d4680078efe80b3b660f36b2f4c509cb3a1f8f4ae98f9dfa6a2334ecaaef04",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 763,
+ "output_tokens": 499,
+ "latency_s": 6.213,
+ "recorded_at": "2026-10-08T10:10:14+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "We have also evaluated this model on our self-driving car by replacing the existing planner module with the learned model M4 and have replicated the driving behaviors observed in simulation.",
+    "claim_type": "finding",
+    "normalized_text": "Model M4 replicates simulated driving behaviors when used in a real self-driving car replacing the planner module.",
+    "source_quote": "We have also evaluated this model on our self-driving car by replacing the existing planner module with the learned model M4 and have replicated the driving behaviors observed in simulation.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The videos of several of these runs are available here and they illustrate not only the smoothness of the network’s driving ability, but also its ability to deal with stop-signs and turns and to drive for long durations in full closed-loop control without deviating from the trajectory.",
+    "claim_type": "finding",
+    "normalized_text": "Model M4 drives smoothly, handles stop-signs and turns, and maintains trajectory over long durations in closed-loop control.",
+    "source_quote": "The videos of several of these runs are available here and they illustrate not only the smoothness of the network’s driving ability, but also its ability to deal with stop-signs and turns and to drive for long durations in full closed-loop control without deviating from the trajectory.",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "In an open-loop evaluation, we take test examples of expert driving data and for each example, compute the L2 distance error between the predicted and ground-truth waypoints.",
+    "claim_type": "method",
+    "normalized_text": "Open-loop evaluation computes L2 distance error between predicted and ground-truth waypoints on expert driving data.",
+    "source_quote": "In an open-loop evaluation, we take test examples of expert driving data and for each example, compute the L2 distance error between the predicted and ground-truth waypoints.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Fig. 8a shows the L2 distance metric in this open-loop evaluation setting for models M0 and M4 on a test set of 10,000 examples.",
+    "claim_type": "finding",
+    "normalized_text": "Models M0 and M4's L2 distance errors are shown in Fig. 8a for open-loop evaluation on 10,000 test examples.",
+    "source_quote": "Fig. 8a shows the L2 distance metric in this open-loop evaluation setting for models M0 and M4 on a test set of 10,000 examples.",
+    "confidence": 0.9
+   }
+  ]
+ }
+}

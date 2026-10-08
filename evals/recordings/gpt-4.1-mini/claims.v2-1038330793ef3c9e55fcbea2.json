@@ -1,0 +1,28 @@
+{
+ "key": "1038330793ef3c9e55fcbea2a4887d654b190d266badd09c2ac7ee44407fad6f",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 548,
+ "output_tokens": 286,
+ "latency_s": 3.301,
+ "recorded_at": "2026-10-08T09:58:34+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "We characterize the approaches by average distance travelled between infractions of the following five types: Opposite lane, Sidewalk, Collision with static object, Collision with car, Collision with pedestrian.",
+    "claim_type": "method",
+    "normalized_text": "Approaches are characterized by average distance between five types of infractions.",
+    "source_quote": "We characterize the approaches by average distance travelled between infractions of the following five types: • Opposite lane: More than 30% of the car’s footprint is over wrong-way lanes. • Sidewalk: More than 30% of the car’s footprint is over the sidewalk. • Collision with static object: Car makes contact with a static object, such as pole or building. • Collision with car: Car makes contact with another car. • Collision with pedestrian: Car makes contact with a pedestrian.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The duration of each violation is limited to 2 seconds, so if the car remains on the sidewalk for 10 seconds, this will be counted as 5 violations, not one.",
+    "claim_type": "method",
+    "normalized_text": "Each violation duration is capped at 2 seconds for counting infractions.",
+    "source_quote": "The duration of each violation is limited to 2 seconds, so if the car remains on the sidewalk for 10 seconds, this will be counted as 5 violations, not one.",
+    "confidence": 0.95
+   }
+  ]
+ }
+}

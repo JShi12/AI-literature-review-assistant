@@ -33,6 +33,7 @@ from lit_review_assistant.pipeline.chunking import chunk_pages_with_sections
 from lit_review_assistant.pipeline.pdf import PageText
 from lit_review_assistant.pipeline.sections import detect_sections
 from lit_review_assistant.schemas import (
+    ClaimCandidate,
     ExtractedClaim,
     GeneratedSynthesis,
     ReviewDraftPayload,
@@ -84,23 +85,15 @@ class FakePipelineLLM:
     def parse(self, *, text_format, prompt_version, instructions, input_text, temperature=0.1):
         self.calls += 1
         if text_format is ExtractedClaimsBatch:
-            fields = dict(re.findall(r"^(\w+): (.*)$", input_text, flags=re.MULTILINE))
             chunk_text = input_text.split("Chunk text:\n", 1)[1]
             sentence = chunk_text.splitlines()[1].split(". ")[0]
-            start = chunk_text.index(sentence) + int(fields["chunk_start_char"])
             parsed: BaseModel = ExtractedClaimsBatch(
                 claims=[
-                    ExtractedClaim(
-                        claim_text=sentence,
-                        claim_type="finding",
-                        paper_id=fields["paper_id"],
-                        chunk_id=fields["chunk_id"],
-                        section_id=fields["section_id"] or None,
-                        page=int(fields["page_start"]),
-                        start_char=start,
-                        end_char=start + len(sentence),
-                        confidence=0.9,
-                    )
+                    ClaimCandidate(claim_text=sentence, claim_type="finding", source_quote=sentence, confidence=0.9),
+                    # Not in the chunk: production drops it rather than storing a made-up location.
+                    ClaimCandidate(
+                        claim_text="Invented", claim_type="finding", source_quote="no such text here", confidence=0.5
+                    ),
                 ]
             )
         elif text_format is GeneratedSynthesesBatch:
@@ -231,7 +224,7 @@ def test_claim_metrics_detects_offsets_that_point_at_the_wrong_text(tmp_path: Pa
     shifted = claim_metrics(_claim(chunk, start + 20, start + 20 + len(text), text), chunk, paper.pages)
     out_of_chunk = claim_metrics(_claim(chunk, start, len(PAGE_ONE) + 50, text), chunk, paper.pages)
 
-    assert correct["location_valid"] and correct["span_match"] and correct["verbatim"] and correct["ids_copied"]
+    assert correct["location_valid"] and correct["span_match"] and correct["verbatim"]
     assert shifted["location_valid"] and not shifted["span_match"]
     assert not out_of_chunk["location_valid"]
 
@@ -333,6 +326,7 @@ def test_eval_run_end_to_end_records_then_replays(tmp_path: Path, monkeypatch: p
     report = json.loads(reports[-1].read_text())
     summary = report["runs"][0]["summary"]
     assert summary["claims"]["span_match_rate"] == 1.0
+    assert summary["claims"]["unlocated_rate"] == 0.5
     assert summary["claims"]["rejected_chunk_rate"] == 0.0
     assert summary["synthesis"]["invented_id_rate"] == 0.0
     assert summary["review"]["sentence_supported_rate"] == 1.0
@@ -344,26 +338,8 @@ def test_gold_claim_metrics_match_by_source_span_not_wording() -> None:
     chunk_text = "We train a CNN to steer a car from raw pixels. It drives without lane markings."
     gold = [("We train a CNN to steer a car from raw pixels", "method"), ("It drives without lane markings", "finding")]
     predicted = [
-        ExtractedClaim(
-            claim_text="We train a CNN to steer a car from raw camera pixels.",
-            claim_type="method",
-            paper_id="P",
-            chunk_id="C",
-            page=1,
-            start_char=0,
-            end_char=10,
-            confidence=0.9,
-        ),
-        ExtractedClaim(
-            claim_text="Completely unrelated statement about weather radar.",
-            claim_type="finding",
-            paper_id="P",
-            chunk_id="C",
-            page=1,
-            start_char=0,
-            end_char=10,
-            confidence=0.9,
-        ),
+        ("We train a CNN to steer a car from raw camera pixels.", "method"),
+        ("Completely unrelated statement about weather radar.", "finding"),
     ]
 
     metrics = gold_claim_metrics(predicted, gold, chunk_text)

@@ -36,7 +36,7 @@ HEADLINE_METRICS: list[tuple[str, str, str, str, str]] = [
     ("claims", "Mean span similarity", "span_similarity_mean", "float", "up"),
     ("claims", "Verbatim claims", "verbatim_rate", "pct", ""),
     ("claims", "Mean lexical coverage of chunk", "lexical_coverage_mean", "float", "up"),
-    ("claims", "Ids copied exactly", "ids_copied_rate", "pct", "up"),
+    ("claims", "Claims dropped: quote not found in chunk", "unlocated_rate", "pct", "down"),
     ("claims", "Gold chunks scored", "gold_chunks", "int", ""),
     ("claims", "Gold claims recalled", "gold_recall", "pct", "up"),
     ("claims", "Extracted claims matching a gold claim", "gold_precision", "pct", "up"),
@@ -99,7 +99,9 @@ def summarize_claims(cases: Sequence[Case]) -> dict[str, Any]:
         "span_similarity_mean": _mean(claim["span_similarity"] for claim in claims),
         "verbatim_rate": _rate(sum(claim["verbatim"] for claim in claims), len(claims)),
         "lexical_coverage_mean": _mean(claim["lexical_coverage"] for claim in claims),
-        "ids_copied_rate": _rate(sum(claim["ids_copied"] for claim in claims), len(claims)),
+        "unlocated_rate": _rate(
+            sum(case["n_unlocated"] for case in scored), len(claims) + sum(case["n_unlocated"] for case in scored)
+        ),
         "confidence_mean": _mean(claim["confidence"] for claim in claims),
         "claim_types": dict(Counter(claim["claim_type"] for claim in claims).most_common()),
         **summarize_gold_claims([case["gold"] for case in scored if "gold" in case]),

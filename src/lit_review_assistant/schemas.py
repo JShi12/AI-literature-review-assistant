@@ -9,9 +9,28 @@ from pydantic import BaseModel, Field
 Confidence = float
 
 
-class ExtractedClaim(BaseModel):
+ClaimType = Literal["finding", "method", "dataset", "metric", "limitation", "future_work", "background", "other"]
+
+
+class ClaimCandidate(BaseModel):
+    """One claim as the LLM returns it: the claim plus the verbatim passage it rests on.
+
+    The model is not asked for character offsets (it can't count them reliably); they're computed by
+    locating source_quote in the chunk text.
+    """
+
     claim_text: str
-    claim_type: Literal["finding", "method", "dataset", "metric", "limitation", "future_work", "background", "other"]
+    claim_type: ClaimType
+    normalized_text: str | None = None
+    source_quote: str
+    confidence: Confidence = Field(ge=0, le=1)
+
+
+class ExtractedClaim(BaseModel):
+    """A claim with its resolved location in the paper, ready to persist."""
+
+    claim_text: str
+    claim_type: ClaimType
     normalized_text: str | None = None
     paper_id: str
     chunk_id: str

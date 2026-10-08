@@ -1,0 +1,29 @@
+{
+ "key": "4c434dc572ae6a514b0e14eacb05240b36b6ccbaceef6fcf8dd02a8b0e84b3ca",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "synthesis.v1",
+ "temperature": 0.2,
+ "input_tokens": 5171,
+ "output_tokens": 397,
+ "latency_s": 9.779,
+ "recorded_at": "2026-10-08T10:11:00+00:00",
+ "parsed": {
+  "syntheses": [
+   {
+    "synthesis_type": "gap",
+    "title": "Lack of Effective Solutions to Error Accumulation in Closed-Loop Imitation Learning",
+    "body": "While mid-level representations and closed-loop simulation testing are employed to facilitate training and deployment of autonomous driving models (claims 5fc32090-a96e-5352-b867-05795d95ae56, e4571968-f7ab-5ab9-9db6-21554bbefe13), there remains a significant limitation due to error accumulation and distribution shift during closed-loop operation (claim c9759883-dd81-58a9-ab2d-155a512245df). This limitation contributes to failures such as the model getting stuck or colliding with parked vehicles despite viable passing options (claim cf5a09ec-bfde-5049-ac07-ec7d2e843d78). Furthermore, pure imitation learning approaches have been found insufficient even with large datasets and mid-level input/output representations (claim 639f88c8-001d-587a-bae9-390fb3c89dcf). However, current methods do not adequately address these challenges, indicating a gap in effective strategies to mitigate error accumulation and distribution shift in closed-loop imitation learning for autonomous driving.",
+    "supporting_claim_ids": [
+     "5fc32090-a96e-5352-b867-05795d95ae56",
+     "e4571968-f7ab-5ab9-9db6-21554bbefe13",
+     "c9759883-dd81-58a9-ab2d-155a512245df",
+     "cf5a09ec-bfde-5049-ac07-ec7d2e843d78",
+     "639f88c8-001d-587a-bae9-390fb3c89dcf"
+    ],
+    "supporting_papers": 3,
+    "supporting_claims": 5,
+    "confidence": 0.95
+   }
+  ]
+ }
+}

@@ -20,6 +20,7 @@ import os
 import re
 import threading
 import time
+import uuid
 from collections.abc import Callable
 from dataclasses import dataclass, replace
 from datetime import UTC, datetime
@@ -35,6 +36,17 @@ from lit_review_assistant.llm.client import LLMResult, OpenAIStructuredLLM, Pars
 
 Mode = Literal["record", "replay", "refresh"]
 DEFAULT_RECORDINGS_DIR = Path("evals/recordings")
+
+
+def prune_recordings(used_paths: set[Path]) -> int:
+    """Delete recordings in the directories this run used that the run itself didn't use; return the count."""
+    removed = 0
+    for directory in {path.parent for path in used_paths}:
+        for path in directory.glob("*.json"):
+            if path not in used_paths:
+                path.unlink()
+                removed += 1
+    return removed
 
 
 class RecordingMissError(RuntimeError):
@@ -92,6 +104,7 @@ class RecordingLLM:
         self._inner: StructuredLLM | None = None
         self._lock = threading.Lock()
         self.calls: list[CallRecord] = []
+        self.used_paths: set[Path] = set()
 
     def parse(
         self,
@@ -111,6 +124,8 @@ class RecordingLLM:
             temperature=temperature,
         )
         path = self.directory / f"{prompt_version}-{key[:24]}.json"
+        with self._lock:
+            self.used_paths.add(path)
 
         if self.mode != "refresh" and path.exists():
             stored = json.loads(path.read_text())
@@ -161,7 +176,8 @@ class RecordingLLM:
             "recorded_at": datetime.now(UTC).isoformat(timespec="seconds"),
             "parsed": result.parsed.model_dump(mode="json"),
         }
-        tmp = path.with_suffix(".tmp")
+        # Unique per writer: identical requests (e.g. two chunks with the same text) can be recorded concurrently.
+        tmp = path.with_suffix(f".{uuid.uuid4().hex}.tmp")
         tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=1) + "\n")
         tmp.replace(path)
 
@@ -215,6 +231,7 @@ class RecordingEmbeddings:
         self._client_factory = client_factory or (lambda: OpenAI(api_key=os.getenv("OPENAI_API_KEY")))
         self._client: Any = None
         self.calls: list[CallRecord] = []
+        self.used_paths: set[Path] = set()
 
     @property
     def embeddings(self) -> RecordingEmbeddings:
@@ -223,6 +240,7 @@ class RecordingEmbeddings:
     def create(self, *, model: str, input: list[str]) -> _EmbeddingsResponse:
         directory = self.recordings_dir / re.sub(r"[^A-Za-z0-9._-]", "_", model)
         paths = [directory / f"embedding-{_text_key(model, text)}.json" for text in input]
+        self.used_paths.update(paths)
         vectors: dict[int, list[float]] = {}
         if self.mode != "refresh":
             for index, path in enumerate(paths):

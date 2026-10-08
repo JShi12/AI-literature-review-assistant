@@ -1,0 +1,119 @@
+{
+ "key": "55bb9998eaec73fba668ecc4af1de0f82074010a4afd88a5eff1021cefe5eeaa",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 839,
+ "output_tokens": 1472,
+ "latency_s": 12.008,
+ "recorded_at": "2026-10-08T10:10:19+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "M0 model uses Imitation with Past Dropout with wimit=1.0 and wenv=0.0.",
+    "claim_type": "method",
+    "normalized_text": "M0 model uses Imitation with Past Dropout with wimit=1.0 and wenv=0.0.",
+    "source_quote": "M0\nImitation with Past Dropout\n1.0\n0.0",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "M1 model is M0 plus Trajectory Perturbation with wimit=1.0 and wenv=0.0.",
+    "claim_type": "method",
+    "normalized_text": "M1 model is M0 plus Trajectory Perturbation with wimit=1.0 and wenv=0.0.",
+    "source_quote": "M1\nM0 + Traj Perturbation\n1.0\n0.0",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "M2 model is M1 plus Environment Losses with wimit=1.0 and wenv=1.0.",
+    "claim_type": "method",
+    "normalized_text": "M2 model is M1 plus Environment Losses with wimit=1.0 and wenv=1.0.",
+    "source_quote": "M2\nM1 + Environment Losses\n1.0\n1.0",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "M3 model is M2 with less imitation, wimit=0.5 and wenv=1.0.",
+    "claim_type": "method",
+    "normalized_text": "M3 model is M2 with less imitation, wimit=0.5 and wenv=1.0.",
+    "source_quote": "M3\nM2 with less imitation\n0.5\n1.0",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "M4 model is M2 with Imitation Dropout with dropout probability 0.5.",
+    "claim_type": "method",
+    "normalized_text": "M4 model is M2 with Imitation Dropout with dropout probability 0.5.",
+    "source_quote": "M4\nM2 with Imitation Dropout\nDropout probability = 0.5 (see Section 5.3).",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "In the Nudging for a Parked Car scenario, M0 passes 20% of the time, collides 50%, and gets stuck 30%.",
+    "claim_type": "finding",
+    "normalized_text": "In the Nudging for a Parked Car scenario, M0 passes 20%, collides 50%, gets stuck 30%.",
+    "source_quote": "Nudging\nfor a\nParked\nCar [video]\nPasses\nCollides\nGets Stuck\n20%\n50%\n30%",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "In the Nudging for a Parked Car scenario, M2 passes 55%, collides 45%, and gets stuck 0%.",
+    "claim_type": "finding",
+    "normalized_text": "In the Nudging for a Parked Car scenario, M2 passes 55%, collides 45%, gets stuck 0%.",
+    "source_quote": "55%\n45%\n0%",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "In the Nudging for a Parked Car scenario, M4 passes 90%, collides 10%, and gets stuck 0%.",
+    "claim_type": "finding",
+    "normalized_text": "In the Nudging for a Parked Car scenario, M4 passes 90%, collides 10%, gets stuck 0%.",
+    "source_quote": "90%\n10%\n0%",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "In the Trajectory Perturbation scenario, M0 recovers 0% and gets stuck 100%.",
+    "claim_type": "finding",
+    "normalized_text": "In the Trajectory Perturbation scenario, M0 recovers 0% and gets stuck 100%.",
+    "source_quote": "Trajectory\nPerturba-\ntion [video]\nRecovers\nGets Stuck\n0%\n100%",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "In the Trajectory Perturbation scenario, M2 recovers 50% and gets stuck 50%.",
+    "claim_type": "finding",
+    "normalized_text": "In the Trajectory Perturbation scenario, M2 recovers 50% and gets stuck 50%.",
+    "source_quote": "50%\n50%",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "In the Slowing for a Slow Car scenario, M0 slows down 75%, collides 0%, and gets stuck 25%.",
+    "claim_type": "finding",
+    "normalized_text": "In the Slowing for a Slow Car scenario, M0 slows down 75%, collides 0%, gets stuck 25%.",
+    "source_quote": "Slowing for\n a Slow Car\n[video]\nSlows Down\nCollides\nGets Stuck\nM0\n75%\n0%\n25%",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "In the Slowing for a Slow Car scenario, M2 slows down 95%, collides 5%, and gets stuck 0%.",
+    "claim_type": "finding",
+    "normalized_text": "In the Slowing for a Slow Car scenario, M2 slows down 95%, collides 5%, gets stuck 0%.",
+    "source_quote": "95%\n5%\n0%",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "The Nudging around a parked car scenario is set up by placing the agent at an arbitrary distance from a stop-sign on an undivided two-way street with a parked vehicle on the right shoulder between the agent and the stop-sign.",
+    "claim_type": "method",
+    "normalized_text": "Nudging around a parked car scenario places agent near stop-sign with parked vehicle between agent and stop-sign.",
+    "source_quote": "To set up this scenario, we place the agent at an\narbitrary distance from a stop-sign on an undivided two-way street and then place a parked\nvehicle on the right shoulder between the the agent and the stop-sign.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Four separate locations with both straight and curved roads and five different starting speeds create a total of 20 scenarios for the Nudging around a parked car test.",
+    "claim_type": "method",
+    "normalized_text": "Nudging around a parked car test uses 4 locations and 5 starting speeds to create 20 scenarios.",
+    "source_quote": "We pick 4 separate\nlocations with both straight and curved roads then vary the starting speed of the agent\nbetween 5 diﬀerent values to create a total of 20 scenarios.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The agent's behavior in the Nudging around a parked car scenario is observed to determine if it stops and gets stuck behind, collides with, or correctly passes around the parked car.",
+    "claim_type": "method",
+    "normalized_text": "Agent behavior observed for stopping, collision, or passing in Nudging around a parked car scenario.",
+    "source_quote": "We then observe if the agent\nwould stop and get stuck behind, collide with the parked car, or correctly pass around the\nparked car, and report the aggregate performance in Fig. 7(row 1).",
+    "confidence": 0.95
+   }
+  ]
+ }
+}

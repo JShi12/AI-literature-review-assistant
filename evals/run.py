@@ -33,7 +33,7 @@ from evals.gold import (
     load_gold_sections,
     load_retrieval_queries,
 )
-from evals.llm_cache import DEFAULT_RECORDINGS_DIR, RecordingEmbeddings, RecordingLLM
+from evals.llm_cache import DEFAULT_RECORDINGS_DIR, RecordingEmbeddings, RecordingLLM, prune_recordings
 from evals.report import build_model_run, infra_errors, render_markdown, summarize_sections, write_report
 from evals.snapshot import DEFAULT_SNAPSHOT_PATH, Snapshot, load_snapshot, sample_chunks
 from evals.tasks import (
@@ -88,6 +88,12 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--scenarios", type=Path, default=DEFAULT_SCENARIOS_PATH)
     parser.add_argument("--recordings", type=Path, default=DEFAULT_RECORDINGS_DIR)
     parser.add_argument("--out", type=Path, default=DEFAULT_REPORTS_DIR)
+    parser.add_argument(
+        "--prune",
+        action="store_true",
+        help="Afterwards, delete recordings this run didn't use (e.g. after a prompt change). Run it with the "
+        "same --limit/--seed/models you intend to replay with, or their recordings are deleted too.",
+    )
     return parser.parse_args(argv)
 
 
@@ -109,6 +115,7 @@ def main(argv: list[str] | None = None) -> int:
         sections = {"summary": summarize_sections(section_cases), "cases": section_cases}
 
     runs = []
+    used_recordings: set[Path] = set()
     for model in models:
         llm = RecordingLLM(model, mode=args.mode, recordings_dir=args.recordings)
         embeddings = RecordingEmbeddings(mode=args.mode, recordings_dir=args.recordings)
@@ -139,6 +146,7 @@ def main(argv: list[str] | None = None) -> int:
                     stages["review"].append(run_review_stage(scenario, syntheses, claims_result.accepted_claims, llm))
 
         runs.append(build_model_run(model, stages, [*llm.calls, *embeddings.calls]))
+        used_recordings |= llm.used_paths | embeddings.used_paths
 
     git_sha, git_dirty = git_state()
     report: dict[str, Any] = {
@@ -172,6 +180,8 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Report written to {run_dir}", file=sys.stderr)
 
     errors = infra_errors(runs)
+    if args.prune and not errors:
+        print(f"Pruned {prune_recordings(used_recordings)} unused recording(s).", file=sys.stderr)
     if errors:
         print(f"\n{len(errors)} case(s) could not be evaluated, e.g.: {errors[0]}", file=sys.stderr)
         return 1

@@ -1,0 +1,56 @@
+{
+ "key": "e8b7a45589f9825bd410ede56c30b5e039010387f23c8a23c8aac97264be6bd3",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 676,
+ "output_tokens": 529,
+ "latency_s": 5.143,
+ "recorded_at": "2026-10-08T09:58:28+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "The performance of the modular pipeline and the imitation learning approach typically differs by less than 10%.",
+    "claim_type": "finding",
+    "normalized_text": "Modular pipeline and imitation learning performance differ by less than 10%.",
+    "source_quote": "Surprisingly, the performance of both systems is very close under most testing conditions: the performance of the two methods typically differs by less than 10%.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The modular pipeline performs better under the “New weather” condition than under the training conditions.",
+    "claim_type": "finding",
+    "normalized_text": "Modular pipeline performs better on new weather than training weather.",
+    "source_quote": "One is that the modular pipeline performs better under the “New weather” condition than under the training conditions.",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "The modular pipeline underperforms on navigation in the “New town” condition and on going straight in “New town & weather”.",
+    "claim_type": "finding",
+    "normalized_text": "Modular pipeline underperforms on navigation in new town and new town & weather conditions.",
+    "source_quote": "Another difference between the two approaches is that MP underperforms on navigation in the “New town” condition and on going straight in “New town & weather”.",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "The perception stack fails systematically under complex weather conditions in the context of a new environment, causing the modular pipeline to fail navigation.",
+    "claim_type": "finding",
+    "normalized_text": "Perception stack failure under complex weather in new environment causes modular pipeline navigation failure.",
+    "source_quote": "This is because the perception stack fails systematically under complex weather conditions in the context of a new environment.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "If the perception stack is not able to reliably find a drivable path, the rules-based planner and the classic controller are unable to navigate to the destination in a consistent way.",
+    "claim_type": "finding",
+    "normalized_text": "Failure of perception stack to find drivable path causes planner and controller navigation failure.",
+    "source_quote": "If the perception stack is not able to reliably find a drivable path, the rules-based planner and the classic controller are unable to navigate to the destination in a consistent way.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The performance of the modular pipeline is bimodal: it works well if the perception stack works, otherwise it fails completely.",
+    "claim_type": "finding",
+    "normalized_text": "Modular pipeline performance is bimodal depending on perception stack success.",
+    "source_quote": "The performance is therefore bimodal: if the perception stack works, the whole system works well; otherwise it fails completely.",
+    "confidence": 0.95
+   }
+  ]
+ }
+}

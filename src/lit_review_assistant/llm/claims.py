@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from decimal import Decimal
 
 from pydantic import BaseModel
@@ -10,14 +11,17 @@ from sqlalchemy.orm import Session
 from lit_review_assistant.db.models import Chunk, Claim
 from lit_review_assistant.llm.client import LLMResult, OpenAIStructuredLLM, StructuredLLM, create_llm_run
 from lit_review_assistant.llm.embeddings import embed_and_persist_claims
-from lit_review_assistant.schemas import ExtractedClaim
+from lit_review_assistant.pipeline.quotes import find_quote_span, strip_control_chars
+from lit_review_assistant.schemas import ClaimCandidate, ExtractedClaim
 
-PROMPT_VERSION = "claims.v1"
+logger = logging.getLogger(__name__)
+
+PROMPT_VERSION = "claims.v2"
 DEFAULT_TEMPERATURE = 0.1
 
 
 class ExtractedClaimsBatch(BaseModel):
-    claims: list[ExtractedClaim]
+    claims: list[ClaimCandidate]
 
 
 def extract_claims_for_chunk(
@@ -28,8 +32,16 @@ def extract_claims_for_chunk(
 ) -> list[Claim]:
     """Extract and persist source-grounded claims from a single chunk's text."""
     result = request_claims(chunk, llm=llm, temperature=temperature)
+    located, unlocated = locate_claims(result.parsed.claims, chunk)
+    if unlocated:
+        logger.warning(
+            "Dropped %d of %d claim(s) from chunk %s: source quote not found in the chunk text",
+            len(unlocated),
+            len(result.parsed.claims),
+            chunk.id,
+        )
     run = create_llm_run(session, result)
-    claims = persist_extracted_claims(session, result.parsed.claims, run.id, chunk=chunk)
+    claims = persist_extracted_claims(session, located, run.id, chunk=chunk)
     embed_and_persist_claims(session, claims)
     session.flush()
     return claims
@@ -49,6 +61,37 @@ def request_claims(
         input_text=build_claim_extraction_input(chunk),
         temperature=temperature,
     )
+
+
+def locate_claims(candidates: list[ClaimCandidate], chunk: Chunk) -> tuple[list[ExtractedClaim], list[ClaimCandidate]]:
+    """Resolve each candidate's page and page-level offsets from its source quote.
+
+    Returns (located claims, candidates whose quote couldn't be found in the chunk). The latter are
+    dropped rather than stored with a made-up location: a quote that isn't in the source is also a
+    grounding red flag. Chunks never span pages, so offsets are relative to chunk.page_start.
+    """
+    located: list[ExtractedClaim] = []
+    unlocated: list[ClaimCandidate] = []
+    for candidate in candidates:
+        span = find_quote_span(chunk.text, candidate.source_quote)
+        if span is None:
+            unlocated.append(candidate)
+            continue
+        located.append(
+            ExtractedClaim(
+                claim_text=candidate.claim_text,
+                claim_type=candidate.claim_type,
+                normalized_text=candidate.normalized_text,
+                paper_id=chunk.paper_id,
+                chunk_id=chunk.id,
+                section_id=chunk.section_id,
+                page=chunk.page_start,
+                start_char=chunk.start_char + span[0],
+                end_char=chunk.start_char + span[1],
+                confidence=candidate.confidence,
+            )
+        )
+    return located, unlocated
 
 
 def persist_extracted_claims(
@@ -90,17 +133,13 @@ def build_claim_extraction_input(chunk: Chunk) -> str:
     section_label = chunk.section.normalized_type if chunk.section else "unknown"
     return (
         "Extract source-grounded atomic claims from this paper chunk.\n"
-        "Return only claims that are directly supported by the text. Use page-level character offsets.\n\n"
-        f"paper_id: {chunk.paper_id}\n"
-        f"chunk_id: {chunk.id}\n"
-        f"section_id: {chunk.section_id or ''}\n"
-        f"section_type: {section_label}\n"
-        f"page_start: {chunk.page_start}\n"
-        f"page_end: {chunk.page_end}\n"
-        f"chunk_start_char: {chunk.start_char}\n"
-        f"chunk_end_char: {chunk.end_char}\n\n"
+        "Return only claims that are directly supported by the text, each with its verbatim source_quote.\n\n"
+        f"section_type: {section_label}\n\n"
         "Chunk text:\n"
-        f"{chunk.text}"
+        # PDF math fonts leave control characters (e.g. \r) in the text; asked to quote verbatim, the model
+        # can degenerate into emitting control characters until it runs out of tokens. Quotes are still
+        # located in the unmodified chunk text, since find_quote_span ignores control characters.
+        f"{strip_control_chars(chunk.text)}"
     )
 
 
@@ -117,8 +156,8 @@ Rules:
 - Extract atomic claims only; one finding, method, dataset, metric, limitation, or future-work point per claim.
 - Preserve the source meaning. Do not add interpretation.
 - Include an optional normalized_text when a concise canonical form is obvious.
-- Each claim must include paper_id, chunk_id, section_id, page, start_char, end_char, and confidence.
-- Copy paper_id, chunk_id, and section_id exactly from the chunk metadata. Do not shorten, rewrite, or invent IDs.
-- Character offsets must refer to the page text coordinates provided by the chunk metadata.
+- source_quote must be copied verbatim from the chunk text: the shortest contiguous passage that states \
+the claim, usually one sentence or less. Do not paraphrase it, fix its typos, or join separate passages.
+- Include confidence for every claim.
 - If the chunk has no direct claim, return an empty claims list.
 """

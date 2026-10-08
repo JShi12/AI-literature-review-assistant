@@ -1,0 +1,82 @@
+{
+ "key": "3c735ee2bd03d9081f06419d6d91f3bc99d28d02cd3584322abbd095e359b9cc",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "synthesis.v1",
+ "temperature": 0.2,
+ "input_tokens": 5171,
+ "output_tokens": 1881,
+ "latency_s": 16.386,
+ "recorded_at": "2026-10-08T10:11:27+00:00",
+ "parsed": {
+  "syntheses": [
+   {
+    "synthesis_type": "insight",
+    "title": "Advancement from Early End-to-End Models to Modern CNN-Based Autonomous Driving Systems",
+    "body": "Early autonomous driving systems like ALVINN demonstrated the feasibility of end-to-end neural network steering using relatively small fully-connected networks and limited data (claims 443f6210-6468-59f8-8167-b719d39fc8fd, 64fadfcd-be98-5c13-b01c-6d0c033e603e). Modern approaches leverage convolutional neural networks (CNNs) with greater computational power and more extensive data, enabling the learning of the entire processing pipeline for steering (claims e66d15a0-9347-5814-b053-1ff1dea8058d, f78de3ab-0095-5d09-a3ae-9f15b81a03b6). This progression reflects significant improvements in model capacity and data utilization, leading to more robust and vehicle-independent steering control (claim 34d85362-1ab7-5462-ac7c-f2c84434250b).",
+    "supporting_claim_ids": [
+     "443f6210-6468-59f8-8167-b719d39fc8fd",
+     "64fadfcd-be98-5c13-b01c-6d0c033e603e",
+     "e66d15a0-9347-5814-b053-1ff1dea8058d",
+     "f78de3ab-0095-5d09-a3ae-9f15b81a03b6",
+     "34d85362-1ab7-5462-ac7c-f2c84434250b"
+    ],
+    "supporting_papers": 1,
+    "supporting_claims": 5,
+    "confidence": 0.95
+   },
+   {
+    "synthesis_type": "insight",
+    "title": "Mid-Level Representations and Recurrent Architectures Enhance Autonomous Driving Model Training and Simulation",
+    "body": "ChauffeurNet employs a recurrent neural network (RNN) architecture that processes mid-level input representations to output driving trajectories, integrating components like FeatureNet and AgentRNN with co-trained perception modules (claims cc49c2d4-b50d-5322-8525-304268249b24, a074e01e-adb6-51f9-a4d9-c118eae03923, 895eafbb-3f11-5339-9345-8de95a48f4d0). Mid-level representations facilitate training on both real and simulated data and enable closed-loop simulation testing prior to real-world deployment (claims 5fc32090-a96e-5352-b867-05795d95ae56, e4571968-f7ab-5ab9-9db6-21554bbefe13). This approach supports iterative prediction refinement through recurrent feedback mechanisms (claims 2eb1abf8-84f5-5074-a80b-6452e5ee9f11, 28ac3012-c446-509b-bbe5-067fc5348a93).",
+    "supporting_claim_ids": [
+     "cc49c2d4-b50d-5322-8525-304268249b24",
+     "a074e01e-adb6-51f9-a4d9-c118eae03923",
+     "895eafbb-3f11-5339-9345-8de95a48f4d0",
+     "5fc32090-a96e-5352-b867-05795d95ae56",
+     "e4571968-f7ab-5ab9-9db6-21554bbefe13",
+     "2eb1abf8-84f5-5074-a80b-6452e5ee9f11",
+     "28ac3012-c446-509b-bbe5-067fc5348a93"
+    ],
+    "supporting_papers": 1,
+    "supporting_claims": 7,
+    "confidence": 0.95
+   },
+   {
+    "synthesis_type": "insight",
+    "title": "CARLA Simulator as a Comprehensive Platform for Autonomous Urban Driving Research",
+    "body": "CARLA is an open-source urban driving simulator providing extensive digital assets including urban layouts, vehicles, buildings, pedestrians, and street signs, created by a dedicated team of digital artists (claims 6dde98eb-ff12-5785-926e-11fbb8cd299b, 0488bcfc-4a7e-5848-a1d4-1e81239f8f55, 35654313-1c19-5ea8-90b3-6083cb8bfe35, eaa96757-17f0-557c-9c27-40cae0a06932). It supports flexible sensor suite specification, environmental condition control, and provides exact measurements of agent state and traffic rule compliance (claims b26241aa-3d3d-560b-9a47-d8c65f50bfa3, 2ef71665-a8a3-556d-864e-59cd9b75ce1c, f9f4ac99-3040-540e-a263-7730701fb5d1, a4766e4b-52af-520a-b0f2-2c0267bf443f). CARLA enables development, training, prototyping, and validation of autonomous driving models including perception and control, and is used to evaluate classic modular pipelines, end-to-end imitation learning, and reinforcement learning approaches (claims 2dedfe39-6dab-5024-be2e-997515e0211d, 95c1e45a-f076-5974-87ce-1ddf31a356f5, 34863bb0-827c-5405-a15d-f7229ca8985c, 7e8db57a-25dd-55f8-9220-c289a62aea7f).",
+    "supporting_claim_ids": [
+     "6dde98eb-ff12-5785-926e-11fbb8cd299b",
+     "0488bcfc-4a7e-5848-a1d4-1e81239f8f55",
+     "35654313-1c19-5ea8-90b3-6083cb8bfe35",
+     "eaa96757-17f0-557c-9c27-40cae0a06932",
+     "b26241aa-3d3d-560b-9a47-d8c65f50bfa3",
+     "2ef71665-a8a3-556d-864e-59cd9b75ce1c",
+     "f9f4ac99-3040-540e-a263-7730701fb5d1",
+     "a4766e4b-52af-520a-b0f2-2c0267bf443f",
+     "2dedfe39-6dab-5024-be2e-997515e0211d",
+     "95c1e45a-f076-5974-87ce-1ddf31a356f5",
+     "34863bb0-827c-5405-a15d-f7229ca8985c",
+     "7e8db57a-25dd-55f8-9220-c289a62aea7f"
+    ],
+    "supporting_papers": 1,
+    "supporting_claims": 12,
+    "confidence": 0.98
+   },
+   {
+    "synthesis_type": "insight",
+    "title": "Limitations of Pure Imitation Learning in Autonomous Driving Despite Large Datasets and Mid-Level Representations",
+    "body": "Studies show that pure imitation learning approaches, even when trained with large datasets (e.g., 30 million examples) and mid-level input/output representations, face significant challenges such as error accumulation and distribution shift during closed-loop operation (claims 639f88c8-001d-587a-bae9-390fb3c89dcf, c9759883-dd81-58a9-ab2d-155a512245df, 09081b52-e1ad-5843-9bbc-8565cf5aea59). These limitations manifest in practical issues like the model getting stuck or colliding with parked vehicles despite viable passing options (claim cf5a09ec-bfde-5049-ac07-ec7d2e843d78). This evidence highlights the need for approaches beyond pure imitation learning to achieve reliable autonomous driving.",
+    "supporting_claim_ids": [
+     "639f88c8-001d-587a-bae9-390fb3c89dcf",
+     "c9759883-dd81-58a9-ab2d-155a512245df",
+     "09081b52-e1ad-5843-9bbc-8565cf5aea59",
+     "cf5a09ec-bfde-5049-ac07-ec7d2e843d78"
+    ],
+    "supporting_papers": 1,
+    "supporting_claims": 4,
+    "confidence": 0.95
+   }
+  ]
+ }
+}

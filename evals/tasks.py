@@ -30,7 +30,7 @@ from evals.metrics import (
 )
 from evals.snapshot import Snapshot, SnapshotChunk, SnapshotPaper, stable_id
 from lit_review_assistant.db.models import Chunk, Claim, Paper, Section, Synthesis
-from lit_review_assistant.llm.claims import persist_extracted_claims, request_claims
+from lit_review_assistant.llm.claims import locate_claims, persist_extracted_claims, request_claims
 from lit_review_assistant.llm.client import StructuredLLM
 from lit_review_assistant.llm.embeddings import claim_embedding_text, embed_texts
 from lit_review_assistant.llm.review import (
@@ -162,12 +162,16 @@ def run_claims_stage(
         except Exception as exc:
             return {**case, **describe_error(exc)}, []
 
-        extracted = result.parsed.claims
+        extracted, unlocated = locate_claims(result.parsed.claims, orm_chunk)
         metrics = chunk_claims_metrics(extracted, orm_chunk, snapshot.paper(chunk.paper_key).pages)
+        metrics["n_unlocated"] = len(unlocated)
+        metrics["unlocated_quotes"] = [candidate.source_quote for candidate in unlocated]
 
         if gold is not None and chunk.key in gold:
             gold_pairs = [(item.quote, item.claim_type) for item in gold[chunk.key]]
-            metrics["gold"] = gold_claim_metrics(extracted, gold_pairs, chunk.text)
+            # Each predicted claim is matched by the source passage it was located at.
+            predicted = [(claim["span_text"], claim["claim_type"]) for claim in metrics["claims"]]
+            metrics["gold"] = gold_claim_metrics(predicted, gold_pairs, chunk.text)
 
         accepted: list[Claim] = []
         if not metrics["rejected"]:

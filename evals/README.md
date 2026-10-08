@@ -28,6 +28,7 @@ Useful flags:
 | `--stop-after claims\|retrieval\|synthesis\|review` | Run only the first stages |
 | `--mode record\|replay\|refresh` | Reuse recordings and record misses / recordings only / always call the API |
 | `--workers N` | Concurrent claim-extraction calls (default 4) |
+| `--prune` | Afterwards, delete recordings the run didn't use, e.g. after a prompt change. Use the same `--limit`/`--seed`/models you replay with |
 
 The exit code is 1 if any case couldn't be evaluated (missing recording, API/auth/network error).
 
@@ -36,7 +37,9 @@ The exit code is 1 if any case couldn't be evaluated (missing recording, API/aut
 - **Snapshot** (`evals/snapshots/demo_papers.json`, gitignored): page text and section-aware chunks
   of the three papers the live demo is seeded with, produced by the production ingestion code.
   Ingestion changes don't affect evals until the snapshot is rebuilt. Each report records the
-  snapshot's fingerprint. Build one from your own PDFs with `python -m evals.snapshot --pdf a.pdf --pdf b.pdf --out evals/snapshots/mine.json`.
+  snapshot's fingerprint. The fingerprint covers page text and chunk boundaries, not derived
+  metadata such as section types, so rebuilding after a section-detection change keeps gold labels
+  valid. Build one from your own PDFs with `python -m evals.snapshot --pdf a.pdf --pdf b.pdf --out evals/snapshots/mine.json`.
 - **Scenarios** (`evals/datasets/review_scenarios.json`): a review topic, which synthesis types to
   generate, and how many claims to draw on.
 - **Gold labels** (`evals/datasets/gold_*.json`, `retrieval_queries.json`, committed): section
@@ -60,16 +63,18 @@ All metrics are deterministic and computed in `evals/metrics.py`; none use an LL
 - *Chunks with correct section type*: this type is sent to the claim extractor in its prompt.
 
 **Claims (per chunk)**
-- *Rejected by location check*: production raises on the first claim whose page or offsets fall
-  outside the chunk, losing **every** claim from that chunk.
-- *Span match*: whether `page_text[start_char:end_char]` actually reads like the claim
-  (similarity ≥ 0.8). Being inside the chunk doesn't mean the offsets point at the right text.
+- *Claims dropped: quote not found*: since `claims.v2` the model returns a verbatim `source_quote`
+  and production computes offsets by locating it (`pipeline/quotes.py`). Claims whose quote can't
+  be found are dropped, so this measures both locating failures and ungrounded quotes.
+- *Rejected by location check*: production rejects a chunk if any claim falls outside it. Since
+  offsets are computed, this should stay at 0.
+- *Span match*: whether the text at `page_text[start_char:end_char]` (the located quote) reads like
+  the claim, at similarity ≥ 0.8. Under `claims.v1`, where the model guessed offsets, this was 0.8%.
+  Now it mostly measures how far `claim_text` departs from its quote.
 - *Verbatim* / *lexical coverage*: how extractive the claim is relative to the chunk. This is a
   rough grounding proxy, not entailment.
-- *Ids copied exactly*: whether the model followed the instruction to echo the ids. Production
-  overwrites them anyway.
 - *Gold recall / precision / F1*: matched by **source span, not wording**. Each extracted claim is
-  located in the chunk by aligning its text, never by its offsets, and matches a gold claim when the
+  located in the chunk by aligning the source text it was located at, and matches a gold claim when the
   two spans overlap by ≥ 50% of the shorter one. Matching isn't one-to-one, because extractors split
   claims at different granularity. Heavily paraphrased claims can't be located and count as
   unmatched, so the scores lean strict. Precision is "against gold": a valid claim the labeller

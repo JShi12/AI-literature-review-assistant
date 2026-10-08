@@ -1,0 +1,56 @@
+{
+ "key": "9472fbc58ea58c86d8ee07f511bb338eaeaaa3a8b09f856fc85bedd4108eae59",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 669,
+ "output_tokens": 630,
+ "latency_s": 8.036,
+ "recorded_at": "2026-10-08T10:10:03+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "We manually calibrate the lane center associated with each frame in the video used by the simulator, called the “ground truth”.",
+    "claim_type": "method",
+    "normalized_text": "Manual calibration of lane center per video frame as ground truth.",
+    "source_quote": "Since human drivers might not be driving in the center of the lane all the time, we manually calibrate the lane center associated with each frame in the video used by the simulator. We call this position the “ground truth”.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The simulator transforms the original images to account for departures from the ground truth, including discrepancies between the human driven path and the ground truth.",
+    "claim_type": "method",
+    "normalized_text": "Simulator transforms images to correct for departures from ground truth lane center.",
+    "source_quote": "The simulator transforms the original images to account for departures from the ground truth. Note that this transformation also includes any discrepancy between the human driven path and the ground truth.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The simulator sends the first frame of the chosen test video, adjusted for any departures from the ground truth, to the input of the trained CNN, which returns a steering command for that frame.",
+    "claim_type": "method",
+    "normalized_text": "Simulator inputs adjusted first video frame to CNN to get steering command.",
+    "source_quote": "The simulator sends the ﬁrst frame of the chosen test video, adjusted for any departures from the ground truth, to the input of the trained CNN. The CNN then returns a steering command for that frame.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The CNN steering commands and recorded human-driver commands are fed into the dynamic model of the vehicle to update the position and orientation of the simulated vehicle.",
+    "claim_type": "method",
+    "normalized_text": "CNN and human steering commands input to vehicle dynamic model to update simulated vehicle state.",
+    "source_quote": "The CNN steering commands as well as the recorded human-driver commands are fed into the dynamic model [8] of the vehicle to update the position and orientation of the simulated vehicle.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The simulator modifies the next frame in the test video so the image appears as if the vehicle were at the position resulting from following CNN steering commands, then feeds this new image to the CNN and repeats the process.",
+    "claim_type": "method",
+    "normalized_text": "Simulator modifies next video frame to reflect CNN-driven position and feeds it back to CNN iteratively.",
+    "source_quote": "The simulator then modiﬁes the next frame in the test video so that the image appears as if the vehicle were at the position that resulted by following steering commands from the CNN. This new image is then fed to the CNN and the process repeats.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The simulator records the off-center distance, the yaw, and the distance traveled by the virtual car.",
+    "claim_type": "method",
+    "normalized_text": "Simulator records off-center distance, yaw, and distance traveled of virtual car.",
+    "source_quote": "The simulator records the off-center distance (distance from the car to the lane center), the yaw, and the distance traveled by the virtual car.",
+    "confidence": 0.95
+   }
+  ]
+ }
+}

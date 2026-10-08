@@ -1,0 +1,63 @@
+{
+ "key": "180e41efeade01724334a1505a0b75e63364b7e32fff1195deb4996d4e955fec",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 594,
+ "output_tokens": 699,
+ "latency_s": 7.299,
+ "recorded_at": "2026-10-08T10:10:25+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "Number of Pedestrians: An integer number of pedestrians to be spawned in the city.",
+    "claim_type": "method",
+    "normalized_text": "Number of pedestrians is an integer specifying how many pedestrians to spawn in the city.",
+    "source_quote": "Number of Pedestrians: An integer number of pedestrians to be spawned in the city.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Weather Id: An index of the weather/lighting presets to use.",
+    "claim_type": "method",
+    "normalized_text": "Weather Id is an index selecting weather and lighting presets.",
+    "source_quote": "Weather Id: An index of the weather/lighting presets to use.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The following are currently supported: Clear Midday, Clear Sunset, Cloudy Midday, Cloudy Sunset, Soft Rain Midday, Soft Rain Sunset, Medium Rain Midday, Cloudy After Rain Midday, Cloudy After Rain Sunset, Medium Rain Sunset, Hard Rain Midday, Hard Rain Sunset, After Rain Noon, After Rain Sunset.",
+    "claim_type": "method",
+    "normalized_text": "Supported weather/lighting presets include Clear Midday, Clear Sunset, Cloudy Midday, Cloudy Sunset, Soft Rain Midday, Soft Rain Sunset, Medium Rain Midday, Cloudy After Rain Midday, Cloudy After Rain Sunset, Medium Rain Sunset, Hard Rain Midday, Hard Rain Sunset, After Rain Noon, After Rain Sunset.",
+    "source_quote": "The following are currently supported: Clear Midday, Clear Sunset, Cloudy Midday, Cloudy Sunset, Soft Rain Midday, Soft Rain Sunset, Medium Rain Midday, Cloudy After Rain Midday, Cloudy After Rain Sunset, Medium Rain Sunset, Hard Rain Midday, Hard Rain Sunset, After Rain Noon, After Rain Sunset.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Seed Vehicles/Pedestrians: A seed that controls how non-player vehicles and pedestrians are spawned.",
+    "claim_type": "method",
+    "normalized_text": "Seed Vehicles/Pedestrians is a seed controlling the spawning of non-player vehicles and pedestrians.",
+    "source_quote": "Seed Vehicles/Pedestrians: A seed that controls how non-player vehicles and pedestrians are spawned.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "It is possible to have the same vehicle/pedestrian behavior by setting the same seed.",
+    "claim_type": "method",
+    "normalized_text": "Setting the same seed results in the same vehicle and pedestrian behavior.",
+    "source_quote": "It is possible to have the same vehicle/pedestrian behavior by setting the same seed.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Set of Cameras: A set of cameras with speciﬁc parameters such as position, orientation, ﬁeld of view, resolution and camera type.",
+    "claim_type": "method",
+    "normalized_text": "Set of Cameras is a set of cameras defined by parameters including position, orientation, field of view, resolution, and camera type.",
+    "source_quote": "Set of Cameras: A set of cameras with speciﬁc parameters such as position, orientation, ﬁeld of view, resolution and camera type.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Available camera types include an optical RGB camera, and pseudo-cameras that provide ground-truth depth and semantic segmentation.",
+    "claim_type": "method",
+    "normalized_text": "Camera types include optical RGB cameras and pseudo-cameras providing ground-truth depth and semantic segmentation.",
+    "source_quote": "Available camera types include an optical RGB camera, and pseudo-cameras that provide ground-truth depth and semantic segmentation.",
+    "confidence": 0.95
+   }
+  ]
+ }
+}

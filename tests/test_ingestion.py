@@ -67,6 +67,73 @@ def test_detect_sections_from_common_headings() -> None:
     assert sections[-1].page_end == 2
 
 
+def _headings(text: str, pages: int = 1) -> list[tuple[str, str]]:
+    body = "This sentence is ordinary body text for the section.\n"
+    page_texts = [text] + [body] * (pages - 1)
+    sections = detect_sections([PageText(number, page) for number, page in enumerate(page_texts, start=1)])
+    return [(section.title, section.normalized_type) for section in sections]
+
+
+def test_detect_sections_numbered_headings_on_one_line_with_subsection_inheritance() -> None:
+    body = "This sentence is ordinary body text for the section.\n"
+    text = (
+        "1. Introduction\n"
+        + body
+        + "3. Model Architecture\n3.1 Input Output Representation\n"
+        + body
+        + "6.3 Closed Loop Evaluation\n"
+        + body
+        + "6.3.1 Agent Position and Heading\n"
+        + body
+    )
+
+    assert _headings(text) == [
+        ("Introduction", "introduction"),
+        ("Model Architecture", "methods"),
+        ("Input Output Representation", "methods"),
+        ("Closed Loop Evaluation", "results"),
+        ("Agent Position and Heading", "results"),
+    ]
+
+
+def test_detect_sections_number_on_its_own_line_then_title() -> None:
+    body = "This sentence is ordinary body text for the section.\n"
+    text = "2\nOverview of the System\n" + body + "5\nTraining Details\n5.1\nData Selection\n" + body
+
+    assert _headings(text) == [
+        ("Overview of the System", "methods"),
+        ("Training Details", "methods"),
+        ("Data Selection", "methods"),
+    ]
+
+
+def test_detect_sections_roman_and_acs_bullet_styles() -> None:
+    body = "This sentence is ordinary body text for the section.\n"
+    text = "I. INTRODUCTION\n" + body + "■RESULTS AND DISCUSSION\n" + body + "■REFERENCES\n(1) A. Author.\n"
+
+    assert _headings(text) == [
+        ("INTRODUCTION", "introduction"),
+        ("RESULTS AND DISCUSSION", "results"),
+        ("REFERENCES", "other"),
+    ]
+
+
+def test_detect_sections_ignores_table_cells_bylines_and_running_headers() -> None:
+    body = "This sentence is ordinary body text for the section.\n"
+    table = "95\n20\nNavigation\n80\n86\n"
+    byline = "V. KOLTUN\nIntel Labs\n"
+    running_header = "3\nBansal, Krizhevsky & Ogale\n" + body
+    pages = [PageText(n, running_header + (table + byline if n == 1 else "")) for n in range(1, 4)]
+
+    assert [section.title for section in detect_sections(pages)] == ["Full Text"]
+
+
+def test_detect_sections_inline_abstract() -> None:
+    assert _headings("Abstract: We introduce a simulator for driving research.\nMore text here.\n") == [
+        ("Abstract", "abstract")
+    ]
+
+
 def test_chunk_offsets_round_trip_to_source_text() -> None:
     page = PageText(1, "Introduction\n" + ("A sentence about methods. " * 20))
 

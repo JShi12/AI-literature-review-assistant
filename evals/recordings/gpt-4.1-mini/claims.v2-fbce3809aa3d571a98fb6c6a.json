@@ -1,0 +1,28 @@
+{
+ "key": "fbce3809aa3d571a98fb6c6ae3d83e2d815287e86ce2cca888bf4d64c749a86b",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 534,
+ "output_tokens": 143,
+ "latency_s": 2.818,
+ "recorded_at": "2026-10-08T10:09:58+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "The weight adjustment is accomplished using back propagation as implemented in the Torch 7 machine learning package.",
+    "claim_type": "method",
+    "normalized_text": "Weight adjustment uses back propagation implemented in Torch 7.",
+    "source_quote": "The weight adjustment is accomplished using back propagation as implemented in the Torch 7 machine learning package.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Once trained, the network can generate steering from the video images of a single center camera.",
+    "claim_type": "finding",
+    "normalized_text": "Trained network generates steering commands from single center camera images.",
+    "source_quote": "Once trained, the network can generate steering from the video images of a single center camera.",
+    "confidence": 0.9
+   }
+  ]
+ }
+}

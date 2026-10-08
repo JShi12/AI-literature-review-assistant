@@ -1,0 +1,52 @@
+{
+ "key": "b5ec05fe451c2d1a06586fe4e5e4f4c30c7235d447715eaeef838650355070ea",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "synthesis.v1",
+ "temperature": 0.2,
+ "input_tokens": 5173,
+ "output_tokens": 1202,
+ "latency_s": 10.547,
+ "recorded_at": "2026-10-08T10:11:11+00:00",
+ "parsed": {
+  "syntheses": [
+   {
+    "synthesis_type": "method_comparison",
+    "title": "Comparison of End-to-End CNN and RNN Approaches for Autonomous Driving Control",
+    "body": "The CNN method learns the entire processing pipeline to steer an automobile directly from raw sensor data, generating steering commands from a single front-facing center camera image (claims e66d15a0-9347-5814-b053-1ff1dea8058d, 70eb8202-ac82-55fb-a95a-efb095234403, 82d5df42-8220-51e7-a608-9993016f4e1c). In contrast, ChauffeurNet employs an RNN architecture that takes mid-level input representations and outputs driving trajectories for control, incorporating components such as FeatureNet and AgentRNN, with recurrent feedback between iterations (claims cc49c2d4-b50d-5322-8525-304268249b24, a074e01e-adb6-51f9-a4d9-c118eae03923, 28ac3012-c446-509b-bbe5-067fc5348a93, 2eb1abf8-84f5-5074-a80b-6452e5ee9f11). The RNN approach benefits from mid-level representations that enable training on both real and simulated data and facilitate closed-loop simulation testing before real deployment (claim 5fc32090-a96e-5352-b867-05795d95ae56). This comparison highlights the architectural and input representation differences between end-to-end CNN and RNN methods in autonomous driving control.",
+    "supporting_claim_ids": [
+     "e66d15a0-9347-5814-b053-1ff1dea8058d",
+     "70eb8202-ac82-55fb-a95a-efb095234403",
+     "82d5df42-8220-51e7-a608-9993016f4e1c",
+     "cc49c2d4-b50d-5322-8525-304268249b24",
+     "a074e01e-adb6-51f9-a4d9-c118eae03923",
+     "28ac3012-c446-509b-bbe5-067fc5348a93",
+     "2eb1abf8-84f5-5074-a80b-6452e5ee9f11",
+     "5fc32090-a96e-5352-b867-05795d95ae56"
+    ],
+    "supporting_papers": 2,
+    "supporting_claims": 8,
+    "confidence": 0.95
+   },
+   {
+    "synthesis_type": "method_comparison",
+    "title": "Comparison of Simulation Platforms and Their Roles in Autonomous Driving Research",
+    "body": "CARLA is an open-source urban driving simulator designed to support development, training, and validation of autonomous driving systems, providing flexible specification of sensor suites, environmental conditions, and detailed urban environment content created by digital artists (claims 6dde98eb-ff12-5785-926e-11fbb8cd299b, 2dedfe39-6dab-5024-be2e-997515e0211d, b26241aa-3d3d-560b-9a47-d8c65f50bfa3, 256972c1-eeae-5177-bc21-a23cc08d9a19, 35654313-1c19-5ea8-90b3-6083cb8bfe35). It supports multiple autonomous driving approaches including classic modular pipelines, end-to-end imitation learning, and reinforcement learning, evaluated in controlled scenarios with specific metrics (claims 34863bb0-827c-5405-a15d-f7229ca8985c, 7e8db57a-25dd-55f8-9220-c289a62aea7f). In contrast, the DARPA Autonomous Vehicle (DAVE) project involved a sub-scale RC car trained on human driving data with video from two cameras and steering commands, focusing on real-world data collection and end-to-end CNN training (claims 921c6021-1bc9-5882-bed7-218fbe19322d, 1f44da23-b078-5b48-9c3b-0f7f3315f522, e66d15a0-9347-5814-b053-1ff1dea8058d). This comparison illustrates the difference between simulation-based and real-world data-driven methods in autonomous driving research.",
+    "supporting_claim_ids": [
+     "6dde98eb-ff12-5785-926e-11fbb8cd299b",
+     "2dedfe39-6dab-5024-be2e-997515e0211d",
+     "b26241aa-3d3d-560b-9a47-d8c65f50bfa3",
+     "256972c1-eeae-5177-bc21-a23cc08d9a19",
+     "35654313-1c19-5ea8-90b3-6083cb8bfe35",
+     "34863bb0-827c-5405-a15d-f7229ca8985c",
+     "7e8db57a-25dd-55f8-9220-c289a62aea7f",
+     "921c6021-1bc9-5882-bed7-218fbe19322d",
+     "1f44da23-b078-5b48-9c3b-0f7f3315f522",
+     "e66d15a0-9347-5814-b053-1ff1dea8058d"
+    ],
+    "supporting_papers": 2,
+    "supporting_claims": 10,
+    "confidence": 0.98
+   }
+  ]
+ }
+}

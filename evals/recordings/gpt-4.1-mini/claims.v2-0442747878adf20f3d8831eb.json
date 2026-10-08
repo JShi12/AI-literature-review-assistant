@@ -1,0 +1,13 @@
+{
+ "key": "0442747878adf20f3d8831ebecdbd88ccbf6a333c3988545e273541a7372260f",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 405,
+ "output_tokens": 5,
+ "latency_s": 0.96,
+ "recorded_at": "2026-10-08T10:10:20+00:00",
+ "parsed": {
+  "claims": []
+ }
+}

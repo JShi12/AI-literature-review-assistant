@@ -1,0 +1,21 @@
+{
+ "key": "5a82ed3255c25785a1b226c3eb3f4a451346197693569d9167d35a09898c96ab",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 450,
+ "output_tokens": 85,
+ "latency_s": 1.775,
+ "recorded_at": "2026-10-08T09:58:07+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "Our contribution can be viewed as pushing the boundaries of what you can do with purely offline data and no RL.",
+    "claim_type": "finding",
+    "normalized_text": "This work advances capabilities using purely offline data without reinforcement learning.",
+    "source_quote": "Our contribution can be viewed as pushing the boundaries of what you can do with purely oﬄine data and no RL.",
+    "confidence": 0.95
+   }
+  ]
+ }
+}

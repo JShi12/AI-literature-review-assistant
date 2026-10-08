@@ -1,0 +1,77 @@
+{
+ "key": "351e3c026ac37b888acf23c90fe0df49cdafbb38587a6c28e40aa3c7f50192f2",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 694,
+ "output_tokens": 788,
+ "latency_s": 6.763,
+ "recorded_at": "2026-10-08T10:10:21+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "Depth and semantic segmentation are pseudo-sensors that support experiments that control for the role of perception.",
+    "claim_type": "method",
+    "normalized_text": "Depth and semantic segmentation are pseudo-sensors for perception control experiments.",
+    "source_quote": "Depth and semantic segmentation are pseudo-sensors that support experiments that control for the role of perception.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Additional sensor models can be plugged in via the API.",
+    "claim_type": "method",
+    "normalized_text": "Additional sensor models can be added through the API.",
+    "source_quote": "Additional sensor models can be plugged in via the API.",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "pseudo-sensor provides 12 semantic classes: road, lane-marking, traffic sign, sidewalk, fence, pole, wall, building, vegetation, vehicle, pedestrian, and other.",
+    "claim_type": "method",
+    "normalized_text": "The pseudo-sensor provides 12 semantic classes including road, lane-marking, traffic sign, sidewalk, fence, pole, wall, building, vegetation, vehicle, pedestrian, and other.",
+    "source_quote": "pseudo-sensor provides 12 semantic classes: road, lane-marking, trafﬁc sign, sidewalk, fence, pole, wall, building, vegetation, vehicle, pedestrian, and other.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "CARLA provides a range of measurements associated with the state of the agent and compliance with traffic rules.",
+    "claim_type": "method",
+    "normalized_text": "CARLA provides measurements of agent state and traffic rule compliance.",
+    "source_quote": "In addition to sensor and pseudo-sensor readings, CARLA provides a range of measurements associ- ated with the state of the agent and compliance with trafﬁc rules.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Measurements of the agent’s state include vehicle location and orientation with respect to the world coordinate system (akin to GPS and compass), speed, acceleration vector, and accumulated impact from collisions.",
+    "claim_type": "method",
+    "normalized_text": "Agent state measurements include location, orientation, speed, acceleration, and collision impact.",
+    "source_quote": "Measurements of the agent’s state include vehicle location and orientation with respect to the world coordinate system (akin to GPS and compass), speed, acceleration vector, and accumulated impact from collisions.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Measurements concerning traffic rules include the percentage of the vehicle’s footprint that impinges on wrong-way lanes or sidewalks, as well as states of the traffic lights and the speed limit at the current location of the vehicle.",
+    "claim_type": "method",
+    "normalized_text": "Traffic rule measurements include vehicle footprint on wrong-way lanes or sidewalks, traffic light states, and speed limit at vehicle location.",
+    "source_quote": "Measurements concerning trafﬁc rules include the percentage of the vehicle’s footprint that impinges on wrong-way lanes or sidewalks, as well as states of the trafﬁc lights and the speed limit at the current location of the vehicle.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "CARLA provides access to exact locations and bounding boxes of all dynamic objects in the environment.",
+    "claim_type": "method",
+    "normalized_text": "CARLA provides exact locations and bounding boxes of all dynamic objects.",
+    "source_quote": "Finally, CARLA provides access to exact locations and bounding boxes of all dynamic objects in the environment.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "These signals play an important role in training and evaluating driving policies.",
+    "claim_type": "method",
+    "normalized_text": "The provided signals are important for training and evaluating driving policies.",
+    "source_quote": "These signals play an important role in training and evaluating driving policies.",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "CARLA supports development, training, and detailed performance analysis of autonomous driving systems.",
+    "claim_type": "method",
+    "normalized_text": "CARLA supports development, training, and performance analysis of autonomous driving systems.",
+    "source_quote": "CARLA supports development, training, and detailed performance analysis of autonomous driving systems.",
+    "confidence": 0.95
+   }
+  ]
+ }
+}

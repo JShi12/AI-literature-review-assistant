@@ -11,7 +11,7 @@ import re
 from collections import Counter
 from collections.abc import Iterable, Mapping, Sequence
 from difflib import SequenceMatcher
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from lit_review_assistant.db.models import Chunk
 from lit_review_assistant.llm.claims import validate_claim_location_against_chunk
@@ -86,15 +86,10 @@ def claim_metrics(claim: ExtractedClaim, chunk: Chunk, pages: Mapping[int, str])
         "span_match": span_similarity >= SPAN_MATCH_THRESHOLD,
         "verbatim": bool(claim_text) and claim_text in normalize_text(chunk.text),
         "lexical_coverage": round(lexical_coverage(claim.claim_text, chunk.text), 3),
-        "ids_copied": (
-            claim.paper_id == chunk.paper_id
-            and claim.chunk_id == chunk.id
-            and (claim.section_id or None) == (chunk.section_id or None)
-        ),
     }
 
 
-def chunk_claims_metrics(claims: list[ExtractedClaim], chunk: Chunk, pages: Mapping[int, str]) -> dict[str, object]:
+def chunk_claims_metrics(claims: list[ExtractedClaim], chunk: Chunk, pages: Mapping[int, str]) -> dict[str, Any]:
     per_claim = [claim_metrics(claim, chunk, pages) for claim in claims]
     return {
         "n_claims": len(claims),
@@ -270,15 +265,15 @@ def span_overlap(a: tuple[int, int], b: tuple[int, int]) -> float:
 
 
 def gold_claim_metrics(
-    predicted: list[ExtractedClaim], gold: list[tuple[str, str]], chunk_text: str
+    predicted: list[tuple[str, str]], gold: list[tuple[str, str]], chunk_text: str
 ) -> dict[str, object]:
-    """Compare a chunk's extracted claims with its gold claims, given as (verbatim quote, claim_type).
+    """Compare a chunk's extracted claims with its gold claims, both given as (source text, claim_type).
 
     Matching is by source span, not wording: a gold claim is recalled if some predicted claim comes from
     an overlapping part of the chunk. Not one-to-one, since extractors split claims differently.
     """
     gold_spans = [(locate_quote(chunk_text, quote), claim_type) for quote, claim_type in gold]
-    predicted_spans = [(locate_claim(claim.claim_text, chunk_text), claim.claim_type) for claim in predicted]
+    predicted_spans = [(locate_claim(text, chunk_text), claim_type) for text, claim_type in predicted]
 
     gold_matched = 0
     type_agree = 0
