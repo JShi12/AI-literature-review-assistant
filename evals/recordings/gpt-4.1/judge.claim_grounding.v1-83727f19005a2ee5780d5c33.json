@@ -1,0 +1,49 @@
+{
+ "key": "83727f19005a2ee5780d5c33d2ada6caa7fb5b42f382134401540735db674124",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 706,
+ "output_tokens": 213,
+ "latency_s": 2.527,
+ "recorded_at": "2026-10-08T10:30:41+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The claim is a direct restatement of the passage's first bullet point.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The claim is a direct restatement of the passage's second bullet point.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 3,
+    "reason": "The claim lists all the weather/lighting presets exactly as in the passage.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 4,
+    "reason": "The claim is a direct restatement of the passage's third bullet point.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 5,
+    "reason": "The claim is a direct restatement of the passage's statement about seed behavior.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 6,
+    "reason": "The claim is a direct restatement of the passage's fourth bullet point.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 7,
+    "reason": "The claim is a direct restatement of the passage's description of available camera types.",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

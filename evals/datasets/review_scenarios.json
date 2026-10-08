@@ -1,0 +1,14 @@
+[
+  {
+    "id": "driving-overview",
+    "topic": "Autonomous driving: end-to-end learning, imitation learning, and simulation",
+    "synthesis_types": ["theme", "contradiction", "gap", "method_comparison", "insight"],
+    "max_claims": 60
+  },
+  {
+    "id": "simulation-and-data",
+    "topic": "How simulation and synthesized data are used to train and evaluate driving policies",
+    "synthesis_types": ["theme", "gap"],
+    "max_claims": 40
+  }
+]

@@ -1,0 +1,205 @@
+{
+ "key": "4a76d32ec0ad0007851cd71eed808b20a979d70e9caf07f7264e19b65125aeec",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.review_citations.v2",
+ "temperature": 0.0,
+ "input_tokens": 2570,
+ "output_tokens": 1035,
+ "latency_s": 6.242,
+ "recorded_at": "2026-10-08T10:34:12+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "sentence_number": 1,
+    "assertions": [
+     {
+      "statement": "There is a noted contradiction regarding the reliability of end-to-end trained networks.",
+      "supporting_claims": [],
+      "supported": false
+     },
+     {
+      "statement": "ALVINN showed successful steering on public roads.",
+      "supporting_claims": [
+       1
+      ],
+      "supported": true
+     },
+     {
+      "statement": "Other systems like DAVE were not reliable enough to replace modular approaches.",
+      "supporting_claims": [
+       2
+      ],
+      "supported": true
+     },
+     {
+      "statement": "This highlights challenges in generalizability.",
+      "supporting_claims": [],
+      "supported": false
+     }
+    ]
+   },
+   {
+    "sentence_number": 2,
+    "assertions": [
+     {
+      "statement": "ChauffeurNet advances this approach by utilizing mid-level input representations combined with recurrent neural networks (RNNs) to output driving trajectories.",
+      "supporting_claims": [
+       1
+      ],
+      "supported": true
+     },
+     {
+      "statement": "ChauffeurNet enables training on both real and simulated data.",
+      "supporting_claims": [
+       2
+      ],
+      "supported": true
+     },
+     {
+      "statement": "ChauffeurNet supports closed-loop simulation testing before real-world deployment.",
+      "supporting_claims": [
+       2
+      ],
+      "supported": true
+     }
+    ]
+   },
+   {
+    "sentence_number": 3,
+    "assertions": [
+     {
+      "statement": "The CARLA simulator serves as a comprehensive open-source platform that facilitates development, training, and validation of autonomous driving models.",
+      "supporting_claims": [
+       1,
+       2,
+       5,
+       6
+      ],
+      "supported": true
+     },
+     {
+      "statement": "CARLA provides flexible sensor and environment configurations.",
+      "supporting_claims": [
+       3
+      ],
+      "supported": true
+     },
+     {
+      "statement": "CARLA provides digital urban assets.",
+      "supporting_claims": [
+       8
+      ],
+      "supported": true
+     },
+     {
+      "statement": "CARLA supports evaluation of various driving approaches including end-to-end learning and reinforcement learning.",
+      "supporting_claims": [
+       9
+      ],
+      "supported": true
+     }
+    ]
+   },
+   {
+    "sentence_number": 4,
+    "assertions": [
+     {
+      "statement": "CARLA enables evaluation in controlled scenarios with specific metrics.",
+      "supporting_claims": [],
+      "supported": false
+     },
+     {
+      "statement": "CARLA offers measurements of agent state and traffic rule compliance.",
+      "supporting_claims": [
+       1,
+       2
+      ],
+      "supported": true
+     },
+     {
+      "statement": "These measurements are critical for training and assessment.",
+      "supporting_claims": [
+       3
+      ],
+      "supported": true
+     }
+    ]
+   },
+   {
+    "sentence_number": 5,
+    "assertions": [
+     {
+      "statement": "The convolutional neural network (CNN) method learns the entire processing pipeline directly from raw sensor data.",
+      "supporting_claims": [],
+      "supported": false
+     },
+     {
+      "statement": "The CNN method generates steering commands from a single front-facing camera image.",
+      "supporting_claims": [],
+      "supported": false
+     }
+    ]
+   },
+   {
+    "sentence_number": 6,
+    "assertions": [
+     {
+      "statement": "Early systems such as ALVINN demonstrated the feasibility of end-to-end neural network steering.",
+      "supporting_claims": [
+       1
+      ],
+      "supported": true
+     },
+     {
+      "statement": "ALVINN used relatively small fully-connected networks.",
+      "supporting_claims": [
+       2
+      ],
+      "supported": true
+     },
+     {
+      "statement": "ALVINN used limited data.",
+      "supporting_claims": [],
+      "supported": false
+     },
+     {
+      "statement": "Modern CNN-based systems leverage greater computational power and extensive datasets to improve robustness.",
+      "supporting_claims": [],
+      "supported": false
+     },
+     {
+      "statement": "Modern CNN-based systems leverage greater computational power and extensive datasets to improve vehicle independence.",
+      "supporting_claims": [],
+      "supported": false
+     }
+    ]
+   },
+   {
+    "sentence_number": 7,
+    "assertions": [
+     {
+      "statement": "End-to-end neural network models have been widely applied to autonomous driving.",
+      "supporting_claims": [],
+      "supported": false
+     },
+     {
+      "statement": "Convolutional neural networks (CNNs) learn to generate steering commands directly from front-facing camera images.",
+      "supporting_claims": [
+       1,
+       5,
+       6
+      ],
+      "supported": true
+     },
+     {
+      "statement": "CNNs are trained on diverse driving data including video and steering inputs.",
+      "supporting_claims": [
+       7
+      ],
+      "supported": true
+     }
+    ]
+   }
+  ]
+ }
+}

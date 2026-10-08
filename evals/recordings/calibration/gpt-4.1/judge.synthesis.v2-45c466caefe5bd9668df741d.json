@@ -1,0 +1,43 @@
+{
+ "key": "45c466caefe5bd9668df741d88cf7cb1d0a732224f153d272287cb4b308be77f",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.synthesis.v2",
+ "temperature": 0.0,
+ "input_tokens": 1160,
+ "output_tokens": 222,
+ "latency_s": 1.843,
+ "recorded_at": "2026-10-08T10:32:37+00:00",
+ "parsed": {
+  "statements": [
+   {
+    "statement": "Several methods for autonomous driving involve end-to-end learning approaches and mid-level representations.",
+    "supporting_claims": [
+     11
+    ],
+    "supported": false
+   },
+   {
+    "statement": "The CNN approach learns the entire processing pipeline to steer an automobile.",
+    "supporting_claims": [],
+    "supported": false
+   },
+   {
+    "statement": "ChauffeurNet uses an RNN with mid-level input and outputs driving trajectories.",
+    "supporting_claims": [],
+    "supported": false
+   },
+   {
+    "statement": "Mid-level representations enable training on real or simulated data and facilitate closed-loop simulation testing before deployment.",
+    "supporting_claims": [],
+    "supported": false
+   },
+   {
+    "statement": "These methods generate steering commands from single front-facing camera images.",
+    "supporting_claims": [],
+    "supported": false
+   }
+  ],
+  "type_evidence": "none",
+  "type_appropriate": false
+ }
+}

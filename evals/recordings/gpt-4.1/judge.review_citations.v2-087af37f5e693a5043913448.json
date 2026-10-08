@@ -1,0 +1,95 @@
+{
+ "key": "087af37f5e693a5043913448eb80048c1cf4f7bfeff98669dd57831eda2f7014",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.review_citations.v2",
+ "temperature": 0.0,
+ "input_tokens": 944,
+ "output_tokens": 452,
+ "latency_s": 2.347,
+ "recorded_at": "2026-10-08T10:43:07+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "sentence_number": 1,
+    "assertions": [
+     {
+      "statement": "Simulation environments and mid-level representations are used to train autonomous driving models on both real and simulated data.",
+      "supporting_claims": [
+       1
+      ],
+      "supported": true
+     },
+     {
+      "statement": "This enables closed-loop simulation testing prior to real-world deployment.",
+      "supporting_claims": [
+       1
+      ],
+      "supported": true
+     }
+    ]
+   },
+   {
+    "sentence_number": 2,
+    "assertions": [
+     {
+      "statement": "The CARLA simulator is an open-source platform that supports the development, training, and validation of autonomous urban driving systems.",
+      "supporting_claims": [
+       1
+      ],
+      "supported": true
+     },
+     {
+      "statement": "CARLA allows flexible specification of sensor suites and environmental conditions.",
+      "supporting_claims": [
+       2
+      ],
+      "supported": true
+     }
+    ]
+   },
+   {
+    "sentence_number": 3,
+    "assertions": [
+     {
+      "statement": "End-to-end learning approaches have been explored, including convolutional neural networks (CNNs) that learn the entire processing pipeline to steer a vehicle.",
+      "supporting_claims": [
+       1
+      ],
+      "supported": true
+     },
+     {
+      "statement": "The CNN uses input from a single front-facing center camera.",
+      "supporting_claims": [
+       2
+      ],
+      "supported": true
+     }
+    ]
+   },
+   {
+    "sentence_number": 4,
+    "assertions": [
+     {
+      "statement": "CARLA has been used to study multiple autonomous driving approaches, including classic modular pipelines, end-to-end imitation learning, and end-to-end reinforcement learning.",
+      "supporting_claims": [
+       1
+      ],
+      "supported": true
+     }
+    ]
+   },
+   {
+    "sentence_number": 5,
+    "assertions": [
+     {
+      "statement": "ChauffeurNet is a recurrent neural network (RNN) that uses mid-level input representations to output driving trajectories for vehicle control.",
+      "supporting_claims": [
+       1
+      ],
+      "supported": true
+     }
+    ]
+   }
+  ]
+ }
+}

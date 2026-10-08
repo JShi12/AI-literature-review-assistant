@@ -1,0 +1,24 @@
+{
+ "key": "579caaeaae3fde432b48f890fa7d82dc11c3216df0e1c93affadeadfa1b8ef7c",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 725,
+ "output_tokens": 119,
+ "latency_s": 1.43,
+ "recorded_at": "2026-10-08T10:31:28+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage states that the AgentRNN employs a shallow convolutional meta-prediction network with a fully-connected layer that predicts a sub-pixel refinement of the pose δpk and also estimates the heading θk and the speed sk. This matches the claim exactly.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage mentions a fully-connected layer but does not specify the number of units (512) in that layer. The claim adds a detail not present in the passage.",
+    "verdict": "partially_supported"
+   }
+  ]
+ }
+}

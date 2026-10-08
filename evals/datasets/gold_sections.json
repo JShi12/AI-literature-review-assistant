@@ -1,0 +1,367 @@
+{
+ "snapshot_fingerprint": "b73819de84718c1d",
+ "labelled_by": "Drafted by Claude (one labelling agent per paper) from the snapshot text; needs human review.",
+ "papers": {
+  "nvidia_end_to_end_self_driving": [
+   {
+    "page": 1,
+    "heading": "Abstract",
+    "normalized_type": "abstract"
+   },
+   {
+    "page": 2,
+    "heading": "Introduction",
+    "normalized_type": "introduction"
+   },
+   {
+    "page": 2,
+    "heading": "Overview of the DAVE-2 System",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 4,
+    "heading": "Data Collection",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 4,
+    "heading": "Network Architecture",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 4,
+    "heading": "Training Details",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 4,
+    "heading": "Data Selection",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 5,
+    "heading": "Augmentation",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 5,
+    "heading": "Simulation",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 6,
+    "heading": "Evaluation",
+    "normalized_type": "results"
+   },
+   {
+    "page": 6,
+    "heading": "Simulation Tests",
+    "normalized_type": "results"
+   },
+   {
+    "page": 7,
+    "heading": "On-road Tests",
+    "normalized_type": "results"
+   },
+   {
+    "page": 7,
+    "heading": "Visualization of Internal CNN State",
+    "normalized_type": "results"
+   },
+   {
+    "page": 9,
+    "heading": "Conclusions",
+    "normalized_type": "conclusion"
+   },
+   {
+    "page": 9,
+    "heading": "References",
+    "normalized_type": "other"
+   }
+  ],
+  "chauffeurnet": [
+   {
+    "page": 1,
+    "heading": "Abstract",
+    "normalized_type": "abstract"
+   },
+   {
+    "page": 1,
+    "heading": "1. Introduction",
+    "normalized_type": "introduction"
+   },
+   {
+    "page": 3,
+    "heading": "2. Related Work",
+    "normalized_type": "related_work"
+   },
+   {
+    "page": 3,
+    "heading": "3. Model Architecture",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 3,
+    "heading": "3.1 Input Output Representation",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 6,
+    "heading": "3.2 Model Design",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 7,
+    "heading": "3.3 System Architecture",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 8,
+    "heading": "4. Imitating the Expert",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 8,
+    "heading": "4.1 Imitation Losses",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 8,
+    "heading": "4.1.1 Agent Position, Heading and Box Prediction",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 8,
+    "heading": "4.1.2 Agent Meta Prediction",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 8,
+    "heading": "4.2 Past Motion Dropout",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 9,
+    "heading": "5. Beyond Pure Imitation",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 9,
+    "heading": "5.1 Synthesizing Perturbations",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 10,
+    "heading": "5.2 Beyond the Imitation Loss",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 10,
+    "heading": "5.2.1 Collision Loss",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 10,
+    "heading": "5.2.2 On Road Loss",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 10,
+    "heading": "5.2.3 Geometry Loss",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 11,
+    "heading": "5.2.4 Auxiliary Losses",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 12,
+    "heading": "5.3 Imitation Dropout",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 12,
+    "heading": "6. Experiments",
+    "normalized_type": "results"
+   },
+   {
+    "page": 12,
+    "heading": "6.1 Data",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 13,
+    "heading": "6.2 Models",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 13,
+    "heading": "6.3 Closed Loop Evaluation",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 13,
+    "heading": "6.3.1 Model Ablation Tests",
+    "normalized_type": "results"
+   },
+   {
+    "page": 15,
+    "heading": "6.3.2 Input Ablation Tests",
+    "normalized_type": "results"
+   },
+   {
+    "page": 15,
+    "heading": "6.3.3 Logged Data Simulated Driving",
+    "normalized_type": "results"
+   },
+   {
+    "page": 16,
+    "heading": "6.3.4 Real World Driving",
+    "normalized_type": "results"
+   },
+   {
+    "page": 16,
+    "heading": "6.4 Open Loop Evaluation",
+    "normalized_type": "results"
+   },
+   {
+    "page": 16,
+    "heading": "6.5 Failure Modes",
+    "normalized_type": "limitations"
+   },
+   {
+    "page": 17,
+    "heading": "6.6 Sampling Speed Proﬁles",
+    "normalized_type": "discussion"
+   },
+   {
+    "page": 18,
+    "heading": "7. Discussion",
+    "normalized_type": "discussion"
+   },
+   {
+    "page": 18,
+    "heading": "Acknowledgments",
+    "normalized_type": "other"
+   },
+   {
+    "page": 19,
+    "heading": "References",
+    "normalized_type": "other"
+   }
+  ],
+  "carla_simulator": [
+   {
+    "page": 1,
+    "heading": "Abstract: We introduce CARLA, an open-source simulator for autonomous driv-",
+    "normalized_type": "abstract"
+   },
+   {
+    "page": 1,
+    "heading": "Introduction",
+    "normalized_type": "introduction"
+   },
+   {
+    "page": 2,
+    "heading": "Simulation Engine",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 4,
+    "heading": "Autonomous Driving",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 4,
+    "heading": "Modular pipeline",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 5,
+    "heading": "Imitation learning",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 5,
+    "heading": "Reinforcement learning",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 6,
+    "heading": "Experiments",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 6,
+    "heading": "Results",
+    "normalized_type": "results"
+   },
+   {
+    "page": 8,
+    "heading": "Conclusion",
+    "normalized_type": "conclusion"
+   },
+   {
+    "page": 9,
+    "heading": "Acknowledgements",
+    "normalized_type": "other"
+   },
+   {
+    "page": 9,
+    "heading": "References",
+    "normalized_type": "other"
+   },
+   {
+    "page": 11,
+    "heading": "Supplementary Material",
+    "normalized_type": "other"
+   },
+   {
+    "page": 11,
+    "heading": "Simulator Technical Details",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 11,
+    "heading": "Client and Server Information Exchange",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 12,
+    "heading": "Environment",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 12,
+    "heading": "Driving Systems Technical Details",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 12,
+    "heading": "Modular Pipeline",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 12,
+    "heading": "Imitation Learning",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 15,
+    "heading": "Reinforcement Learning",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 16,
+    "heading": "Experimental Setup",
+    "normalized_type": "methods"
+   },
+   {
+    "page": 16,
+    "heading": "Types of Infractions",
+    "normalized_type": "methods"
+   }
+  ]
+ }
+}

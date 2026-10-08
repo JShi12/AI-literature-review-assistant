@@ -1,0 +1,28 @@
+{
+ "key": "3817ec9a581ad39539104fcfa1a8adc5ffc527f7b7af807e7319b8a078588905",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 834,
+ "output_tokens": 182,
+ "latency_s": 2.651,
+ "recorded_at": "2026-10-08T09:58:13+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "We experimented with randomly dropping out the imitation losses for a random subset of training examples, referred to as \"imitation dropout\".",
+    "claim_type": "method",
+    "normalized_text": "Imitation dropout randomly drops imitation losses during training for some examples.",
+    "source_quote": "To further increase the eﬀectiveness of the environment losses, we experimented with randomly dropping out the imitation losses for a random subset of training examples. We refer to this as “imitation dropout”.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Imitation dropout yields a better driving model than simply under-weighting the imitation losses.",
+    "claim_type": "finding",
+    "normalized_text": "Imitation dropout improves driving model performance compared to under-weighting imitation losses.",
+    "source_quote": "In the experiments, we show that imitation dropout yields a better driving model than simply under-weighting the imitation losses.",
+    "confidence": 0.9
+   }
+  ]
+ }
+}

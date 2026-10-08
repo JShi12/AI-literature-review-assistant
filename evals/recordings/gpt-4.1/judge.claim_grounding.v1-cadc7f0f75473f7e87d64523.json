@@ -1,0 +1,49 @@
+{
+ "key": "cadc7f0f75473f7e87d64523807d303a12eaa0a51eda9215f907996854405100",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 915,
+ "output_tokens": 378,
+ "latency_s": 2.667,
+ "recorded_at": "2026-10-08T10:30:29+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage states that the paper describes a CNN that goes beyond pattern recognition and learns the entire processing pipeline needed to steer an automobile, matching the claim exactly.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage explicitly says the groundwork was done over 10 years ago in a DARPA seedling project known as DARPA Autonomous Vehicle (DAVE), in which a sub-scale RC car drove through a junk-filled alley way.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 3,
+    "reason": "The passage states that DAVE was trained on hours of human driving in similar, but not identical environments, and that the training data included video from two cameras coupled with left and right steering commands from a human operator.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 4,
+    "reason": "The passage says DAVE-2 was inspired by Pomerleau's work, who built ALVINN in 1989, which demonstrated that an end-to-end trained neural network can indeed steer a car on public roads. This matches the claim.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 5,
+    "reason": "The passage states that their work differs in that 25 years of advances let them apply far more data and computational power, and their experience with CNNs lets them use this technology. This matches the claim.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 6,
+    "reason": "The passage states that ALVINN used a fully-connected network which is tiny by today’s standard, matching the claim.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 7,
+    "reason": "The passage says DAVE demonstrated the potential of end-to-end learning, was used to justify starting the DARPA LAGR program, but its performance was not sufficiently reliable to provide a full alternative to more modular approaches to off-road driving. This matches the claim.",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

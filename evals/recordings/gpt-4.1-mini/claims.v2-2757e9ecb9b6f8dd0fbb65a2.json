@@ -1,0 +1,35 @@
+{
+ "key": "2757e9ecb9b6f8dd0fbb65a21bbf359a07c499e119fd692b6a126830db3b4f19",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 476,
+ "output_tokens": 285,
+ "latency_s": 4.866,
+ "recorded_at": "2026-10-08T10:10:08+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "The intended route is obtained from the router, and is updated dynamically conditioned on whether our agent was able to execute past intents or not.",
+    "claim_type": "method",
+    "normalized_text": "The intended route is dynamically updated based on agent's success in executing past intents.",
+    "source_quote": "The intended route is obtained from the router, and is updated dynamically conditioned on whether our agent was able to execute past intents or not.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The environment information is rendered into the input images described in Fig. 1 and given to the RNN which then outputs a future trajectory.",
+    "claim_type": "method",
+    "normalized_text": "Environment information is rendered into input images and fed to an RNN to output a future trajectory.",
+    "source_quote": "The environment information is rendered into the input images described in Fig. 1 and given to the RNN which then outputs a future trajectory.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "This is fed to a controls optimizer that outputs the low-level control signals that drive the vehicle (in the real world or in simulation).",
+    "claim_type": "method",
+    "normalized_text": "A controls optimizer outputs low-level control signals to drive the vehicle based on the future trajectory.",
+    "source_quote": "This is fed to a controls optimizer that outputs the low-level control signals that drive the vehicle (in the real world or in simulation).",
+    "confidence": 0.95
+   }
+  ]
+ }
+}

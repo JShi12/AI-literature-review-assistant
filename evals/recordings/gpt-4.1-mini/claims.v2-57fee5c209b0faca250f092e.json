@@ -1,0 +1,77 @@
+{
+ "key": "57fee5c209b0faca250f092ec5283054defdd271103cfea363bf1b83ac021c31",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 647,
+ "output_tokens": 763,
+ "latency_s": 7.231,
+ "recorded_at": "2026-10-08T10:10:02+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "The trained network is used to generate steering commands from a single front-facing center camera.",
+    "claim_type": "method",
+    "normalized_text": "The trained network generates steering commands from a single front-facing center camera.",
+    "source_quote": "The trained network is used to generate steering commands from a single front-facing center camera.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Training data was collected by driving on a wide variety of roads and in a diverse set of lighting and weather conditions.",
+    "claim_type": "dataset",
+    "normalized_text": "Training data includes diverse roads, lighting, and weather conditions.",
+    "source_quote": "Training data was collected by driving on a wide variety of roads and in a diverse set of lighting and weather conditions.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Most road data was collected in central New Jersey, although highway data was also collected from Illinois, Michigan, Pennsylvania, and New York.",
+    "claim_type": "dataset",
+    "normalized_text": "Road data was collected mainly in central New Jersey and highways in Illinois, Michigan, Pennsylvania, and New York.",
+    "source_quote": "Most road data was collected in central New Jersey, although highway data was also collected from Illinois, Michigan, Pennsylvania, and New York.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Other road types include two-lane roads (with and without lane markings), residential roads with parked cars, tunnels, and unpaved roads.",
+    "claim_type": "dataset",
+    "normalized_text": "Data includes two-lane roads, residential roads with parked cars, tunnels, and unpaved roads.",
+    "source_quote": "Other road types include two-lane roads (with and without lane markings), residential roads with parked cars, tunnels, and unpaved roads.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Data was collected in clear, cloudy, foggy, snowy, and rainy weather, both day and night.",
+    "claim_type": "dataset",
+    "normalized_text": "Data was collected across various weather conditions and times of day.",
+    "source_quote": "Data was collected in clear, cloudy, foggy, snowy, and rainy weather, both day and night.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "In some instances, the sun was low in the sky, resulting in glare reﬂecting from the road surface and scattering from the windshield.",
+    "claim_type": "dataset",
+    "normalized_text": "Some data includes sun glare effects from low sun positions.",
+    "source_quote": "In some instances, the sun was low in the sky, resulting in glare reﬂecting from the road surface and scattering from the windshield.",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "Data was acquired using either our drive-by-wire test vehicle, which is a 2016 Lincoln MKZ, or using a 2013 Ford Focus with cameras placed in similar positions to those in the Lincoln.",
+    "claim_type": "dataset",
+    "normalized_text": "Data was acquired using a 2016 Lincoln MKZ or a 2013 Ford Focus with similarly placed cameras.",
+    "source_quote": "Data was acquired using either our drive-by-wire test vehicle, which is a 2016 Lincoln MKZ, or using a 2013 Ford Focus with cameras placed in similar positions to those in the Lincoln.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The system has no dependencies on any particular vehicle make or model.",
+    "claim_type": "method",
+    "normalized_text": "The system is vehicle-make and model independent.",
+    "source_quote": "The system has no dependencies on any particular vehicle make or model.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Drivers were encouraged to maintain full attentiveness, but otherwise drive as they usually do.",
+    "claim_type": "method",
+    "normalized_text": "Drivers maintained full attentiveness and drove normally during data collection.",
+    "source_quote": "Drivers were encouraged to maintain full attentiveness, but otherwise drive as they usually do.",
+    "confidence": 0.9
+   }
+  ]
+ }
+}

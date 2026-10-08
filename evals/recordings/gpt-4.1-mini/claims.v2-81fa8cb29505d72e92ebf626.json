@@ -1,0 +1,35 @@
+{
+ "key": "81fa8cb29505d72e92ebf6261070dfe78a5ae5649d9c128d5a20690d9e818d69",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 528,
+ "output_tokens": 264,
+ "latency_s": 3.104,
+ "recorded_at": "2026-10-08T10:10:03+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "This demonstrates that the CNN learned to detect useful road features on its own, i. e., with only the human steering angle as training signal.",
+    "claim_type": "finding",
+    "normalized_text": "The CNN learned to detect useful road features using only human steering angle as training signal.",
+    "source_quote": "This demonstrates that the CNN learned to detect useful road features on its own, i. e., with only the human steering angle as training signal.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "We never explicitly trained it to detect the outlines of roads.",
+    "claim_type": "method",
+    "normalized_text": "The CNN was not explicitly trained to detect road outlines.",
+    "source_quote": "We never explicitly trained it to detect the outlines of roads.",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "The activations of the first two feature maps appear to contain mostly noise, i. e., the CNN doesn’t recognize any useful features in this image.",
+    "claim_type": "finding",
+    "normalized_text": "The CNN does not recognize useful features in images with no road, as indicated by noisy activations in the first two feature maps.",
+    "source_quote": "The activations of the first two feature maps appear to contain mostly noise, i. e., the CNN doesn’t recognize any useful features in this image.",
+    "confidence": 0.9
+   }
+  ]
+ }
+}

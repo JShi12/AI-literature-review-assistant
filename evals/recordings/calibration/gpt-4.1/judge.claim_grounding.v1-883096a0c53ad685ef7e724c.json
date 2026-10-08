@@ -1,0 +1,24 @@
+{
+ "key": "883096a0c53ad685ef7e724c63a16abb1b2a291b67b3dceec44017b966f71966",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 502,
+ "output_tokens": 143,
+ "latency_s": 2.253,
+ "recorded_at": "2026-10-08T10:31:21+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "This claim is directly supported by the passage, which states that in Figure 8 (an image with no road), the activations of the first two feature maps appear to contain mostly noise, i.e., the CNN doesn’t recognize any useful features in this image.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage only discusses one example image with no road (Figure 8) and does not generalize to all images without a road. The claim overgeneralizes by asserting that the CNN does not recognize useful features in any image without a road, which is not stated in the passage.",
+    "verdict": "partially_supported"
+   }
+  ]
+ }
+}

@@ -1,0 +1,63 @@
+{
+ "key": "8823eba591f2d3242b0d26d639d543814c99b31e9bf918a454c317bc1cf525f3",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 725,
+ "output_tokens": 574,
+ "latency_s": 4.5,
+ "recorded_at": "2026-10-08T10:10:08+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "The core ChauffeurNet model consists of a FeatureNet and an AgentRNN.",
+    "claim_type": "method",
+    "normalized_text": "ChauffeurNet model includes FeatureNet and AgentRNN.",
+    "source_quote": "(a) The core ChauﬀeurNet model with a FeatureNet and an AgentRNN",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "There is a co-trained road mask prediction net and PerceptionRNN in ChauffeurNet.",
+    "claim_type": "method",
+    "normalized_text": "ChauffeurNet includes co-trained road mask prediction net and PerceptionRNN.",
+    "source_quote": "(b) Co-trained road mask prediction net and PerceptionRNN",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Training losses are shown in blue, and the green labels depict the ground-truth data in ChauffeurNet training.",
+    "claim_type": "method",
+    "normalized_text": "Training losses are blue; green labels are ground-truth data in ChauffeurNet training.",
+    "source_quote": "(c) Training losses are shown in blue, and the green labels depict the ground-truth data.",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "The dashed arrows represent the recurrent feedback of predictions from one iteration to the next in ChauffeurNet.",
+    "claim_type": "method",
+    "normalized_text": "Dashed arrows indicate recurrent feedback of predictions between iterations in ChauffeurNet.",
+    "source_quote": "The dashed arrows represent the recurrent feedback of predictions from one iteration to the next.",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "Lights and dynamic objects are sampled over the past Tscene seconds, while past agent poses are sampled over a potentially longer interval of Tpose seconds.",
+    "claim_type": "method",
+    "normalized_text": "Sampling of lights and dynamic objects over Tscene seconds; agent poses over Tpose seconds.",
+    "source_quote": "lights and dynamic objects are sampled over the past Tscene seconds, while the past agent poses are sampled over a potentially longer interval of Tpose seconds.",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "The box representation of other dynamic objects makes it easy to generate input data from simulation or real-sensor logs using a standard perception system.",
+    "claim_type": "method",
+    "normalized_text": "Box representation of dynamic objects facilitates input data generation from simulation or sensor logs.",
+    "source_quote": "This simple input representation, particularly the box representation of other dynamic objects, makes it easy to generate input data from simulation or create it from real-sensor logs using a standard perception system that detects and tracks objects.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "This input representation enables testing and validation of models in closed-loop simulations before running them on a real car.",
+    "claim_type": "method",
+    "normalized_text": "Input representation enables closed-loop simulation testing before real car deployment.",
+    "source_quote": "This enables testing and validation of models in closed-loop simulations before running them on a real car.",
+    "confidence": 0.95
+   }
+  ]
+ }
+}

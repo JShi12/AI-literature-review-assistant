@@ -1,0 +1,29 @@
+{
+ "key": "3fd9402be6ec0945764af250037150c571f97232f6eb0f8d6c0f0975d9537e32",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 725,
+ "output_tokens": 139,
+ "latency_s": 1.259,
+ "recorded_at": "2026-10-08T10:31:31+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage explicitly states that the key challenge is the need to run the system closed-loop, where errors accumulate and induce a shift from the training distribution, referencing Ross et al. (2011).",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage directly states that their first finding is that even with 30 million examples and mid-level input/output representations, pure imitation learning is not sufficient.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 3,
+    "reason": "This claim contradicts the passage, which states that pure imitation learning is not sufficient under these conditions, not that it is sufficient.",
+    "verdict": "unsupported"
+   }
+  ]
+ }
+}

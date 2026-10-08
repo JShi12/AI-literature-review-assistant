@@ -1,0 +1,36 @@
+{
+ "key": "7b1384b38854a8d9ac6a6af63b31b081b33c646ddb0ba5f3ad169895ef69e4ca",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.synthesis.v2",
+ "temperature": 0.0,
+ "input_tokens": 1027,
+ "output_tokens": 223,
+ "latency_s": 3.433,
+ "recorded_at": "2026-10-08T10:32:34+00:00",
+ "parsed": {
+  "statements": [
+   {
+    "statement": "Several studies demonstrate the use of end-to-end neural networks for autonomous vehicle steering.",
+    "supporting_claims": [],
+    "supported": false
+   },
+   {
+    "statement": "ALVINN showed that an end-to-end trained neural network can steer a car on public roads using a fully-connected network smaller than modern networks.",
+    "supporting_claims": [],
+    "supported": false
+   },
+   {
+    "statement": "More recent work applies convolutional neural networks (CNNs) that learn the entire processing pipeline to steer an automobile, generating steering commands from single front-facing center camera images.",
+    "supporting_claims": [],
+    "supported": false
+   },
+   {
+    "statement": "These networks are trained on diverse driving data including video from multiple cameras and steering commands, leveraging back propagation for weight adjustment.",
+    "supporting_claims": [],
+    "supported": false
+   }
+  ],
+  "type_evidence": "none",
+  "type_appropriate": false
+ }
+}

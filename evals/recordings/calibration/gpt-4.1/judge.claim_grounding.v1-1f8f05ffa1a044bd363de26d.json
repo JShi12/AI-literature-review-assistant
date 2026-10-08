@@ -1,0 +1,24 @@
+{
+ "key": "1f8f05ffa1a044bd363de26d40a93e93521ac0ca164d901e024ef00215f6ae46",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 805,
+ "output_tokens": 118,
+ "latency_s": 1.708,
+ "recorded_at": "2026-10-08T10:31:26+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage explicitly states that they experimented with randomly dropping out the imitation losses for a random subset of training examples and refer to this as 'imitation dropout.'",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage says 'we show that imitation dropout yields a better driving model than simply under-weighting the imitation losses.' It does not claim superiority over 'any alternative way of weighting the imitation losses,' only over under-weighting. The claim overgeneralizes the comparison.",
+    "verdict": "partially_supported"
+   }
+  ]
+ }
+}

@@ -1,0 +1,42 @@
+{
+ "key": "9773a7c15331ec56a7f2d67cae53d58016053167114d6a9a37325dd1847be5a7",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.synthesis.v2",
+ "temperature": 0.0,
+ "input_tokens": 898,
+ "output_tokens": 198,
+ "latency_s": 1.404,
+ "recorded_at": "2026-10-08T10:41:34+00:00",
+ "parsed": {
+  "statements": [
+   {
+    "statement": "Paper A describes a method where a CNN learns the entire processing pipeline to steer an automobile, generating steering commands directly from single front-facing center camera images.",
+    "supporting_claims": [
+     1,
+     2
+    ],
+    "supported": true
+   },
+   {
+    "statement": "Paper B presents ChauffeurNet, an RNN that takes mid-level input representations and outputs driving trajectories for control rather than direct steering commands.",
+    "supporting_claims": [
+     3,
+     4
+    ],
+    "supported": true
+   },
+   {
+    "statement": "This reveals a contradiction in the fundamental approach to input and output representations for autonomous driving control between the two methods.",
+    "supporting_claims": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "supported": false
+   }
+  ],
+  "type_evidence": "none",
+  "type_appropriate": false
+ }
+}

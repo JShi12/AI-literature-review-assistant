@@ -1,0 +1,24 @@
+{
+ "key": "31745355c0713efc45d79d00644f355d5d87d3004dbb04aa1050076129420275",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 658,
+ "output_tokens": 80,
+ "latency_s": 3.378,
+ "recorded_at": "2026-10-08T10:31:18+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage explicitly states that ALVINN used a fully-connected network which is tiny by today’s standard.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage states that ALVINN used a fully-connected network, not a convolutional network. This claim changes the type of network used.",
+    "verdict": "unsupported"
+   }
+  ]
+ }
+}

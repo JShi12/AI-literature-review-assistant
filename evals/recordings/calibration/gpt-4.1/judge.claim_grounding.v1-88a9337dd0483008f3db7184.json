@@ -1,0 +1,24 @@
+{
+ "key": "88a9337dd0483008f3db7184a12caebefa18e1b069b00c33f7f2faa060fbde7a",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 632,
+ "output_tokens": 85,
+ "latency_s": 1.964,
+ "recorded_at": "2026-10-08T10:31:36+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage explicitly states that the test data was taken in diverse lighting and weather conditions and includes highways, local roads, and residential streets.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage contradicts this claim, stating that the test data was taken in diverse lighting and weather conditions and includes more than just highways.",
+    "verdict": "unsupported"
+   }
+  ]
+ }
+}

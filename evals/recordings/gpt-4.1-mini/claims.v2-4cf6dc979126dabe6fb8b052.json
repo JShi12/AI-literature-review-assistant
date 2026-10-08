@@ -1,0 +1,56 @@
+{
+ "key": "4cf6dc979126dabe6fb8b0525d5b15cf1157018fd3cdf4d3bda499cab9857a3e",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 664,
+ "output_tokens": 565,
+ "latency_s": 5.534,
+ "recorded_at": "2026-10-08T10:10:13+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "other than M4, all other models cause the agent to collide with the parked vehicle about half the time",
+    "claim_type": "finding",
+    "normalized_text": "Only model M4 causes significantly fewer collisions with the parked vehicle compared to others.",
+    "source_quote": "We ﬁnd that other than M4, all other models cause the agent to collide with the parked vehicle about half the time.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The baseline M0 model can also get stuck behind the parked vehicle in some of the scenarios",
+    "claim_type": "finding",
+    "normalized_text": "Model M0 sometimes gets stuck behind the parked vehicle.",
+    "source_quote": "The baseline M0 model can also get stuck behind the parked vehicle in some of the scenarios.",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "The model M4 nudges around the parked vehicle and then brings the agent back to the lane center",
+    "claim_type": "finding",
+    "normalized_text": "Model M4 successfully nudges around the parked vehicle and returns to lane center.",
+    "source_quote": "The model M4 nudges around the parked vehicle and then brings the agent back to the lane center.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "This can be attributed to the model’s ability to learn to avoid collisions and nudge around objects because of training with the collision loss the trajectory perturbation",
+    "claim_type": "finding",
+    "normalized_text": "Model M4's training with collision loss and trajectory perturbation enables it to avoid collisions and nudge around objects.",
+    "source_quote": "This can be attributed to the model’s ability to learn to avoid collisions and nudge around objects because of training with the collision loss the trajectory perturbation.",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "Comparing model M3 and M4, it is apparent that “imitation dropout” was more eﬀective at learning the right behavior than only re-weighting the imitation losses",
+    "claim_type": "finding",
+    "normalized_text": "Imitation dropout (used in M4) is more effective than re-weighting imitation losses (used in M3) for learning correct behavior.",
+    "source_quote": "Comparing model M3 and M4, it is apparent that “imitation dropout” was more eﬀective at learning the right behavior than only re-weighting the imitation losses.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "A 10% collision rate for M4 is thus not a measure of the absolute performance of the model since we do not have a perfect",
+    "claim_type": "limitation",
+    "normalized_text": "The 10% collision rate for M4 does not represent absolute performance due to imperfect conditions.",
+    "source_quote": "A 10% collision rate for M4 is thus not a measure of the absolute performance of the model since we do not have a perfect",
+    "confidence": 0.85
+   }
+  ]
+ }
+}

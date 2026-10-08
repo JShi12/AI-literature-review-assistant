@@ -1,0 +1,35 @@
+{
+ "key": "b8e136ce5add2e1c06d27f4a5196f28e4a7cb64a74e253d4ac4a39434acfc0b4",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 861,
+ "output_tokens": 319,
+ "latency_s": 3.914,
+ "recorded_at": "2026-10-08T09:58:28+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "RL was trained using a signiﬁcantly larger amount of data: 12 days of driving, compared to 14 hours used by imitation learning.",
+    "claim_type": "method",
+    "normalized_text": "RL training data duration is 12 days, imitation learning training data duration is 14 hours.",
+    "source_quote": "RL was trained using a signiﬁcantly larger amount of data: 12 days of driving, compared to 14 hours used by imitation learning.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "RL underperforms despite strong results on tasks such as Atari games and maze navigation.",
+    "claim_type": "finding",
+    "normalized_text": "RL performs worse in this driving task compared to other tasks like Atari games and maze navigation.",
+    "source_quote": "Why does RL underperform, despite strong results on tasks such as Atari games [18, 19] and maze navigation [19, 5]?",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "RL is known to be brittle and requires extensive task-speciﬁc hyperparameter search, which is infeasible in realistic simulators.",
+    "claim_type": "limitation",
+    "normalized_text": "RL brittleness and hyperparameter tuning challenges limit its performance in realistic simulators.",
+    "source_quote": "One reason is that RL is known to be brittle [12], and it is common to perform extensive task-speciﬁc hyperparameter search, such as 50 trials per environment as reported by Mnih et al. [19]. When using a realistic simulator, such extensive hyperparameter search becomes infeasible.",
+    "confidence": 0.95
+   }
+  ]
+ }
+}

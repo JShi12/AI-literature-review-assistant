@@ -1,0 +1,59 @@
+{
+ "key": "0ddd61f6d003439ac3ed9ac34241ff8f221bd5f1b33ed62d540038577a6cd5a0",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.synthesis.v2",
+ "temperature": 0.0,
+ "input_tokens": 1069,
+ "output_tokens": 270,
+ "latency_s": 1.712,
+ "recorded_at": "2026-10-08T10:42:01+00:00",
+ "parsed": {
+  "statements": [
+   {
+    "statement": "Paper C describes CARLA as an open-source urban driving simulator.",
+    "supporting_claims": [
+     1
+    ],
+    "supported": true
+   },
+   {
+    "statement": "CARLA supports development, training, and validation of autonomous driving systems.",
+    "supporting_claims": [
+     2
+    ],
+    "supported": true
+   },
+   {
+    "statement": "CARLA supports flexible specification of sensor suites and environmental conditions.",
+    "supporting_claims": [
+     3
+    ],
+    "supported": true
+   },
+   {
+    "statement": "CARLA provides free urban environment content such as urban layouts, vehicles, buildings, and pedestrians.",
+    "supporting_claims": [
+     4,
+     5
+    ],
+    "supported": true
+   },
+   {
+    "statement": "CARLA supports training, prototyping, and validation of autonomous driving models including perception and control.",
+    "supporting_claims": [
+     6
+    ],
+    "supported": true
+   },
+   {
+    "statement": "CARLA provides measurements of agent state and traffic rule compliance.",
+    "supporting_claims": [
+     7
+    ],
+    "supported": true
+   }
+  ],
+  "type_evidence": "none",
+  "type_appropriate": false
+ }
+}

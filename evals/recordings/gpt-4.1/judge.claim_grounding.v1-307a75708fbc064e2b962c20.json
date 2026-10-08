@@ -1,0 +1,44 @@
+{
+ "key": "307a75708fbc064e2b962c20166bfa679b7fb1c0b1ea035d33e2a26df09fb6b0",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 857,
+ "output_tokens": 301,
+ "latency_s": 1.97,
+ "recorded_at": "2026-10-08T10:30:32+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage explicitly states that the mid-level input is presented to a recurrent neural network (RNN), named ChauffeurNet, which outputs a driving trajectory that is then consumed by a controller translating it to steering and acceleration.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage states that the advantage of these mid-level representations is that the net can be trained on real or simulated data, and can be easily tested and validated in closed-loop simulations before running on a real car.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 3,
+    "reason": "The passage directly states that even with 30 million examples and mid-level input/output representations, pure imitation learning is not sufficient.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 4,
+    "reason": "The passage gives the example that the model would get stuck or collide with another vehicle parked on the side of a narrow street, when a nudging and passing behavior was viable.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 5,
+    "reason": "The passage states that the key challenge is the need to run the system closed-loop, where errors accumulate and induce a shift from the training distribution.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 6,
+    "reason": "The passage says that scientifically, this result is valuable evidence about the limitations of pure imitation in the driving domain, especially in light of recent promising results for high-capacity models.",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

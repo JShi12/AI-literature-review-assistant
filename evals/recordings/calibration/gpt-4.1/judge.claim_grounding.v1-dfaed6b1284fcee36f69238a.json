@@ -1,0 +1,29 @@
+{
+ "key": "dfaed6b1284fcee36f69238a282e81c8d5835f96f34a78282974c09293fbc77f",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 641,
+ "output_tokens": 146,
+ "latency_s": 1.439,
+ "recorded_at": "2026-10-08T10:31:38+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "This claim is directly stated in the passage: 'Drivers were encouraged to maintain full attentiveness, but otherwise drive as they usually do.'",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "This claim matches the passage, which lists 'two-lane roads (with and without lane markings), residential roads with parked cars, tunnels, and unpaved roads' as other road types.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 3,
+    "reason": "The claim adds 'multi-level parking garages,' which are not mentioned in the passage. The rest of the claim matches, but this addition is not supported by the passage.",
+    "verdict": "partially_supported"
+   }
+  ]
+ }
+}

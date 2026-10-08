@@ -1,0 +1,56 @@
+{
+ "key": "8c23a7e358f3d476f33c4db49658f8cc35bda5418ecc2ee09e556412267246a6",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 708,
+ "output_tokens": 697,
+ "latency_s": 5.909,
+ "recorded_at": "2026-10-08T09:58:11+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "We present this mid-level input to a recurrent neural network (RNN), named ChauffeurNet, which then outputs a driving trajectory that is consumed by a controller which translates it to steering and acceleration.",
+    "claim_type": "method",
+    "normalized_text": "ChauffeurNet is an RNN that takes mid-level input and outputs driving trajectories for control.",
+    "source_quote": "We present this mid-level input to a recurrent neural network (RNN), named ChauffeurNet, which then outputs a driving trajectory that is consumed by a controller which translates it to steering and acceleration.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The further advantage of these mid-level representations is that the net can be trained on real or simulated data, and can be easily tested and validated in closed-loop simulations before running on a real car.",
+    "claim_type": "method",
+    "normalized_text": "Mid-level representations enable training on real or simulated data and facilitate closed-loop simulation testing before real deployment.",
+    "source_quote": "The further advantage of these mid-level representations is that the net can be trained on real or simulated data, and can be easily tested and validated in closed-loop simulations before running on a real car.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Our first finding is that even with 30 million examples, and even with mid-level input and output representations that remove the burden of perception and control, pure imitation learning is not sufficient.",
+    "claim_type": "finding",
+    "normalized_text": "Pure imitation learning is insufficient even with 30 million examples and mid-level input/output representations.",
+    "source_quote": "Our first finding is that even with 30 million examples, and even with mid-level input and output representations that remove the burden of perception and control, pure imitation learning is not sufficient.",
+    "confidence": 0.98
+   },
+   {
+    "claim_text": "As an example, we found that this model would get stuck or collide with another vehicle parked on the side of a narrow street, when a nudging and passing behavior was viable.",
+    "claim_type": "finding",
+    "normalized_text": "The model can get stuck or collide with parked vehicles on narrow streets despite viable passing options.",
+    "source_quote": "As an example, we found that this model would get stuck or collide with another vehicle parked on the side of a narrow street, when a nudging and passing behavior was viable.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The key challenge is that we need to run the system closed-loop, where errors accumulate and induce a shift from the training distribution (Ross et al. (2011)).",
+    "claim_type": "limitation",
+    "normalized_text": "Closed-loop operation causes error accumulation and distribution shift from training data.",
+    "source_quote": "The key challenge is that we need to run the system closed-loop, where errors accumulate and induce a shift from the training distribution (Ross et al. (2011)).",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Scientifically, this result is valuable evidence about the limitations of pure imitation in the driving domain, especially in light of recent promising results for high-capacity models (Laskey et al. (2017a)).",
+    "claim_type": "finding",
+    "normalized_text": "This result evidences limitations of pure imitation learning in driving despite promising high-capacity model results.",
+    "source_quote": "Scientifically, this result is valuable evidence about the limitations of pure imitation in the driving domain, especially in light of recent promising results for high-capacity models (Laskey et al. (2017a)).",
+    "confidence": 0.9
+   }
+  ]
+ }
+}

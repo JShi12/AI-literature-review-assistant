@@ -1,0 +1,34 @@
+{
+ "key": "2fc349d4282815621a6cef846ee4c765f5aaef2587888dbe69464da232624fbb",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 754,
+ "output_tokens": 198,
+ "latency_s": 2.022,
+ "recorded_at": "2026-10-08T10:30:30+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage explicitly states that when the off-center distance exceeds one meter, a virtual human intervention is triggered, and the virtual vehicle position and orientation is reset to match the ground truth of the corresponding frame of the original test video.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage states that in simulation, the networks provide steering commands to an ensemble of prerecorded test routes corresponding to about three hours and 100 miles of driving in Monmouth County, NJ.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 3,
+    "reason": "The passage says the test data was taken in diverse lighting and weather conditions and includes highways, local roads, and residential streets.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 4,
+    "reason": "The passage explains that autonomy is estimated by counting simulated human interventions, which occur when the simulated vehicle departs from the center line by more than one meter. This matches the claim.",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

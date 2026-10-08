@@ -1,0 +1,24 @@
+{
+ "key": "4c956aad40bc9031214e2d5596e0425b3930a7253e03346945b1da6aaadaed20",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 699,
+ "output_tokens": 113,
+ "latency_s": 2.295,
+ "recorded_at": "2026-10-08T10:30:31+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage states: 'For a typical drive in Monmouth County NJ from our office in Holmdel to Atlantic Highlands, we are autonomous approximately 98% of the time.' This matches the claim exactly.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage states: 'We also drove 10 miles on the Garden State Parkway (a multi-lane divided highway with on and off ramps) with zero intercepts.' This matches the claim exactly.",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

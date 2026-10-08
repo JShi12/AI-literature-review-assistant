@@ -1,0 +1,44 @@
+{
+ "key": "d5bf238017f6af6f945320ddc85fc9a5952c3ed3574ed3c4846f6031bd0d51c7",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 742,
+ "output_tokens": 333,
+ "latency_s": 2.129,
+ "recorded_at": "2026-10-08T10:30:36+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage states: 'other than M4, all other models cause the agent to collide with the parked vehicle about half the time.' This matches the claim exactly.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage says: 'The baseline M0 model can also get stuck behind the parked vehicle in some of the scenarios.' This is directly stated.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 3,
+    "reason": "The passage states: 'The model M4 nudges around the parked vehicle and then brings the agent back to the lane center.' This matches the claim.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 4,
+    "reason": "The passage says: 'This can be attributed to the model’s ability to learn to avoid collisions and nudge around objects because of training with the collision loss the trajectory perturbation.' The claim is a paraphrase of this sentence.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 5,
+    "reason": "The passage states: 'Comparing model M3 and M4, it is apparent that “imitation dropout” was more effective at learning the right behavior than only re-weighting the imitation losses.' This matches the claim.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 6,
+    "reason": "The passage says: 'A 10% collision rate for M4 is thus not a measure of the absolute performance of the model since we do not have a perfect...' The claim matches this statement, though the passage is cut off at the end. However, the core meaning is present.",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "key": "c6b55989e5959990aec131a7fe3bd8c95d41b64c9fcd1144a19225b658827f59",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 823,
+ "output_tokens": 111,
+ "latency_s": 1.435,
+ "recorded_at": "2026-10-08T10:31:29+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage explicitly states that RL underperforms despite strong results on tasks such as Atari games and maze navigation.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage suggests that one reason RL underperforms is the infeasibility of extensive hyperparameter search in a realistic simulator, but it does not say this is the main reason. It only says 'one reason is...' and does not claim it is the primary or main cause.",
+    "verdict": "partially_supported"
+   }
+  ]
+ }
+}

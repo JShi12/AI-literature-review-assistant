@@ -1,0 +1,49 @@
+{
+ "key": "f24a884ea88790b3d2c7dca6b1c4249715504f8405167c65835a6717518bf314",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 803,
+ "output_tokens": 287,
+ "latency_s": 1.943,
+ "recorded_at": "2026-10-08T10:30:33+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage states in Figure 2(a) that the core ChauffeurNet model consists of a FeatureNet and an AgentRNN.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage states in Figure 2(b) that there is a co-trained road mask prediction net and PerceptionRNN.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 3,
+    "reason": "The passage says that training losses are shown in blue and green labels depict the ground-truth data.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 4,
+    "reason": "The passage states that the dashed arrows represent the recurrent feedback of predictions from one iteration to the next.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 5,
+    "reason": "The passage says 'lights and dynamic objects are sampled over the past Tscene seconds, while the past agent poses are sampled over a potentially longer interval of Tpose seconds.'",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 6,
+    "reason": "The passage states that the box representation of other dynamic objects makes it easy to generate input data from simulation or real-sensor logs using a standard perception system.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 7,
+    "reason": "The passage says this input representation enables testing and validation of models in closed-loop simulations before running them on a real car.",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

@@ -1,0 +1,56 @@
+{
+ "key": "040b183b2c65c1d55d5102a4c20af856c2eae23b9e2724619af77b4cfe67bd0f",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 699,
+ "output_tokens": 552,
+ "latency_s": 5.462,
+ "recorded_at": "2026-10-08T10:10:17+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "We introduce CARLA, an open-source simulator for autonomous driving research.",
+    "claim_type": "method",
+    "normalized_text": "CARLA is an open-source simulator for autonomous driving research.",
+    "source_quote": "We introduce CARLA, an open-source simulator for autonomous driv-\ning research.",
+    "confidence": 0.99
+   },
+   {
+    "claim_text": "CARLA has been developed from the ground up to support development, training, and validation of autonomous urban driving systems.",
+    "claim_type": "method",
+    "normalized_text": "CARLA supports development, training, and validation of autonomous urban driving systems.",
+    "source_quote": "CARLA has been developed from the ground up to support devel-\nopment, training, and validation of autonomous urban driving systems.",
+    "confidence": 0.98
+   },
+   {
+    "claim_text": "CARLA provides open digital assets (urban layouts, buildings, vehicles) that were created for this purpose and can be used freely.",
+    "claim_type": "dataset",
+    "normalized_text": "CARLA provides freely usable open digital assets including urban layouts, buildings, and vehicles.",
+    "source_quote": "In addition to open-source code and protocols, CARLA provides open digital assets\n(urban layouts, buildings, vehicles) that were created for this purpose and can\nbe used freely.",
+    "confidence": 0.98
+   },
+   {
+    "claim_text": "The simulation platform supports flexible specification of sensor suites and environmental conditions.",
+    "claim_type": "method",
+    "normalized_text": "CARLA supports flexible specification of sensor suites and environmental conditions.",
+    "source_quote": "The simulation platform supports ﬂexible speciﬁcation of sensor\nsuites and environmental conditions.",
+    "confidence": 0.98
+   },
+   {
+    "claim_text": "We use CARLA to study the performance of three approaches to autonomous driving: a classic modular pipeline, an end-to-end model trained via imitation learning, and an end-to-end model trained via reinforcement learning.",
+    "claim_type": "method",
+    "normalized_text": "CARLA is used to study three autonomous driving approaches: classic modular pipeline, end-to-end imitation learning, and end-to-end reinforcement learning.",
+    "source_quote": "We use CARLA to study the performance\nof three approaches to autonomous driving: a classic modular pipeline, an end-\nto-end model trained via imitation learning, and an end-to-end model trained via\nreinforcement learning.",
+    "confidence": 0.97
+   },
+   {
+    "claim_text": "The approaches are evaluated in controlled scenarios of increasing difficulty, and their performance is examined via metrics provided by CARLA.",
+    "claim_type": "method",
+    "normalized_text": "The three approaches are evaluated in controlled scenarios of increasing difficulty using CARLA's metrics.",
+    "source_quote": "The approaches are evaluated in controlled scenarios of\nincreasing difﬁculty, and their performance is examined via metrics provided by\nCARLA, illustrating the platform’s utility for autonomous driving research.",
+    "confidence": 0.96
+   }
+  ]
+ }
+}

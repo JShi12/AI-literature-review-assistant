@@ -1,0 +1,47 @@
+{
+ "key": "6ce7a2c6691687e3267ba28cae748e6f1fc4ba94d97c7eb17cd7005c283ae909",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "synthesis.v2",
+ "temperature": 0.2,
+ "input_tokens": 4116,
+ "output_tokens": 910,
+ "latency_s": 9.054,
+ "recorded_at": "2026-10-08T10:41:24+00:00",
+ "parsed": {
+  "syntheses": [
+   {
+    "synthesis_type": "theme",
+    "title": "Use of Mid-Level Representations and Simulation for Autonomous Driving Training",
+    "body": "Both papers B and C emphasize the use of mid-level representations and simulation environments to facilitate autonomous driving training and testing. Paper B describes ChauffeurNet as an RNN that takes mid-level input and outputs driving trajectories, enabling training on real or simulated data and closed-loop simulation testing before real deployment (claims cc49c2d4-b50d-5322-8525-304268249b24, 5fc32090-a96e-5352-b867-05795d95ae56, e4571968-f7ab-5ab9-9db6-21554bbefe13). Paper C presents CARLA as an open-source simulator supporting development, training, and validation of autonomous urban driving systems, providing flexible sensor suite specification and environmental conditions, and enabling controlled scenario evaluation (claims 6dde98eb-ff12-5785-926e-11fbb8cd299b, 2dedfe39-6dab-5024-be2e-997515e0211d, b26241aa-3d3d-560b-9a47-d8c65f50bfa3, 7e8db57a-25dd-55f8-9220-c289a62aea7f, 95c1e45a-f076-5974-87ce-1ddf31a356f5). This theme highlights the shared focus on mid-level input representations and simulation platforms to advance autonomous driving research and deployment.",
+    "supporting_claim_ids": [
+     "cc49c2d4-b50d-5322-8525-304268249b24",
+     "5fc32090-a96e-5352-b867-05795d95ae56",
+     "e4571968-f7ab-5ab9-9db6-21554bbefe13",
+     "6dde98eb-ff12-5785-926e-11fbb8cd299b",
+     "2dedfe39-6dab-5024-be2e-997515e0211d",
+     "b26241aa-3d3d-560b-9a47-d8c65f50bfa3",
+     "7e8db57a-25dd-55f8-9220-c289a62aea7f",
+     "95c1e45a-f076-5974-87ce-1ddf31a356f5"
+    ],
+    "supporting_papers": 2,
+    "supporting_claims": 8,
+    "confidence": 0.95
+   },
+   {
+    "synthesis_type": "theme",
+    "title": "End-to-End Learning Approaches for Autonomous Driving",
+    "body": "Papers A and C both discuss end-to-end learning approaches for autonomous driving. Paper A describes a CNN that learns the entire processing pipeline to steer an automobile, generating steering commands from single center camera images (claims e66d15a0-9347-5814-b053-1ff1dea8058d, 82d5df42-8220-51e7-a608-9993016f4e1c, 70eb8202-ac82-55fb-a95a-efb095234403). Paper C uses CARLA to study end-to-end imitation learning among other approaches, supporting training, prototyping, and validation of autonomous driving models including perception and control (claims 34863bb0-827c-5405-a15d-f7229ca8985c, 95c1e45a-f076-5974-87ce-1ddf31a356f5). This theme reflects a shared focus on end-to-end learning methods for autonomous vehicle control.",
+    "supporting_claim_ids": [
+     "e66d15a0-9347-5814-b053-1ff1dea8058d",
+     "82d5df42-8220-51e7-a608-9993016f4e1c",
+     "70eb8202-ac82-55fb-a95a-efb095234403",
+     "34863bb0-827c-5405-a15d-f7229ca8985c",
+     "95c1e45a-f076-5974-87ce-1ddf31a356f5"
+    ],
+    "supporting_papers": 2,
+    "supporting_claims": 5,
+    "confidence": 0.93
+   }
+  ]
+ }
+}

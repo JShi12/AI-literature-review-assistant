@@ -1,0 +1,47 @@
+{
+ "key": "b032ba094456bce9c02fa2daea129f355a52dfe36c0cedfb440284ef26a503e3",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.synthesis.v2",
+ "temperature": 0.0,
+ "input_tokens": 821,
+ "output_tokens": 287,
+ "latency_s": 2.49,
+ "recorded_at": "2026-10-08T10:42:47+00:00",
+ "parsed": {
+  "statements": [
+   {
+    "statement": "Both papers B and C emphasize the use of mid-level representations and simulation environments to facilitate autonomous driving research.",
+    "supporting_claims": [],
+    "supported": false
+   },
+   {
+    "statement": "Paper B highlights that mid-level representations enable training on real or simulated data and facilitate closed-loop simulation testing before real deployment.",
+    "supporting_claims": [
+     1
+    ],
+    "supported": true
+   },
+   {
+    "statement": "Paper C describes CARLA as an open-source simulator supporting development, training, and validation of autonomous urban driving systems.",
+    "supporting_claims": [
+     2
+    ],
+    "supported": true
+   },
+   {
+    "statement": "Paper C supports flexible specification of sensor suites and environmental conditions.",
+    "supporting_claims": [
+     3
+    ],
+    "supported": true
+   },
+   {
+    "statement": "This theme shows a shared focus on leveraging simulation and mid-level abstractions to improve autonomous driving model training and evaluation.",
+    "supporting_claims": [],
+    "supported": false
+   }
+  ],
+  "type_evidence": "Claims 1 and 2 both discuss simulation environments for training and validation, but only claim 1 discusses mid-level representations. There is no claim from Paper C about mid-level representations.",
+  "type_appropriate": false
+ }
+}

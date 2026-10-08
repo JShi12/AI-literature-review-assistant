@@ -1,0 +1,29 @@
+{
+ "key": "d3751edccf3d6c6b70914d7c1c4952d792c2740c1617c2f5bddc5a5a906e24fd",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 850,
+ "output_tokens": 150,
+ "latency_s": 1.462,
+ "recorded_at": "2026-10-08T10:30:40+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage explicitly states that RL was trained using 12 days of driving, compared to 14 hours for imitation learning, and describes this as a significantly larger amount of data.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage states that RL underperforms (in the context of the table and discussion) despite strong results on tasks such as Atari games and maze navigation, matching the claim.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 3,
+    "reason": "The passage says RL is known to be brittle and that extensive task-specific hyperparameter search is common, but that such search is infeasible in realistic simulators. This matches the claim.",
+    "verdict": "supported"
+   }
+  ]
+ }
+}

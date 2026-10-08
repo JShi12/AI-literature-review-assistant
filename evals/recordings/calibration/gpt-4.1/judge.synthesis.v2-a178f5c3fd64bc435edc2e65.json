@@ -1,0 +1,53 @@
+{
+ "key": "a178f5c3fd64bc435edc2e6527f98493a6b219a4788344ef0460a5339c1927b6",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.synthesis.v2",
+ "temperature": 0.0,
+ "input_tokens": 1123,
+ "output_tokens": 240,
+ "latency_s": 1.843,
+ "recorded_at": "2026-10-08T10:32:10+00:00",
+ "parsed": {
+  "statements": [
+   {
+    "statement": "ChauffeurNet employs a recurrent neural network (RNN) architecture that processes mid-level input representations to output driving trajectories.",
+    "supporting_claims": [
+     1
+    ],
+    "supported": true
+   },
+   {
+    "statement": "ChauffeurNet integrates components like FeatureNet and AgentRNN with co-trained perception modules.",
+    "supporting_claims": [
+     2,
+     3
+    ],
+    "supported": true
+   },
+   {
+    "statement": "Mid-level representations facilitate training on both real and simulated data.",
+    "supporting_claims": [
+     4
+    ],
+    "supported": true
+   },
+   {
+    "statement": "Mid-level representations enable closed-loop simulation testing prior to real-world deployment.",
+    "supporting_claims": [
+     4,
+     5
+    ],
+    "supported": true
+   },
+   {
+    "statement": "This approach supports iterative prediction refinement through recurrent feedback mechanisms.",
+    "supporting_claims": [
+     6
+    ],
+    "supported": true
+   }
+  ],
+  "type_evidence": "none",
+  "type_appropriate": false
+ }
+}

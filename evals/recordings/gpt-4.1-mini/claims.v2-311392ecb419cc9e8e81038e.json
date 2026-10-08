@@ -1,0 +1,21 @@
+{
+ "key": "311392ecb419cc9e8e81038eec185c4fa96064a73b3b973699d45a38ccf1e43b",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 656,
+ "output_tokens": 378,
+ "latency_s": 4.355,
+ "recorded_at": "2026-10-08T10:10:23+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "The client receives from the server the following information about the world and the player’s state: Player Position, Player Speed, Collision, Opposite Lane Intersection, Sidewalk Intersection, Time, Player Acceleration, Player Orientation, Sensor readings, Non-Client-Controlled agents information, Traffic Lights information, Speed Limit Signs information.",
+    "claim_type": "method",
+    "normalized_text": "The client receives detailed state and environment information from the server including player position, speed, collisions, intersections, time, acceleration, orientation, sensor readings, other agents' info, traffic lights, and speed limit signs.",
+    "source_quote": "The client receives from the server the following information about the world and the player’s state:\n• Player Position: The 3D position of the player with respect to the world coordinate system.\n• Player Speed: The player’s linear speed in kilometers per hour.\n• Collision: Cumulative impact from collisions with three different types of objects: cars, pedestrians, or static objects.\n• Opposite Lane Intersection: The current fraction of the player car footprint that overlaps the opposite lane.\n• Sidewalk Intersection: The current fraction of the player car footprint that overlaps the sidewalk.\n• Time: The current in-game time.\n• Player Acceleration: A 3D vector with the agent’s acceleration with respect to the world coordinate system.\n• Player Orientation: A unit-length vector corresponding to the agent car orientation.\n• Sensor readings: The current readings from the set of camera sensors.\n• Non-Client-Controlled agents information: The positions, orientations and bounding boxes for all pedestrians and cars present in the environment.\n• Trafﬁc Lights information: The position and state of all trafﬁc lights.\n• Speed Limit Signs information: Position and readings from all speed limit signs.",
+    "confidence": 0.95
+   }
+  ]
+ }
+}

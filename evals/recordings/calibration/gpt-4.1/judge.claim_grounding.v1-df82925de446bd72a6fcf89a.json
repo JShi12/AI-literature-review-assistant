@@ -1,0 +1,34 @@
+{
+ "key": "df82925de446bd72a6fcf89a536cdeb7aaf93ab3ef513686955db2086d527eeb",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 863,
+ "output_tokens": 213,
+ "latency_s": 2.555,
+ "recorded_at": "2026-10-08T10:31:25+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The table shows M1 is 'M0 + Traj Perturbation' with wimit=1.0 and wenv=0.0.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "In the 'Slowing for a Slow Car' scenario, the table shows for M0: Slows Down 75%, Collides 0%, Gets Stuck 25%.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 3,
+    "reason": "The table lists M0 as 'Imitation with Past Dropout' with wimit=1.0 and wenv=0.0.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 4,
+    "reason": "The table shows M2 is 'M1 + Environment Losses' with wimit=1.0 and wenv=1.0, not M1. M1 is 'M0 + Traj Perturbation' with wimit=1.0 and wenv=0.0.",
+    "verdict": "unsupported"
+   }
+  ]
+ }
+}

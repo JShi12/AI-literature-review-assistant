@@ -116,11 +116,10 @@ def ingest_papers() -> list[str]:
 def extract_all_claims(paper_ids: list[str]) -> list[str]:
     """Extract claims chunk by chunk, each in its own transaction.
 
-    An occasional chunk fails validation (the LLM's returned claim offsets don't quite line up
-    with the source chunk's offsets) -- that's a pre-existing, correct safety check elsewhere in
-    the pipeline, not something to weaken here. Isolating each chunk in its own session_scope
-    means one bad chunk only loses that chunk's claims, not every claim already committed for
-    every other chunk in the same run.
+    Claim offsets are computed from each claim's verbatim source quote, so chunks no longer fail
+    location validation, but a chunk can still fail (e.g. an API error or malformed model output).
+    Isolating each chunk in its own session_scope means one bad chunk only loses that chunk's
+    claims, not every claim already committed for every other chunk in the same run.
     """
     all_claim_ids: list[str] = []
     for paper_id in paper_ids:

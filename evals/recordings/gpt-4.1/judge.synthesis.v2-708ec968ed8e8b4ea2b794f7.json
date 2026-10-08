@@ -1,0 +1,62 @@
+{
+ "key": "708ec968ed8e8b4ea2b794f76a7f290577b9e70a62add211395f19787996ed4c",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.synthesis.v2",
+ "temperature": 0.0,
+ "input_tokens": 1047,
+ "output_tokens": 352,
+ "latency_s": 3.301,
+ "recorded_at": "2026-10-08T10:41:59+00:00",
+ "parsed": {
+  "statements": [
+   {
+    "statement": "Paper A presents a method where a convolutional neural network (CNN) learns the entire processing pipeline to steer an automobile.",
+    "supporting_claims": [
+     1
+    ],
+    "supported": true
+   },
+   {
+    "statement": "Paper A's method generates steering commands from a single front-facing center camera.",
+    "supporting_claims": [
+     2
+    ],
+    "supported": true
+   },
+   {
+    "statement": "Paper B introduces ChauffeurNet, a recurrent neural network (RNN) that takes mid-level input and outputs driving trajectories for control.",
+    "supporting_claims": [
+     3
+    ],
+    "supported": true
+   },
+   {
+    "statement": "ChauffeurNet incorporates components such as FeatureNet and AgentRNN.",
+    "supporting_claims": [
+     4
+    ],
+    "supported": true
+   },
+   {
+    "statement": "ChauffeurNet uses a memory model with recurrent feedback between iterations.",
+    "supporting_claims": [
+     5
+    ],
+    "supported": true
+   },
+   {
+    "statement": "Both methods rely on different input representations and network architectures to produce control outputs for autonomous driving.",
+    "supporting_claims": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "supported": true
+   }
+  ],
+  "type_evidence": "Claims 1, 2 (CNN, end-to-end, camera input); Claims 3, 4, 5 (RNN, mid-level input, recurrent feedback, FeatureNet/AgentRNN); both describe methods for producing control outputs.",
+  "type_appropriate": true
+ }
+}

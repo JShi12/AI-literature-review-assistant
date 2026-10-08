@@ -1,0 +1,40 @@
+{
+ "key": "6c0015bea9ee2e34f5d9b68ff95a027a5332b9b8097714fe2a4be31e1a78e535",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "synthesis.v2",
+ "temperature": 0.2,
+ "input_tokens": 2917,
+ "output_tokens": 571,
+ "latency_s": 6.898,
+ "recorded_at": "2026-10-08T10:42:45+00:00",
+ "parsed": {
+  "syntheses": [
+   {
+    "synthesis_type": "theme",
+    "title": "Use of Mid-Level Representations and Simulation in Autonomous Driving Research",
+    "body": "Both papers B and C emphasize the use of mid-level representations and simulation environments to facilitate autonomous driving research. Paper B highlights that mid-level representations enable training on real or simulated data and facilitate closed-loop simulation testing before real deployment (claim_id=5fc32090-a96e-5352-b867-05795d95ae56). Paper C describes CARLA as an open-source simulator supporting development, training, and validation of autonomous urban driving systems (claim_id=2dedfe39-6dab-5024-be2e-997515e0211d) and supports flexible specification of sensor suites and environmental conditions (claim_id=b26241aa-3d3d-560b-9a47-d8c65f50bfa3). This theme shows a shared focus on leveraging simulation and mid-level abstractions to improve autonomous driving model training and evaluation.",
+    "supporting_claim_ids": [
+     "5fc32090-a96e-5352-b867-05795d95ae56",
+     "2dedfe39-6dab-5024-be2e-997515e0211d",
+     "b26241aa-3d3d-560b-9a47-d8c65f50bfa3"
+    ],
+    "supporting_papers": 2,
+    "supporting_claims": 3,
+    "confidence": 0.95
+   },
+   {
+    "synthesis_type": "theme",
+    "title": "End-to-End Learning Approaches for Autonomous Driving",
+    "body": "Papers A and C both discuss end-to-end learning approaches for autonomous driving. Paper A presents a CNN that learns the entire processing pipeline to steer an automobile (claim_id=e66d15a0-9347-5814-b053-1ff1dea8058d) and notes that the trained network generates steering commands from a single front-facing center camera (claim_id=70eb8202-ac82-55fb-a95a-efb095234403). Paper C evaluates end-to-end imitation learning as one of three autonomous driving approaches studied using the CARLA simulator (claim_id=34863bb0-827c-5405-a15d-f7229ca8985c). This theme reflects the investigation of end-to-end learning methods in autonomous driving research across these papers.",
+    "supporting_claim_ids": [
+     "e66d15a0-9347-5814-b053-1ff1dea8058d",
+     "70eb8202-ac82-55fb-a95a-efb095234403",
+     "34863bb0-827c-5405-a15d-f7229ca8985c"
+    ],
+    "supporting_papers": 2,
+    "supporting_claims": 3,
+    "confidence": 0.93
+   }
+  ]
+ }
+}

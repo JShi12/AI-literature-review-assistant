@@ -11,12 +11,13 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from lit_review_assistant.db.models import Claim, ReviewDraft, ReviewSentence, ReviewSentenceClaim, Synthesis
-from lit_review_assistant.llm.client import OpenAIStructuredLLM, StructuredLLM, create_llm_run
+from lit_review_assistant.llm.client import LLMResult, OpenAIStructuredLLM, StructuredLLM, create_llm_run
 from lit_review_assistant.pipeline.pdf import infer_paper_metadata_from_name
 from lit_review_assistant.pipeline.review_traceability import normalize_sentence_support
 from lit_review_assistant.schemas import ReviewDraftPayload, ReviewSentencePayload
 
-PROMPT_VERSION = "review.v1"
+PROMPT_VERSION = "review.v2"
+DEFAULT_TEMPERATURE = 0.2
 UUID_PATTERN = re.compile(r"\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b")
 
 
@@ -25,27 +26,37 @@ def generate_review_draft(
     topic: str,
     synthesis_ids: list[str],
     llm: StructuredLLM | None = None,
-    temperature: float = 0.2,
+    temperature: float = DEFAULT_TEMPERATURE,
 ) -> ReviewDraft | None:
     """Generate, citation-clean, and persist a review draft from the given syntheses."""
     syntheses = session.scalars(select(Synthesis).where(Synthesis.id.in_(synthesis_ids))).all()
     if not syntheses:
         return None
 
-    llm = llm or OpenAIStructuredLLM()
-    result = llm.parse(
-        text_format=ReviewDraftPayload,
-        prompt_version=PROMPT_VERSION,
-        instructions=REVIEW_INSTRUCTIONS,
-        input_text=build_review_input(topic, syntheses),
-        temperature=temperature,
-    )
+    result = request_review_draft(topic, syntheses, llm=llm, temperature=temperature)
     extra_claims = find_claims_for_citation_cleanup(session, result.parsed, syntheses)
     parsed = apply_academic_citations(result.parsed, syntheses, extra_claims=extra_claims)
     run = create_llm_run(session, result)
     draft = persist_review_draft(session, parsed, run.id)
     session.flush()
     return draft
+
+
+def request_review_draft(
+    topic: str,
+    syntheses: Sequence[Synthesis],
+    llm: StructuredLLM | None = None,
+    temperature: float = DEFAULT_TEMPERATURE,
+) -> LLMResult[ReviewDraftPayload]:
+    """Ask the LLM for a raw review draft without citation cleanup or persistence (shared with the eval harness)."""
+    llm = llm or OpenAIStructuredLLM()
+    return llm.parse(
+        text_format=ReviewDraftPayload,
+        prompt_version=PROMPT_VERSION,
+        instructions=REVIEW_INSTRUCTIONS,
+        input_text=build_review_input(topic, syntheses),
+        temperature=temperature,
+    )
 
 
 def persist_review_draft(session: Session, payload: ReviewDraftPayload, run_id: str) -> ReviewDraft:
@@ -60,10 +71,18 @@ def persist_review_draft(session: Session, payload: ReviewDraftPayload, run_id: 
     session.flush()
 
     for sentence_payload in payload.sentences:
-        sentence = persist_review_sentence(session, draft.id, sentence_payload)
-        for claim_id in sorted(set(sentence_payload.supporting_claim_ids)):
-            if session.get(Claim, claim_id) is not None:
-                session.add(ReviewSentenceClaim(review_sentence_id=sentence.id, claim_id=claim_id))
+        # Keep only ids of claims that exist, *before* deriving is_supported: otherwise a sentence citing
+        # only invented ids (e.g. a synthesis id) is stored as supported with no claim behind it.
+        existing = [
+            claim_id
+            for claim_id in sorted(set(sentence_payload.supporting_claim_ids))
+            if session.get(Claim, claim_id) is not None
+        ]
+        sentence = persist_review_sentence(
+            session, draft.id, sentence_payload.model_copy(update={"supporting_claim_ids": existing})
+        )
+        for claim_id in existing:
+            session.add(ReviewSentenceClaim(review_sentence_id=sentence.id, claim_id=claim_id))
     session.flush()
     return draft
 
@@ -87,6 +106,12 @@ def persist_review_sentence(
 
 
 def build_review_input(topic: str, syntheses: Sequence[Synthesis]) -> str:
+    """Topic, numbered paper references, and each synthesis with the text of the claims behind it.
+
+    Syntheses are labelled S1, S2, ... rather than by id: their UUIDs looked like claim ids and the model
+    cited them as supporting claims. Claim texts are included so the model can check what it cites
+    instead of relying on synthesis bodies, which can overstate their evidence.
+    """
     citation_by_paper_id = build_citation_map(syntheses)
     lines = [
         f"Topic: {topic}",
@@ -96,17 +121,13 @@ def build_review_input(topic: str, syntheses: Sequence[Synthesis]) -> str:
     for paper_id, citation_number in citation_by_paper_id.items():
         lines.append(f"[{citation_number}] {format_reference(paper_id, syntheses)}")
 
-    lines.extend(["", "Use these syntheses and their claim-backed evidence:"])
-    for synthesis in syntheses:
-        claim_refs = [
-            f"{claim.id} -> [{citation_by_paper_id[claim.paper_id]}]"
-            for claim in synthesis.claims
-            if claim.paper_id in citation_by_paper_id
-        ]
-        lines.append(
-            f"- synthesis_id={synthesis.id}; type={synthesis.synthesis_type}; title={synthesis.title}; "
-            f"supporting_claim_refs={claim_refs}; body={synthesis.body}"
-        )
+    lines.extend(["", "Syntheses, each with the evidence claims behind it:"])
+    for index, synthesis in enumerate(syntheses, start=1):
+        lines.append(f"S{index} ({synthesis.synthesis_type}) {synthesis.title}: {synthesis.body}")
+        for claim in synthesis.claims:
+            if claim.paper_id in citation_by_paper_id:
+                text = claim.normalized_text or claim.claim_text
+                lines.append(f"   - claim_id={claim.id} [{citation_by_paper_id[claim.paper_id]}]: {text}")
     return "\n".join(lines)
 
 
@@ -321,13 +342,22 @@ REVIEW_INSTRUCTIONS = """You write evidence-grounded literature review drafts.
 
 Rules:
 - Generate a concise Markdown literature review.
-- Every substantive sentence in the Markdown must include bracketed numeric citations such as [1] or [1, 2].
-- Use only citation numbers listed in Paper references.
-- Never cite claim IDs, UUIDs, synthesis IDs, or paper database IDs in the Markdown.
+- The evidence is the claims listed under each synthesis. Use the synthesis text only as a guide to how
+  claims fit together; never carry over a detail it states unless a listed claim states it too.
+- Each sentence may assert only what its supporting claims state:
+  - Do not add details, items, numbers, or qualifiers the claims don't state ("widely used", "exact",
+    "always", "studies show" when only one paper says it).
+  - Attribute each finding to the paper whose claim states it; say papers agree or share a finding only
+    when claims from each of them state it.
+  - Do not assert causes, mechanisms, or links between findings that no claim states.
+- Every substantive sentence in the Markdown must include bracketed numeric citations such as [1] or [1, 2],
+  naming the papers of the claims it relies on. Use only citation numbers listed in Paper references.
+- Never write claim IDs, UUIDs, synthesis labels (S1, S2, ...), or paper database IDs in the Markdown.
 - Add a Markdown References section at the end using the same bracketed numbers.
-- Every substantive sentence payload must include supporting_claim_ids.
+- Every substantive sentence payload must include supporting_claim_ids: claim_id values listed above, never
+  synthesis labels or citation numbers.
 - Mark is_supported true only when at least one supporting claim is listed.
 - Sentences with no direct support should be marked is_supported false.
-- Do not invent claims, papers, methods, datasets, or results beyond the provided syntheses.
+- Do not invent claims, papers, methods, datasets, or results beyond the listed claims.
 - The output must include title, outline, markdown, sentences, and confidence.
 """

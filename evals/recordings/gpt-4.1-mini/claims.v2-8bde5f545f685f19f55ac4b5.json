@@ -1,0 +1,63 @@
+{
+ "key": "8bde5f545f685f19f55ac4b5c0bc027ef1e68bc1d5e63c7efbb11754ce56c174",
+ "model": "gpt-4.1-mini",
+ "prompt_version": "claims.v2",
+ "temperature": 0.1,
+ "input_tokens": 714,
+ "output_tokens": 858,
+ "latency_s": 7.718,
+ "recorded_at": "2026-10-08T09:58:03+00:00",
+ "parsed": {
+  "claims": [
+   {
+    "claim_text": "In this paper, we describe a CNN that goes beyond pattern recognition. It learns the entire processing pipeline needed to steer an automobile.",
+    "claim_type": "method",
+    "normalized_text": "The CNN learns the entire processing pipeline to steer an automobile.",
+    "source_quote": "In this paper, we describe a CNN that goes beyond pattern recognition. It learns the entire pro-cessing pipeline needed to steer an automobile.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "The groundwork for this project was done over 10 years ago in a Defense Advanced Research Projects Agency (DARPA) seedling project known as DARPA Autonomous Vehicle (DAVE) in which a sub-scale radio control (RC) car drove through a junk-filled alley way.",
+    "claim_type": "background",
+    "normalized_text": "The DARPA Autonomous Vehicle (DAVE) project involved a sub-scale RC car driving through a junk-filled alleyway.",
+    "source_quote": "The groundwork for this project was done over 10 years ago in a Defense Advanced Research Projects Agency (DARPA) seedling project known as DARPA Autonomous Vehicle (DAVE) [5] in which a sub-scale radio control (RC) car drove through a junk-ﬁlled alley way.",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "DAVE was trained on hours of human driving in similar, but not identical environments. The training data included video from two cameras coupled with left and right steering commands from a human operator.",
+    "claim_type": "method",
+    "normalized_text": "DAVE was trained on hours of human driving data including video from two cameras and steering commands.",
+    "source_quote": "DAVE was trained on hours of human driving in similar, but not identical en-vironments. The training data included video from two cameras coupled with left and right steering commands from a human operator.",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "DAVE-2 was inspired by the pioneering work of Pomerleau who in 1989 built the Autonomous Land Vehicle in a Neural Network (ALVINN) system, demonstrating that an end-to-end trained neural network can steer a car on public roads.",
+    "claim_type": "background",
+    "normalized_text": "ALVINN demonstrated that an end-to-end trained neural network can steer a car on public roads.",
+    "source_quote": "In many ways, DAVE-2 was inspired by the pioneering work of Pomerleau [6] who in 1989 built the Autonomous Land Vehicle in a Neural Network (ALVINN) system. It demonstrated that an end-to-end trained neural network can indeed steer a car on public roads.",
+    "confidence": 0.95
+   },
+   {
+    "claim_text": "Our work differs in that 25 years of advances let us apply far more data and computational power to the task, and our experience with CNNs lets us make use of this powerful technology.",
+    "claim_type": "method",
+    "normalized_text": "This work applies more data, computational power, and CNN technology compared to ALVINN.",
+    "source_quote": "Our work differs in that 25 years of advances let us apply far more data and computational power to the task. In addition, our experience with CNNs lets us make use of this powerful technology.",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "ALVINN used a fully-connected network which is tiny by today’s standard.",
+    "claim_type": "background",
+    "normalized_text": "ALVINN used a fully-connected network much smaller than modern networks.",
+    "source_quote": "(ALVINN used a fully-connected network which is tiny by today’s standard.)",
+    "confidence": 0.9
+   },
+   {
+    "claim_text": "While DAVE demonstrated the potential of end-to-end learning, and was used to justify starting the DARPA Learning Applied to Ground Robots (LAGR) program, DAVE’s performance was not sufficiently reliable to provide a full alternative to more modular approaches to off-road driving.",
+    "claim_type": "limitation",
+    "normalized_text": "DAVE's performance was not reliable enough to replace modular off-road driving approaches.",
+    "source_quote": "While DAVE demonstrated the potential of end-to-end learning, and indeed was used to justify starting the DARPA Learning Applied to Ground Robots (LAGR) program [7], DAVE’s performance was not sufﬁciently reliable to provide a full alternative to more modular approaches to off-road driving.",
+    "confidence": 0.9
+   }
+  ]
+ }
+}

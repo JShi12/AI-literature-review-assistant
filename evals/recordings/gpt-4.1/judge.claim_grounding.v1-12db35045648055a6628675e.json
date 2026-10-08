@@ -1,0 +1,44 @@
+{
+ "key": "12db35045648055a6628675ecdd1c25503adf78cf8ecc6cec4d9508e494e48ad",
+ "model": "gpt-4.1",
+ "prompt_version": "judge.claim_grounding.v1",
+ "temperature": 0.0,
+ "input_tokens": 770,
+ "output_tokens": 270,
+ "latency_s": 1.931,
+ "recorded_at": "2026-10-08T10:30:30+00:00",
+ "parsed": {
+  "judgments": [
+   {
+    "claim_number": 1,
+    "reason": "The passage states that the lane center is manually calibrated for each frame and this position is called the 'ground truth.'",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 2,
+    "reason": "The passage says the simulator transforms the original images to account for departures from the ground truth, including discrepancies between the human driven path and the ground truth.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 3,
+    "reason": "The passage explains that the simulator sends the first frame, adjusted for departures from the ground truth, to the CNN, which returns a steering command for that frame.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 4,
+    "reason": "The passage states that both the CNN steering commands and the recorded human-driver commands are fed into the dynamic model to update the simulated vehicle's position and orientation.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 5,
+    "reason": "The passage describes that the simulator modifies the next frame so it appears as if the vehicle followed the CNN's steering commands, then feeds this new image to the CNN and repeats the process.",
+    "verdict": "supported"
+   },
+   {
+    "claim_number": 6,
+    "reason": "The passage explicitly states that the simulator records the off-center distance, the yaw, and the distance traveled by the virtual car.",
+    "verdict": "supported"
+   }
+  ]
+ }
+}
