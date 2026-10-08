@@ -27,7 +27,12 @@ from pydantic_ai.messages import (
     ModelMessagesTypeAdapter,
     ModelRequest,
     ModelResponse,
+    RetryPromptPart,
+    SystemPromptPart,
+    TextPart,
+    ToolCallPart,
     ToolReturnPart,
+    UserPromptPart,
 )
 from pydantic_ai.models import Model, ModelRequestParameters
 from pydantic_ai.models.openai import OpenAIResponsesModel
@@ -37,7 +42,7 @@ from pydantic_ai.settings import ModelSettings
 
 from evals.llm_cache import DEFAULT_RECORDINGS_DIR, Mode, RecordingMissError
 from evals.snapshot import stable_id
-from evals.tasks import build_syntheses, describe_error
+from evals.tasks import build_syntheses, describe_error, stable_ranking
 from lit_review_assistant.db.models import Claim, ReviewDraft, Synthesis
 from lit_review_assistant.llm import agent as agent_module
 from lit_review_assistant.llm.agent import AgentDeps, build_agent
@@ -48,29 +53,42 @@ from lit_review_assistant.llm.synthesis import SynthesisType, request_syntheses
 
 DEFAULT_AGENT_CASES_PATH = Path("evals/datasets/agent_cases.json")
 UUID_RE = re.compile(r"\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b")
-# Message fields that change between otherwise identical runs; left out of the recording key.
-VOLATILE_KEYS = {
-    "timestamp",
-    "run_id",
-    "conversation_id",
-    "usage",
-    "provider_response_id",
-    "provider_details",
-    "provider_url",
-    "metadata",
-    "id",
-}
-
-
 # --- Recording the agent's own model calls --------------------------------------------------------
 
 
-def _strip_volatile(value: Any) -> Any:
-    if isinstance(value, dict):
-        return {key: _strip_volatile(item) for key, item in value.items() if key not in VOLATILE_KEYS}
-    if isinstance(value, list):
-        return [_strip_volatile(item) for item in value]
-    return value
+def canonical_messages(messages: Sequence[ModelMessage]) -> list[Any]:
+    """The meaningful content of a conversation, for the recording key.
+
+    An allow-list (prompts, instructions, tool calls and their arguments, tool results, text) rather than a
+    full dump: dumps also carry timestamps and run ids, and newer pydantic-ai versions add fields -- either
+    would change the key between machines or versions and miss every recording.
+    """
+    canonical: list[Any] = []
+    for message in messages:
+        if isinstance(message, ModelRequest):
+            parts: list[Any] = []
+            for request_part in message.parts:
+                if isinstance(request_part, ToolReturnPart | RetryPromptPart):
+                    content = json.dumps(request_part.content, sort_keys=True, default=str)
+                    parts.append([request_part.part_kind, request_part.tool_name, request_part.tool_call_id, content])
+                elif isinstance(request_part, UserPromptPart | SystemPromptPart):
+                    parts.append([request_part.part_kind, str(request_part.content)])
+                else:
+                    parts.append([request_part.part_kind])
+            canonical.append(["request", message.instructions, parts])
+        else:
+            response_parts: list[Any] = []
+            for response_part in message.parts:
+                if isinstance(response_part, ToolCallPart):
+                    response_parts.append(
+                        ["tool-call", response_part.tool_name, response_part.args_as_dict(), response_part.tool_call_id]
+                    )
+                elif isinstance(response_part, TextPart):
+                    response_parts.append(["text", response_part.content])
+                else:
+                    response_parts.append([response_part.part_kind])
+            canonical.append(["response", response_parts])
+    return canonical
 
 
 class RecordingModel(WrapperModel):
@@ -99,7 +117,7 @@ class RecordingModel(WrapperModel):
     def _key(self, messages: list[ModelMessage], parameters: ModelRequestParameters) -> str:
         material = {
             "model": self._recorded_name,
-            "messages": _strip_volatile(ModelMessagesTypeAdapter.dump_python(messages, mode="json")),
+            "messages": canonical_messages(messages),
             "tools": [[tool.name, tool.description, tool.parameters_json_schema] for tool in parameters.function_tools],
         }
         return hashlib.sha256(json.dumps(material, sort_keys=True).encode()).hexdigest()
@@ -149,7 +167,7 @@ class AgentStore:
         vectors = np.asarray(embed_texts(list(texts), client=self.embeddings_client))
         query = np.asarray(embed_texts([topic], client=self.embeddings_client)[0])
         scores = (vectors @ query) / (np.linalg.norm(vectors, axis=1) * np.linalg.norm(query))
-        return [int(index) for index in np.argsort(-scores, kind="stable")[:limit]]
+        return stable_ranking(scores)[:limit]
 
     def find_similar_claims(self, session: object, topic: str, limit: int, client: object = None) -> list[Claim]:
         order = self._rank(topic, [claim_embedding_text(claim) for claim in self.claims], limit)

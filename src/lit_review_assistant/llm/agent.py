@@ -28,6 +28,13 @@ Prefer calling find_claims or find_syntheses first to see what already exists be
 anything new -- don't regenerate syntheses or a draft that already covers the same ground unless the
 user asks for something new. In your final answer, report the concrete results you produced or found
 (titles, counts, ids), not just a general description of what you did.
+
+When the user asks for a review, draft, or write-up, always create it with generate_draft -- also when
+existing syntheses are enough -- and never write review text yourself in your answer: only a saved draft
+gets numbered citations and sentence-level traceability. Then report the draft's title and id and briefly
+what it covers.
+
+Pass ids to tools exactly as earlier tool calls returned them; never retype, shorten, or invent an id.
 """
 
 

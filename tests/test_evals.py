@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 from pathlib import Path
 
+import numpy as np
 import pytest
 from pydantic import BaseModel
 from pydantic_ai.messages import (
@@ -19,7 +20,15 @@ from pydantic_ai.messages import (
 from pydantic_ai.models.test import TestModel
 
 from evals import run as eval_run
-from evals.agent_eval import AgentCase, RecordingModel, check_trajectory, reports_results, run_agent_stage, tool_results
+from evals.agent_eval import (
+    AgentCase,
+    RecordingModel,
+    canonical_messages,
+    check_trajectory,
+    reports_results,
+    run_agent_stage,
+    tool_results,
+)
 from evals.calibrate import agreement, cohen_kappa
 from evals.gate import compare, config_mismatches, gated_metrics, write_baseline
 from evals.gold import GoldHeading, RetrievalQuery, locate_line
@@ -47,7 +56,7 @@ from evals.metrics import (
 )
 from evals.pricing import estimate_cost
 from evals.snapshot import load_snapshot, sample_chunks, write_snapshot
-from evals.tasks import run_retrieval_stage, to_orm_chunk
+from evals.tasks import run_retrieval_stage, stable_ranking, to_orm_chunk
 from lit_review_assistant.db.models import Claim
 from lit_review_assistant.llm.claims import ExtractedClaimsBatch
 from lit_review_assistant.llm.client import LLMResult
@@ -712,3 +721,23 @@ def test_agent_stage_records_then_replays_without_calling_the_model(tmp_path: Pa
     assert recorded[0]["checks"]["calls find_claims"] is True
     assert [call["tool"] for call in replayed[0]["tool_calls"]] == ["find_claims"]
     assert replayed[0]["output"] == recorded[0]["output"]
+
+
+def test_agent_recording_key_ignores_volatile_and_version_specific_fields() -> None:
+    first = _conversation({"claim_ids": [CLAIM_A], "synthesis_type": "gap"})
+    second = _conversation({"claim_ids": [CLAIM_A], "synthesis_type": "gap"})
+    # Same conversation, but different timestamps/run ids and extra provider metadata.
+    second[1] = ModelResponse(
+        parts=second[1].parts, provider_name="openai", provider_response_id="resp_123", run_id="other-run"
+    )
+
+    assert canonical_messages(first) == canonical_messages(second)
+    assert canonical_messages(first) != canonical_messages(_conversation({"claim_ids": [], "synthesis_type": "gap"}))
+
+
+def test_stable_ranking_breaks_near_ties_by_position() -> None:
+    # Scores equal up to float noise of the kind different BLAS builds produce.
+    scores = np.array([0.5, 0.7 + 1e-15, 0.7, 0.1])
+
+    assert stable_ranking(scores) == [1, 2, 0, 3]
+    assert stable_ranking(np.array([0.5, 0.7, 0.7 + 1e-15, 0.1])) == [1, 2, 0, 3]

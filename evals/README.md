@@ -147,7 +147,17 @@ this stage measures the agent's decisions, while the tools' own quality is measu
 The agent's model calls are recorded too (`RecordingModel`), so it replays offline.
 
 The first run found one real failure. Asked to draft a review from existing syntheses, the agent wrote the
-review in its chat reply instead of calling `generate_draft`, so nothing was saved or citation-traced.
+review in its chat reply instead of calling `generate_draft`, so nothing was saved or citation-traced. Over
+4 runs each, review requests saved through `generate_draft` went from 2/8 to 7/8 after an instruction fix.
+
+The agent's own model calls are not deterministic, so judge agent changes over several runs. Remaining
+weakness: gpt-4.1-mini sometimes miscopies one of many UUIDs it passes to a tool (seen in 1–4 of 32 case
+runs); short claim handles instead of UUIDs would remove that failure mode.
+
+Recording keys use an allow-list of message content (prompts, tool calls and results, text), and
+similarity ranking is rounded before sorting, so replays match across pydantic-ai versions and CPU
+architectures. The first CI run (Linux, pydantic-ai 2.54) missed every agent recording made on macOS
+with 2.48 until both were fixed.
 
 ## LLM judges
 

@@ -224,6 +224,16 @@ def run_claims_stage(
     )
 
 
+def stable_ranking(scores: np.ndarray) -> list[int]:
+    """Indices by descending score, identical across platforms.
+
+    BLAS dot products differ in the last bits between machines (e.g. macOS ARM vs Linux x86); without
+    rounding, near-ties flip order, which changes what tools return and misses recordings in CI.
+    """
+    rounded = np.round(scores.astype(float), 9)
+    return sorted(range(len(rounded)), key=lambda index: (-rounded[index], index))
+
+
 def run_retrieval_stage(
     snapshot: Snapshot,
     claims: Sequence[Claim],
@@ -254,7 +264,7 @@ def run_retrieval_stage(
     query_vectors /= np.linalg.norm(query_vectors, axis=1, keepdims=True)
     cases = []
     for query, query_vector in zip(queries, query_vectors, strict=True):
-        order = np.argsort(-(claim_vectors @ query_vector), kind="stable")
+        order = stable_ranking(claim_vectors @ query_vector)
         relevant = [chunk_key_by_id.get(claim.chunk_id) in query.relevant_chunks for claim in claims]
         ranked = [relevant[index] for index in order]
         cases.append(
